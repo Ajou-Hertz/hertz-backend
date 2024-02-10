@@ -53,12 +53,9 @@ public class User extends TimeTrackedBaseEntity {
 	public static User create(
 		@NonNull String email,
 		@NonNull String password,
-		String kakaoUid,
 		LocalDate birth,
-		@NonNull Gender gender,
-		String phone,
-		String contactLink
+		@NonNull Gender gender
 	) {
-		return new User(null, email, password, kakaoUid, birth, gender, phone, contactLink);
+		return new User(null, email, password, null, birth, gender, null, null);
 	}
 }
