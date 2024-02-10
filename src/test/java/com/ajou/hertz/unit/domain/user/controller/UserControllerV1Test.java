@@ -48,6 +48,25 @@ class UserControllerV1Test {
 	}
 
 	@Test
+	void 이메일이_주어지고_주어진_이메일을_사용_중인_회원의_존재_여부를_조회한다() throws Exception {
+	    // given
+		String email = "test@mail.com";
+		boolean expectedResult = true;
+		given(userQueryService.existsByEmail(email)).willReturn(expectedResult);
+
+	    // when & then
+		mvc.perform(
+				get("/v1/users/existence")
+					.header(API_MINOR_VERSION_HEADER_NAME, 1)
+					.param("email", email)
+			)
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("isExist").value(expectedResult));
+		then(userQueryService).should().existsByEmail(email);
+		verifyEveryMocksShouldHaveNoMoreInteractions();
+	}
+
+	@Test
 	void 주어진_회원_정보로_신규_회원을_등록한다() throws Exception {
 		// given
 		long userId = 1L;

@@ -1,5 +1,7 @@
 package com.ajou.hertz.global.config;
 
+import static org.springframework.http.HttpMethod.*;
+
 import java.util.Map;
 
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
@@ -24,7 +26,8 @@ public class SecurityConfig {
 	};
 
 	private static final Map<String, HttpMethod> AUTH_WHITE_LIST = Map.of(
-		"/v*/users", HttpMethod.POST
+		"/v*/users", POST,
+		"/v*/users/existence", GET
 	);
 
 	@Bean
