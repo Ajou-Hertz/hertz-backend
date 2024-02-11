@@ -102,14 +102,16 @@ class UserCommandServiceTest {
 	}
 
 	private SignUpRequest createSignUpRequest(String email) throws Exception {
-		Constructor<SignUpRequest> signUpRequestConstructor =
-			SignUpRequest.class.getDeclaredConstructor(String.class, String.class, LocalDate.class, Gender.class);
+		Constructor<SignUpRequest> signUpRequestConstructor = SignUpRequest.class.getDeclaredConstructor(
+			String.class, String.class, LocalDate.class, Gender.class, String.class
+		);
 		signUpRequestConstructor.setAccessible(true);
 		return signUpRequestConstructor.newInstance(
 			email,
 			"1q2w3e4r!",
 			LocalDate.of(2024, 1, 1),
-			Gender.ETC
+			Gender.ETC,
+			"01012345678"
 		);
 	}
 

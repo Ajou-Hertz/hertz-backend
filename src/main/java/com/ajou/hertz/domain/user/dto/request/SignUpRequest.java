@@ -4,6 +4,7 @@ import java.time.LocalDate;
 
 import com.ajou.hertz.domain.user.constant.Gender;
 import com.ajou.hertz.global.validator.Password;
+import com.ajou.hertz.global.validator.PhoneNumber;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
@@ -36,4 +37,9 @@ public class SignUpRequest {
 	@Schema(description = "성별")
 	@NotNull
 	private Gender gender;
+
+	@Schema(description = "전화번호", example = "01012345678")
+	@PhoneNumber
+	@NotBlank
+	private String phone;
 }

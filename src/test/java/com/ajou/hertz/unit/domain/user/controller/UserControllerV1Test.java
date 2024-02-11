@@ -97,14 +97,16 @@ class UserControllerV1Test {
 	}
 
 	private SignUpRequest createSignUpRequest() throws Exception {
-		Constructor<SignUpRequest> signUpRequestConstructor =
-			SignUpRequest.class.getDeclaredConstructor(String.class, String.class, LocalDate.class, Gender.class);
+		Constructor<SignUpRequest> signUpRequestConstructor = SignUpRequest.class.getDeclaredConstructor(
+			String.class, String.class, LocalDate.class, Gender.class, String.class
+		);
 		signUpRequestConstructor.setAccessible(true);
 		return signUpRequestConstructor.newInstance(
 			"test@test.com",
 			"1q2w3e4r!",
 			LocalDate.of(2024, 1, 1),
-			Gender.ETC
+			Gender.ETC,
+			"01012345678"
 		);
 	}
 
@@ -121,7 +123,7 @@ class UserControllerV1Test {
 			"kakao-user-id",
 			LocalDate.of(2024, 1, 1),
 			Gender.ETC,
-			"010-1234-5678",
+			"01012345678",
 			"https://contack-link"
 		);
 	}

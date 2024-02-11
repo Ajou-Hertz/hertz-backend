@@ -39,7 +39,8 @@ public class UserCommandService {
 				email,
 				passwordEncoder.encode(signUpRequest.getPassword()),
 				signUpRequest.getBirth(),
-				signUpRequest.getGender()
+				signUpRequest.getGender(),
+				signUpRequest.getPhone()
 			)
 		);
 		return UserDto.from(userSaved);

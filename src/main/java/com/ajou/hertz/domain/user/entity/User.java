@@ -54,8 +54,9 @@ public class User extends TimeTrackedBaseEntity {
 		@NonNull String email,
 		@NonNull String password,
 		LocalDate birth,
-		@NonNull Gender gender
+		@NonNull Gender gender,
+		String phone
 	) {
-		return new User(null, email, password, null, birth, gender, null, null);
+		return new User(null, email, password, null, birth, gender, phone, null);
 	}
 }
