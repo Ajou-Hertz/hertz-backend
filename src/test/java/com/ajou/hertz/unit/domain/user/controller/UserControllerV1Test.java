@@ -106,21 +106,69 @@ class UserControllerV1Test {
 		verifyEveryMocksShouldHaveNoMoreInteractions();
 	}
 
+	@Test
+	void 주어진_회원_정보로_신규_회원을_등록한다_이때_전달된_비밀번호가_잘못된_형식인_경우_에러가_발생한다() throws Exception {
+		// given
+		SignUpRequest signUpRequest = createSignUpRequest(
+			"test@mail.com",
+			"pass",
+			"01012345678"
+		);
+
+		// when & then
+		mvc.perform(
+				post("/v1/users")
+					.header(API_MINOR_VERSION_HEADER_NAME, 1)
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(objectMapper.writeValueAsString(signUpRequest))
+			)
+			.andExpect(status().isUnprocessableEntity());
+		verifyEveryMocksShouldHaveNoMoreInteractions();
+	}
+
+	@Test
+	void 주어진_회원_정보로_신규_회원을_등록한다_이때_전달된_전화번호가_잘못된_형식인_경우_에러가_발생한다() throws Exception {
+		// given
+		SignUpRequest signUpRequest = createSignUpRequest(
+			"test@mail.com",
+			"1q2w3e4r!",
+			"123"
+		);
+
+		// when & then
+		mvc.perform(
+				post("/v1/users")
+					.header(API_MINOR_VERSION_HEADER_NAME, 1)
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(objectMapper.writeValueAsString(signUpRequest))
+			)
+			.andExpect(status().isUnprocessableEntity());
+		verifyEveryMocksShouldHaveNoMoreInteractions();
+	}
+
 	private void verifyEveryMocksShouldHaveNoMoreInteractions() {
 		then(userCommandService).shouldHaveNoMoreInteractions();
 		then(userQueryService).shouldHaveNoMoreInteractions();
 	}
 
-	private SignUpRequest createSignUpRequest() throws Exception {
+	private SignUpRequest createSignUpRequest(String email, String password, String phone) throws Exception {
 		Constructor<SignUpRequest> signUpRequestConstructor = SignUpRequest.class.getDeclaredConstructor(
 			String.class, String.class, LocalDate.class, Gender.class, String.class
 		);
 		signUpRequestConstructor.setAccessible(true);
 		return signUpRequestConstructor.newInstance(
-			"test@test.com",
-			"1q2w3e4r!",
+			email,
+			password,
 			LocalDate.of(2024, 1, 1),
 			Gender.ETC,
+			phone
+		);
+	}
+
+	private SignUpRequest createSignUpRequest() throws Exception {
+		return createSignUpRequest(
+			"test@test.com",
+			"1q2w3e4r!",
 			"01012345678"
 		);
 	}
