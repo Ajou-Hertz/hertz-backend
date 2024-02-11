@@ -5,6 +5,7 @@ import static com.ajou.hertz.global.common.constant.GlobalConstants.*;
 import java.net.URI;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -21,11 +22,16 @@ import com.ajou.hertz.domain.user.service.UserQueryService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Email;
 import lombok.RequiredArgsConstructor;
 
 @Tag(name = "유저 관련 API")
+@Validated
 @RequiredArgsConstructor
 @RequestMapping("/v1/users")
 @RestController
@@ -38,12 +44,16 @@ public class UserControllerV1 {
 		summary = "회원 존재 여부 조회",
 		description = "전달받은 값들에 일치하는 회원이 존재하는지 확인힙니다."
 	)
+	@ApiResponses({
+		@ApiResponse(responseCode = "200", description = "OK"),
+		@ApiResponse(responseCode = "422", description = "[1200] <code>email</code>에 잘못된 형식의 이메일이 전달된 경우.", content = @Content)
+	})
 	@GetMapping(value = "/existence", headers = API_MINOR_VERSION_HEADER_NAME + "=" + 1)
 	public UserExistenceResponse getExistenceOfUserByEmailV1_1(
 		@Parameter(
 			description = "이메일. 입력된 이메일을 사용 중인 회원이 존재하는지 조회합니다.",
 			example = "example@mail.com"
-		) @RequestParam String email
+		) @RequestParam @Email String email
 	) {
 		boolean existence = userQueryService.existsByEmail(email);
 		return new UserExistenceResponse(existence);
