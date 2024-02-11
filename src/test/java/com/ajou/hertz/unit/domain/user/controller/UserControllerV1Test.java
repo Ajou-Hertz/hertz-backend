@@ -49,16 +49,16 @@ class UserControllerV1Test {
 
 	@Test
 	void 이메일이_주어지고_주어진_이메일을_사용_중인_회원의_존재_여부를_조회한다() throws Exception {
-	    // given
+		// given
 		String email = "test@mail.com";
 		boolean expectedResult = true;
 		given(userQueryService.existsByEmail(email)).willReturn(expectedResult);
 
-	    // when & then
+		// when & then
 		mvc.perform(
 				get("/v1/users/existence")
 					.header(API_MINOR_VERSION_HEADER_NAME, 1)
-					.param("email", email)
+					.queryParam("email", email)
 			)
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("isExist").value(expectedResult));
@@ -91,20 +91,70 @@ class UserControllerV1Test {
 		verifyEveryMocksShouldHaveNoMoreInteractions();
 	}
 
+	@Test
+	void 주어진_회원_정보로_신규_회원을_등록한다_이때_전달된_비밀번호가_잘못된_형식인_경우_에러가_발생한다() throws Exception {
+		// given
+		SignUpRequest signUpRequest = createSignUpRequest(
+			"test@mail.com",
+			"pass",
+			"01012345678"
+		);
+
+		// when & then
+		mvc.perform(
+				post("/v1/users")
+					.header(API_MINOR_VERSION_HEADER_NAME, 1)
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(objectMapper.writeValueAsString(signUpRequest))
+			)
+			.andExpect(status().isUnprocessableEntity());
+		verifyEveryMocksShouldHaveNoMoreInteractions();
+	}
+
+	@Test
+	void 주어진_회원_정보로_신규_회원을_등록한다_이때_전달된_전화번호가_잘못된_형식인_경우_에러가_발생한다() throws Exception {
+		// given
+		SignUpRequest signUpRequest = createSignUpRequest(
+			"test@mail.com",
+			"1q2w3e4r!",
+			"123"
+		);
+
+		// when & then
+		mvc.perform(
+				post("/v1/users")
+					.header(API_MINOR_VERSION_HEADER_NAME, 1)
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(objectMapper.writeValueAsString(signUpRequest))
+			)
+			.andExpect(status().isUnprocessableEntity());
+		verifyEveryMocksShouldHaveNoMoreInteractions();
+	}
+
 	private void verifyEveryMocksShouldHaveNoMoreInteractions() {
 		then(userCommandService).shouldHaveNoMoreInteractions();
 		then(userQueryService).shouldHaveNoMoreInteractions();
 	}
 
-	private SignUpRequest createSignUpRequest() throws Exception {
-		Constructor<SignUpRequest> signUpRequestConstructor =
-			SignUpRequest.class.getDeclaredConstructor(String.class, String.class, LocalDate.class, Gender.class);
+	private SignUpRequest createSignUpRequest(String email, String password, String phone) throws Exception {
+		Constructor<SignUpRequest> signUpRequestConstructor = SignUpRequest.class.getDeclaredConstructor(
+			String.class, String.class, LocalDate.class, Gender.class, String.class
+		);
 		signUpRequestConstructor.setAccessible(true);
 		return signUpRequestConstructor.newInstance(
+			email,
+			password,
+			LocalDate.of(2024, 1, 1),
+			Gender.ETC,
+			phone
+		);
+	}
+
+	private SignUpRequest createSignUpRequest() throws Exception {
+		return createSignUpRequest(
 			"test@test.com",
 			"1q2w3e4r!",
-			LocalDate.of(2024, 1, 1),
-			Gender.ETC
+			"01012345678"
 		);
 	}
 
@@ -121,7 +171,7 @@ class UserControllerV1Test {
 			"kakao-user-id",
 			LocalDate.of(2024, 1, 1),
 			Gender.ETC,
-			"010-1234-5678",
+			"01012345678",
 			"https://contack-link"
 		);
 	}
