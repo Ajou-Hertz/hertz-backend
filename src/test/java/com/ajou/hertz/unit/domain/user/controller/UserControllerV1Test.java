@@ -1,6 +1,6 @@
 package com.ajou.hertz.unit.domain.user.controller;
 
-import static com.ajou.hertz.global.common.constant.GlobalConstants.*;
+import static com.ajou.hertz.common.constant.GlobalConstants.*;
 import static org.mockito.BDDMockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;

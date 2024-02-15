@@ -3,8 +3,8 @@ package com.ajou.hertz.domain.user.dto.request;
 import java.time.LocalDate;
 
 import com.ajou.hertz.domain.user.constant.Gender;
-import com.ajou.hertz.global.validator.Password;
-import com.ajou.hertz.global.validator.PhoneNumber;
+import com.ajou.hertz.common.validator.Password;
+import com.ajou.hertz.common.validator.PhoneNumber;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;

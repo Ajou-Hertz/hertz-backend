@@ -1,6 +1,6 @@
 package com.ajou.hertz.domain.user.controller;
 
-import static com.ajou.hertz.global.common.constant.GlobalConstants.*;
+import static com.ajou.hertz.common.constant.GlobalConstants.*;
 
 import java.net.URI;
 

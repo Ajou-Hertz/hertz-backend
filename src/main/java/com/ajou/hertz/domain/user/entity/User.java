@@ -5,7 +5,7 @@ import java.time.LocalDate;
 import org.springframework.lang.NonNull;
 
 import com.ajou.hertz.domain.user.constant.Gender;
-import com.ajou.hertz.global.common.entity.TimeTrackedBaseEntity;
+import com.ajou.hertz.common.entity.TimeTrackedBaseEntity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
