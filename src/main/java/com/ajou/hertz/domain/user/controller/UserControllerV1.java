@@ -59,6 +59,10 @@ public class UserControllerV1 {
 		summary = "회원 등록",
 		description = "회원을 등록합니다."
 	)
+	@ApiResponses({
+		@ApiResponse(responseCode = "200"),
+		@ApiResponse(responseCode = "409", description = "[2200] 이미 다른 사용자가 사용 중인 이메일로 신규 회원을 등록하려고 하는 경우", content = @Content)
+	})
 	@PostMapping(headers = API_MINOR_VERSION_HEADER_NAME + "=" + 1)
 	public ResponseEntity<UserResponse> signUpV1_1(
 		@RequestBody @Valid SignUpRequest signUpRequest
