@@ -39,7 +39,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
 	@ExceptionHandler(CustomException.class)
 	public ResponseEntity<ErrorResponse> handleCustomException(CustomException ex) {
-		Logger.error(String.format(String.format("Custom Exception: %s:", ExceptionUtils.getExceptionStackTrace(ex))));
+		Logger.error(String.format(String.format("Custom Exception: %s", ExceptionUtils.getExceptionStackTrace(ex))));
 
 		return ResponseEntity
 			.status(ex.getHttpStatus())
