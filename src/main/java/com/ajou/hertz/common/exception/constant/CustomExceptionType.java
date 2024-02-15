@@ -17,6 +17,8 @@ import lombok.Getter;
 @Getter
 public enum CustomExceptionType {
 
+	MULTIPART_FILE_NOT_READABLE(1000, "파일을 읽을 수 없습니다. 올바른 파일인지 다시 확인 후 요청해주세요."),
+
 	/**
 	 * 로그인, 인증 관련 예외
 	 */
