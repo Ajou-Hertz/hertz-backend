@@ -49,6 +49,7 @@ public class User extends TimeTrackedBaseEntity {
 	private LocalDate birth;
 
 	@Column(nullable = false)
+	@Enumerated(EnumType.STRING)
 	private Gender gender;
 
 	@Column(unique = true)
