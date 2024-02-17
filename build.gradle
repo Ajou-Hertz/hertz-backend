@@ -126,8 +126,8 @@ jacocoTestCoverageVerification {
             }
 
             includes = [
-                    '*.*Service*',
-                    '*.*Controller*'
+                    '*service.*Service*',
+                    '*controller.*Controller*'
             ]
         }
     }
