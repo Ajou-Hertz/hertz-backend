@@ -5,6 +5,7 @@ import static org.mockito.BDDMockito.*;
 
 import java.lang.reflect.Constructor;
 import java.time.LocalDate;
+import java.util.Set;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -15,6 +16,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.ajou.hertz.domain.user.constant.Gender;
+import com.ajou.hertz.domain.user.constant.RoleType;
 import com.ajou.hertz.domain.user.dto.UserDto;
 import com.ajou.hertz.domain.user.dto.request.SignUpRequest;
 import com.ajou.hertz.domain.user.entity.User;
@@ -85,12 +87,13 @@ class UserCommandServiceTest {
 
 	private User createUser(Long id, String password) throws Exception {
 		Constructor<User> userConstructor = User.class.getDeclaredConstructor(
-			Long.class, String.class, String.class, String.class,
+			Long.class, Set.class, String.class, String.class, String.class,
 			LocalDate.class, Gender.class, String.class, String.class
 		);
 		userConstructor.setAccessible(true);
 		return userConstructor.newInstance(
 			id,
+			Set.of(RoleType.USER),
 			"test@test.com",
 			password,
 			"kakao-user-id",

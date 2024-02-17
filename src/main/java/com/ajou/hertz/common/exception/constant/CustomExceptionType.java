@@ -31,7 +31,7 @@ public enum CustomExceptionType {
 	 * 유저 관련 예외
 	 */
 	USER_EMAIL_DUPLICATION(2200, "이미 다른 회원이 사용 중인 이메일입니다."),
-	;
+	USER_NOT_FOUND_BY_ID(2201, "일치하는 회원을 찾을 수 없습니다."),
 
 	private final Integer code;
 	private final String message;

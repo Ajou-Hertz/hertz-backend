@@ -1,8 +1,10 @@
 package com.ajou.hertz.domain.user.dto;
 
 import java.time.LocalDate;
+import java.util.Set;
 
 import com.ajou.hertz.domain.user.constant.Gender;
+import com.ajou.hertz.domain.user.constant.RoleType;
 import com.ajou.hertz.domain.user.entity.User;
 
 import lombok.AccessLevel;
@@ -14,6 +16,7 @@ import lombok.Getter;
 public class UserDto {
 
 	private Long id;
+	private Set<RoleType> roleTypes;
 	private String email;
 	private String password;
 	private String kakaoUid;
@@ -25,6 +28,7 @@ public class UserDto {
 	public static UserDto from(User user) {
 		return new UserDto(
 			user.getId(),
+			user.getRoleTypes(),
 			user.getEmail(),
 			user.getPassword(),
 			user.getKakaoUid(),
