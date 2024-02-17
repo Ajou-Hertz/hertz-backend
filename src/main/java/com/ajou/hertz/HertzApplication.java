@@ -1,5 +1,7 @@
 package com.ajou.hertz;
 
+import java.util.TimeZone;
+
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
@@ -12,6 +14,8 @@ public class HertzApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(HertzApplication.class, args);
+
+        TimeZone.setDefault(TimeZone.getTimeZone("Asia/Seoul"));
     }
 
 }
