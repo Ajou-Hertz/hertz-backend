@@ -19,6 +19,7 @@ import com.ajou.hertz.domain.user.constant.Gender;
 import com.ajou.hertz.domain.user.constant.RoleType;
 import com.ajou.hertz.domain.user.dto.UserDto;
 import com.ajou.hertz.domain.user.entity.User;
+import com.ajou.hertz.domain.user.exception.UserNotFoundByEmailException;
 import com.ajou.hertz.domain.user.exception.UserNotFoundByIdException;
 import com.ajou.hertz.domain.user.repository.UserRepository;
 import com.ajou.hertz.domain.user.service.UserQueryService;
@@ -63,6 +64,39 @@ class UserQueryServiceTest {
 		then(userRepository).should().findById(userId);
 		verifyEveryMocksShouldHaveNoMoreInteractions();
 		assertThat(t).isInstanceOf(UserNotFoundByIdException.class);
+	}
+
+	@Test
+	void 이메일이_주어지고_주어진_이메일로_유저를_조회하면_조회된_유저_정보가_반환된다() throws Exception {
+		// given
+		String email = "test@mail.com";
+		User expectedResult = createUser(1L, email);
+		given(userRepository.findByEmail(email)).willReturn(Optional.of(expectedResult));
+
+		// when
+		UserDto actualResult = sut.getDtoByEmail(email);
+
+		// then
+		then(userRepository).should().findByEmail(email);
+		verifyEveryMocksShouldHaveNoMoreInteractions();
+		assertThat(actualResult)
+			.hasFieldOrPropertyWithValue("id", expectedResult.getId())
+			.hasFieldOrPropertyWithValue("email", expectedResult.getEmail());
+	}
+
+	@Test
+	void 이메일이_주어지고_주어진_이메일로_유저를_조회한다_만약_일치하는_유저가_없다면_예외가_발생한다() {
+		// given
+		String email = "test@mail.com";
+		given(userRepository.findByEmail(email)).willReturn(Optional.empty());
+
+		// when
+		Throwable t = catchThrowable(() -> sut.getDtoByEmail(email));
+
+		// then
+		then(userRepository).should().findByEmail(email);
+		verifyEveryMocksShouldHaveNoMoreInteractions();
+		assertThat(t).isInstanceOf(UserNotFoundByEmailException.class);
 	}
 
 	@Test

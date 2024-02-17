@@ -25,13 +25,14 @@ public enum CustomExceptionType {
 	ACCESS_DENIED(2000, "접근이 거부되었습니다."),
 	UNAUTHORIZED(2001, "유효하지 않은 인증 정보로 인해 인증 과정에서 문제가 발생하였습니다."),
 	TOKEN_VALIDATE(2002, "유효하지 않은 token입니다. Token 값이 잘못되었거나 만료되어 유효하지 않은 경우로 token 갱신이 필요합니다."),
-	ACCESS_TOKEN_VALIDATE(2003, "유효하지 않은 access token입니다. Token 값이 잘못되었거나 만료되어 유효하지 않은 경우로 token 갱신이 필요합니다."),
+	PASSWORD_MISMATCH(2003, "비밀번호가 일치하지 않습니다."),
 
 	/**
 	 * 유저 관련 예외
 	 */
 	USER_EMAIL_DUPLICATION(2200, "이미 다른 회원이 사용 중인 이메일입니다."),
 	USER_NOT_FOUND_BY_ID(2201, "일치하는 회원을 찾을 수 없습니다."),
+	USER_NOT_FOUND_BY_EMAIL(2202, "일치하는 회원을 찾을 수 없습니다.");
 
 	private final Integer code;
 	private final String message;
