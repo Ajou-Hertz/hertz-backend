@@ -1,11 +1,14 @@
 package com.ajou.hertz.domain.user.entity;
 
 import java.time.LocalDate;
+import java.util.Set;
 
 import org.springframework.lang.NonNull;
 
-import com.ajou.hertz.domain.user.constant.Gender;
 import com.ajou.hertz.common.entity.TimeTrackedBaseEntity;
+import com.ajou.hertz.domain.user.constant.Gender;
+import com.ajou.hertz.domain.user.constant.RoleType;
+import com.ajou.hertz.domain.user.converter.RoleTypesConverter;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -29,6 +32,10 @@ public class User extends TimeTrackedBaseEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "user_id", nullable = false, updatable = false)
 	private Long id;
+
+	@Column(nullable = false)
+	@Convert(converter = RoleTypesConverter.class)
+	private Set<RoleType> roleTypes;
 
 	@Column(nullable = false, unique = true)
 	private String email;
@@ -57,6 +64,6 @@ public class User extends TimeTrackedBaseEntity {
 		@NonNull Gender gender,
 		String phone
 	) {
-		return new User(null, email, password, null, birth, gender, phone, null);
+		return new User(null, Set.of(RoleType.USER), email, password, null, birth, gender, phone, null);
 	}
 }
