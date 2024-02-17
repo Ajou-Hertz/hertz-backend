@@ -17,9 +17,6 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Setup application properties file for test
-        run: echo "${{ secrets.APPLICATION_PROPERTIES_TEST }}" > ./src/main/resources/application-test.properties
-
       - name: Setup environment variables
         run: echo "${{ secrets.ENV_PROPERTIES_PROD }}" > ./src/main/resources/env.properties
 
