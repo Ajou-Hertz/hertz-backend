@@ -16,9 +16,23 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import com.ajou.hertz.common.auth.JwtAccessDeniedHandler;
+import com.ajou.hertz.common.auth.JwtAuthenticationEntryPoint;
+import com.ajou.hertz.common.auth.JwtAuthenticationFilter;
+import com.ajou.hertz.common.auth.JwtExceptionFilter;
+
+import lombok.RequiredArgsConstructor;
+
+@RequiredArgsConstructor
 @Configuration
 public class SecurityConfig {
+
+	private final JwtAuthenticationFilter jwtAuthenticationFilter;
+	private final JwtExceptionFilter jwtExceptionFilter;
+	private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
+	private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 
 	private static final String[] AUTH_WHITE_PATHS = {
 		"/swagger-ui/**",
@@ -27,7 +41,8 @@ public class SecurityConfig {
 
 	private static final Map<String, HttpMethod> AUTH_WHITE_LIST = Map.of(
 		"/v*/users", POST,
-		"/v*/users/existence", GET
+		"/v*/users/existence", GET,
+		"/v*/auth/login", POST
 	);
 
 	@Bean
@@ -45,6 +60,11 @@ public class SecurityConfig {
 				);
 				auth.anyRequest().authenticated();
 			})
+			.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+			.addFilterBefore(jwtExceptionFilter, jwtAuthenticationFilter.getClass())
+			.exceptionHandling(exceptionHandlingConfigurer -> exceptionHandlingConfigurer
+				.accessDeniedHandler(jwtAccessDeniedHandler)
+				.authenticationEntryPoint(jwtAuthenticationEntryPoint))
 			.build();
 	}
 

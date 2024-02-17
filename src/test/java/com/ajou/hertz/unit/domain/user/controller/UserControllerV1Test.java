@@ -7,6 +7,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.lang.reflect.Constructor;
 import java.time.LocalDate;
+import java.util.Set;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -14,11 +15,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.event.annotation.BeforeTestMethod;
 import org.springframework.test.web.servlet.MockMvc;
 
-import com.ajou.hertz.config.ControllerTestConfig;
+import com.ajou.hertz.common.auth.CustomUserDetailsService;
+import com.ajou.hertz.common.auth.JwtAccessDeniedHandler;
+import com.ajou.hertz.common.auth.JwtAuthenticationEntryPoint;
+import com.ajou.hertz.common.auth.JwtAuthenticationFilter;
+import com.ajou.hertz.common.auth.JwtExceptionFilter;
+import com.ajou.hertz.common.auth.JwtTokenProvider;
+import com.ajou.hertz.common.config.SecurityConfig;
 import com.ajou.hertz.domain.user.constant.Gender;
+import com.ajou.hertz.domain.user.constant.RoleType;
 import com.ajou.hertz.domain.user.controller.UserControllerV1;
 import com.ajou.hertz.domain.user.dto.UserDto;
 import com.ajou.hertz.domain.user.dto.request.SignUpRequest;
@@ -26,8 +36,17 @@ import com.ajou.hertz.domain.user.service.UserCommandService;
 import com.ajou.hertz.domain.user.service.UserQueryService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-@DisplayName("[Unit] Controller - User")
-@Import(ControllerTestConfig.class)
+@DisplayName("[Unit] Controller - User(V1)")
+@MockBean(JpaMetamodelMappingContext.class)
+@Import({
+	SecurityConfig.class,
+	JwtAccessDeniedHandler.class,
+	JwtAuthenticationFilter.class,
+	JwtAuthenticationEntryPoint.class,
+	JwtExceptionFilter.class,
+	JwtTokenProvider.class,
+	CustomUserDetailsService.class
+})
 @WebMvcTest(controllers = UserControllerV1.class)
 class UserControllerV1Test {
 
@@ -45,6 +64,11 @@ class UserControllerV1Test {
 	public UserControllerV1Test(MockMvc mvc, ObjectMapper objectMapper) {
 		this.mvc = mvc;
 		this.objectMapper = objectMapper;
+	}
+
+	@BeforeTestMethod
+	public void securitySetUp() throws Exception {
+		given(userQueryService.getDtoById(anyLong())).willReturn(createUserDto());
 	}
 
 	@Test
@@ -160,12 +184,13 @@ class UserControllerV1Test {
 
 	private UserDto createUserDto(long id) throws Exception {
 		Constructor<UserDto> userResponseConstructor = UserDto.class.getDeclaredConstructor(
-			Long.class, String.class, String.class, String.class,
+			Long.class, Set.class, String.class, String.class, String.class,
 			LocalDate.class, Gender.class, String.class, String.class
 		);
 		userResponseConstructor.setAccessible(true);
 		return userResponseConstructor.newInstance(
 			id,
+			Set.of(RoleType.USER),
 			"test@mail.com",
 			"$2a$abc123",
 			"kakao-user-id",
@@ -174,5 +199,9 @@ class UserControllerV1Test {
 			"01012345678",
 			"https://contack-link"
 		);
+	}
+
+	private UserDto createUserDto() throws Exception {
+		return createUserDto(1L);
 	}
 }

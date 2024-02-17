@@ -1,17 +1,24 @@
 package com.ajou.hertz.domain.user.entity;
 
 import java.time.LocalDate;
+import java.util.Set;
 
 import org.springframework.lang.NonNull;
 
-import com.ajou.hertz.domain.user.constant.Gender;
 import com.ajou.hertz.common.entity.TimeTrackedBaseEntity;
+import com.ajou.hertz.domain.user.constant.Gender;
+import com.ajou.hertz.domain.user.constant.RoleType;
+import com.ajou.hertz.domain.user.converter.RoleTypesConverter;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -21,7 +28,14 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-@Table(name = "users")
+@Table(
+	name = "users",
+	indexes = {
+		@Index(name = "idx__user__email", columnList = "email"),
+		@Index(name = "idx__user__kakao_uid", columnList = "kakaoUid"),
+		@Index(name = "idx__user__phone", columnList = "phone")
+	}
+)
 @Entity
 public class User extends TimeTrackedBaseEntity {
 
@@ -29,6 +43,10 @@ public class User extends TimeTrackedBaseEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "user_id", nullable = false, updatable = false)
 	private Long id;
+
+	@Column(nullable = false)
+	@Convert(converter = RoleTypesConverter.class)
+	private Set<RoleType> roleTypes;
 
 	@Column(nullable = false, unique = true)
 	private String email;
@@ -42,6 +60,7 @@ public class User extends TimeTrackedBaseEntity {
 	private LocalDate birth;
 
 	@Column(nullable = false)
+	@Enumerated(EnumType.STRING)
 	private Gender gender;
 
 	@Column(unique = true)
@@ -57,6 +76,6 @@ public class User extends TimeTrackedBaseEntity {
 		@NonNull Gender gender,
 		String phone
 	) {
-		return new User(null, email, password, null, birth, gender, phone, null);
+		return new User(null, Set.of(RoleType.USER), email, password, null, birth, gender, phone, null);
 	}
 }
