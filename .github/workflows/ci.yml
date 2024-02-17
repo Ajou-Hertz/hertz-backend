@@ -1,6 +1,8 @@
 name: Hertz Server - CI
 
 on:
+  push:
+    branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
 
