@@ -11,10 +11,14 @@ import com.ajou.hertz.domain.user.constant.RoleType;
 import com.ajou.hertz.domain.user.converter.RoleTypesConverter;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -24,7 +28,14 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-@Table(name = "users")
+@Table(
+	name = "users",
+	indexes = {
+		@Index(name = "idx__user__email", columnList = "email"),
+		@Index(name = "idx__user__kakao_uid", columnList = "kakaoUid"),
+		@Index(name = "idx__user__phone", columnList = "phone")
+	}
+)
 @Entity
 public class User extends TimeTrackedBaseEntity {
 
