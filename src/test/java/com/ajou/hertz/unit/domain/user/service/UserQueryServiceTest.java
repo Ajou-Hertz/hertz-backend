@@ -122,7 +122,7 @@ class UserQueryServiceTest {
 	private User createUser(Long id, String email) throws Exception {
 		Constructor<User> userConstructor = User.class.getDeclaredConstructor(
 			Long.class, Set.class, String.class, String.class, String.class,
-			LocalDate.class, Gender.class, String.class, String.class
+			String.class, LocalDate.class, Gender.class, String.class, String.class
 		);
 		userConstructor.setAccessible(true);
 		return userConstructor.newInstance(
@@ -131,6 +131,7 @@ class UserQueryServiceTest {
 			email,
 			"password",
 			"kakao-user-id",
+			"https://user-default-profile-image-url",
 			LocalDate.of(2024, 1, 1),
 			Gender.ETC,
 			"010-1234-5678",

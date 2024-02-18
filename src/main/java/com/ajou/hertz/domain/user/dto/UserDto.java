@@ -20,6 +20,7 @@ public class UserDto {
 	private String email;
 	private String password;
 	private String kakaoUid;
+	private String profileImageUrl;
 	private LocalDate birth;
 	private Gender gender;
 	private String phone;
@@ -32,6 +33,7 @@ public class UserDto {
 			user.getEmail(),
 			user.getPassword(),
 			user.getKakaoUid(),
+			user.getProfileImageUrl(),
 			user.getBirth(),
 			user.getGender(),
 			user.getPhone(),

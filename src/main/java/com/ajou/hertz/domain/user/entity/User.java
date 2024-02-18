@@ -57,6 +57,9 @@ public class User extends TimeTrackedBaseEntity {
 	@Column(unique = true)
 	private String kakaoUid;
 
+	@Column(nullable = false)
+	private String profileImageUrl;
+
 	private LocalDate birth;
 
 	@Column(nullable = false)
@@ -72,10 +75,14 @@ public class User extends TimeTrackedBaseEntity {
 	public static User create(
 		@NonNull String email,
 		@NonNull String password,
+		@NonNull String profileImageUrl,
 		LocalDate birth,
 		@NonNull Gender gender,
 		String phone
 	) {
-		return new User(null, Set.of(RoleType.USER), email, password, null, birth, gender, phone, null);
+		return new User(
+			null, Set.of(RoleType.USER), email, password, null,
+			profileImageUrl, birth, gender, phone, null
+		);
 	}
 }

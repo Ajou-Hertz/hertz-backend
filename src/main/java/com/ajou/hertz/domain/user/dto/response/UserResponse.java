@@ -17,6 +17,7 @@ public class UserResponse {
 
 	private Long id;
 	private String email;
+	private String profileImageUrl;
 	private LocalDate birth;
 	private Gender gender;
 	private String contactLink;
@@ -25,6 +26,7 @@ public class UserResponse {
 		return new UserResponse(
 			userDto.getId(),
 			userDto.getEmail(),
+			userDto.getProfileImageUrl(),
 			userDto.getBirth(),
 			userDto.getGender(),
 			userDto.getContactLink()

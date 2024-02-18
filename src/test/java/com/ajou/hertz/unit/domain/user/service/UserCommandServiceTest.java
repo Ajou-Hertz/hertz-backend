@@ -14,7 +14,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.context.event.annotation.BeforeTestMethod;
 
+import com.ajou.hertz.common.properties.HertzProperties;
 import com.ajou.hertz.domain.user.constant.Gender;
 import com.ajou.hertz.domain.user.constant.RoleType;
 import com.ajou.hertz.domain.user.dto.UserDto;
@@ -40,6 +42,14 @@ class UserCommandServiceTest {
 
 	@Mock
 	private PasswordEncoder passwordEncoder;
+
+	@Mock
+	private HertzProperties hertzProperties;
+
+	@BeforeTestMethod
+	public void setUp() {
+		given(hertzProperties.userDefaultProfileImageUrl()).willReturn("https://user-default-profile-image");
+	}
 
 	@Test
 	void 주어진_회원_정보로_신규_회원을_등록한다() throws Exception {
@@ -88,7 +98,7 @@ class UserCommandServiceTest {
 	private User createUser(Long id, String password) throws Exception {
 		Constructor<User> userConstructor = User.class.getDeclaredConstructor(
 			Long.class, Set.class, String.class, String.class, String.class,
-			LocalDate.class, Gender.class, String.class, String.class
+			String.class, LocalDate.class, Gender.class, String.class, String.class
 		);
 		userConstructor.setAccessible(true);
 		return userConstructor.newInstance(
@@ -97,6 +107,7 @@ class UserCommandServiceTest {
 			"test@test.com",
 			password,
 			"kakao-user-id",
+			"https://user-default-profile-image-url",
 			LocalDate.of(2024, 1, 1),
 			Gender.ETC,
 			"010-1234-5678",
