@@ -7,6 +7,7 @@ import com.ajou.hertz.domain.user.dto.UserDto;
 import com.ajou.hertz.domain.user.entity.User;
 import com.ajou.hertz.domain.user.exception.UserNotFoundByEmailException;
 import com.ajou.hertz.domain.user.exception.UserNotFoundByIdException;
+import com.ajou.hertz.domain.user.exception.UserNotFoundByKakaoUidException;
 import com.ajou.hertz.domain.user.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -62,6 +63,12 @@ public class UserQueryService {
 		return UserDto.from(getByEmail(email));
 	}
 
+	public UserDto getDtoByKakaoUid(String kakaoUid) {
+		User user = userRepository.findByKakaoUid(kakaoUid)
+			.orElseThrow(() -> new UserNotFoundByKakaoUidException(kakaoUid));
+		return UserDto.from(user);
+	}
+
 	/**
 	 * 전달된 email을 사용 중인 회원의 존재 여부를 조회한다.
 	 *
@@ -70,5 +77,25 @@ public class UserQueryService {
 	 */
 	public boolean existsByEmail(String email) {
 		return userRepository.existsByEmail(email);
+	}
+
+	/**
+	 * 전달된 kakaoUid를 사용 중인 회원의 존재 여부를 조회한다.
+	 *
+	 * @param kakaoUid kakao user id
+	 * @return 전달된 kakaoUid를 사용 중인 회원의 존재 여부
+	 */
+	public boolean existsByKakaoUid(String kakaoUid) {
+		return userRepository.existsByKakaoUid(kakaoUid);
+	}
+
+	/**
+	 * 전달된 phone를 사용 중인 회원의 존재 여부를 조회한다.
+	 *
+	 * @param phone phone number
+	 * @return 전달된 phone를 사용 중인 회원의 존재 여부
+	 */
+	public boolean existsByPhone(String phone) {
+		return userRepository.existsByPhone(phone);
 	}
 }

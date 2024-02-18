@@ -13,6 +13,7 @@ import com.ajou.hertz.common.auth.dto.response.JwtTokenInfoResponse;
 import com.ajou.hertz.common.auth.service.AuthService;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -33,8 +34,8 @@ public class AuthControllerV1 {
 	)
 	@ApiResponses({
 		@ApiResponse(responseCode = "200", description = "OK"),
-		@ApiResponse(responseCode = "400", description = "[2003] 비밀번호가 일치하지 않는 경우"),
-		@ApiResponse(responseCode = "404", description = "[2202] 이메일에 해당하는 유저를 찾을 수 없는 경우")
+		@ApiResponse(responseCode = "400", description = "[2003] 비밀번호가 일치하지 않는 경우", content = @Content),
+		@ApiResponse(responseCode = "404", description = "[2202] 이메일에 해당하는 유저를 찾을 수 없는 경우", content = @Content)
 	})
 	@PostMapping(value = "/login", headers = API_MINOR_VERSION_HEADER_NAME + "=" + 1)
 	public JwtTokenInfoResponse loginV1_1(@RequestBody @Valid LoginRequest loginRequest) {

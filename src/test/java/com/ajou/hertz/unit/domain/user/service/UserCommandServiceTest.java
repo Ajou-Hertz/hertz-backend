@@ -23,6 +23,7 @@ import com.ajou.hertz.domain.user.dto.UserDto;
 import com.ajou.hertz.domain.user.dto.request.SignUpRequest;
 import com.ajou.hertz.domain.user.entity.User;
 import com.ajou.hertz.domain.user.exception.UserEmailDuplicationException;
+import com.ajou.hertz.domain.user.exception.UserPhoneDuplicationException;
 import com.ajou.hertz.domain.user.repository.UserRepository;
 import com.ajou.hertz.domain.user.service.UserCommandService;
 import com.ajou.hertz.domain.user.service.UserQueryService;
@@ -59,6 +60,7 @@ class UserCommandServiceTest {
 		String passwordEncoded = "$2a$abc123";
 		User expectedResult = createUser(userId, passwordEncoded);
 		given(userQueryService.existsByEmail(signUpRequest.getEmail())).willReturn(false);
+		given(userQueryService.existsByPhone(signUpRequest.getPhone())).willReturn(false);
 		given(passwordEncoder.encode(signUpRequest.getPassword())).willReturn(passwordEncoded);
 		given(userRepository.save(any(User.class))).willReturn(expectedResult);
 
@@ -67,6 +69,7 @@ class UserCommandServiceTest {
 
 		// then
 		then(userQueryService).should().existsByEmail(signUpRequest.getEmail());
+		then(userQueryService).should().existsByPhone(signUpRequest.getPhone());
 		then(passwordEncoder).should().encode(signUpRequest.getPassword());
 		then(userRepository).should().save(any(User.class));
 		verifyEveryMocksShouldHaveNoMoreInteractions();
@@ -77,7 +80,7 @@ class UserCommandServiceTest {
 	void 주어진_회원_정보로_신규_회원을_등록한다_이미_사용_중인_이메일이라면_예외가_발생한다() throws Exception {
 		// given
 		String email = "test@test.com";
-		SignUpRequest signUpRequest = createSignUpRequest(email);
+		SignUpRequest signUpRequest = createSignUpRequest(email, "01012345678");
 		given(userQueryService.existsByEmail(email)).willReturn(true);
 
 		// when
@@ -87,6 +90,24 @@ class UserCommandServiceTest {
 		then(userQueryService).should().existsByEmail(email);
 		verifyEveryMocksShouldHaveNoMoreInteractions();
 		assertThat(t).isInstanceOf(UserEmailDuplicationException.class);
+	}
+
+	@Test
+	void 주어진_회원_정보로_신규_회원을_등록한다_이미_사용_중인_전화번호라면_예외가_발생한다() throws Exception {
+		// given
+		String phone = "01012345678";
+		SignUpRequest signUpRequest = createSignUpRequest(phone, phone);
+		given(userQueryService.existsByEmail(signUpRequest.getEmail())).willReturn(false);
+		given(userQueryService.existsByPhone(phone)).willReturn(true);
+
+		// when
+		Throwable t = catchThrowable(() -> sut.createNewUser(signUpRequest));
+
+		// then
+		then(userQueryService).should().existsByEmail(signUpRequest.getEmail());
+		then(userQueryService).should().existsByPhone(phone);
+		verifyEveryMocksShouldHaveNoMoreInteractions();
+		assertThat(t).isInstanceOf(UserPhoneDuplicationException.class);
 	}
 
 	private void verifyEveryMocksShouldHaveNoMoreInteractions() {
@@ -115,7 +136,7 @@ class UserCommandServiceTest {
 		);
 	}
 
-	private SignUpRequest createSignUpRequest(String email) throws Exception {
+	private SignUpRequest createSignUpRequest(String email, String phone) throws Exception {
 		Constructor<SignUpRequest> signUpRequestConstructor = SignUpRequest.class.getDeclaredConstructor(
 			String.class, String.class, LocalDate.class, Gender.class, String.class
 		);
@@ -125,11 +146,11 @@ class UserCommandServiceTest {
 			"1q2w3e4r!",
 			LocalDate.of(2024, 1, 1),
 			Gender.ETC,
-			"01012345678"
+			phone
 		);
 	}
 
 	private SignUpRequest createSignUpRequest() throws Exception {
-		return createSignUpRequest("test@test.com");
+		return createSignUpRequest("test@test.com", "01012345678");
 	}
 }
