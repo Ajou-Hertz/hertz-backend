@@ -4,6 +4,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.ajou.hertz.common.properties.HertzProperties;
 import com.ajou.hertz.domain.user.dto.UserDto;
 import com.ajou.hertz.domain.user.dto.request.SignUpRequest;
 import com.ajou.hertz.domain.user.entity.User;
@@ -20,6 +21,7 @@ public class UserCommandService {
 	private final UserQueryService userQueryService;
 	private final UserRepository userRepository;
 	private final PasswordEncoder passwordEncoder;
+	private final HertzProperties hertzProperties;
 
 	/**
 	 * 새로운 회원을 등록한다.
@@ -38,6 +40,7 @@ public class UserCommandService {
 			User.create(
 				email,
 				passwordEncoder.encode(signUpRequest.getPassword()),
+				hertzProperties.userDefaultProfileImageUrl(),
 				signUpRequest.getBirth(),
 				signUpRequest.getGender(),
 				signUpRequest.getPhone()

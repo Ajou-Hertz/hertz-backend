@@ -46,7 +46,7 @@ public class TestSecurityConfig {
 	private UserDto createUserDto() throws Exception {
 		Constructor<UserDto> userResponseConstructor = UserDto.class.getDeclaredConstructor(
 			Long.class, Set.class, String.class, String.class, String.class,
-			LocalDate.class, Gender.class, String.class, String.class
+			String.class, LocalDate.class, Gender.class, String.class, String.class
 		);
 		userResponseConstructor.setAccessible(true);
 		return userResponseConstructor.newInstance(
@@ -55,6 +55,7 @@ public class TestSecurityConfig {
 			"test@mail.com",
 			"$2a$abc123",
 			"kakao-user-id",
+			"https://user-default-profile-image",
 			LocalDate.of(2024, 1, 1),
 			Gender.ETC,
 			"01012345678",
