@@ -2,14 +2,13 @@ package com.ajou.hertz.domain.user.dto.request;
 
 import java.time.LocalDate;
 
-import com.ajou.hertz.domain.user.constant.Gender;
 import com.ajou.hertz.common.validator.Password;
 import com.ajou.hertz.common.validator.PhoneNumber;
+import com.ajou.hertz.domain.user.constant.Gender;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -31,11 +30,9 @@ public class SignUpRequest {
 	private String password;
 
 	@Schema(description = "생년월일", example = "2024-01-01")
-	@NotNull
 	private LocalDate birth;
 
 	@Schema(description = "성별")
-	@NotNull
 	private Gender gender;
 
 	@Schema(description = "전화번호", example = "01012345678")

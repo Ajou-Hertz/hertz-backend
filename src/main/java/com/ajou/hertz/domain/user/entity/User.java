@@ -62,7 +62,6 @@ public class User extends TimeTrackedBaseEntity {
 
 	private LocalDate birth;
 
-	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
 	private Gender gender;
 
@@ -77,7 +76,7 @@ public class User extends TimeTrackedBaseEntity {
 		@NonNull String password,
 		@NonNull String profileImageUrl,
 		LocalDate birth,
-		@NonNull Gender gender,
+		Gender gender,
 		String phone
 	) {
 		return new User(
