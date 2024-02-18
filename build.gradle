@@ -56,6 +56,9 @@ dependencies {
     // Spring Configuration Processor
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
 
+    // Spring Open Feign (Feign Client)
+    implementation 'org.springframework.cloud:spring-cloud-starter-openfeign:4.1.0'
+
     // JWT
     implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
     implementation 'io.jsonwebtoken:jjwt-impl:0.11.5'
