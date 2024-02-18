@@ -21,7 +21,6 @@ import com.ajou.hertz.domain.user.dto.UserDto;
 import com.ajou.hertz.domain.user.entity.User;
 import com.ajou.hertz.domain.user.exception.UserNotFoundByEmailException;
 import com.ajou.hertz.domain.user.exception.UserNotFoundByIdException;
-import com.ajou.hertz.domain.user.exception.UserNotFoundByKakaoUidException;
 import com.ajou.hertz.domain.user.repository.UserRepository;
 import com.ajou.hertz.domain.user.service.UserQueryService;
 
@@ -101,36 +100,22 @@ class UserQueryServiceTest {
 	}
 
 	@Test
-	void 카카오_유저_ID가_주어지고_주어진_카카오_유저_ID로_유저를_조회하면_조회된_유저_정보가_반환된다() throws Exception {
+	void 카카오_유저_ID가_주어지고_주어진_카카오_유저_ID로_유저를_조회하면_조회된_Optional_유저_정보가_반환된다() throws Exception {
 		// given
 		String kakaoUid = "12345";
 		User expectedResult = createUser(1L, "test@mail.com", kakaoUid);
 		given(userRepository.findByKakaoUid(kakaoUid)).willReturn(Optional.of(expectedResult));
 
 		// when
-		UserDto actualResult = sut.getDtoByKakaoUid(kakaoUid);
+		Optional<UserDto> actualResult = sut.findDtoByKakaoUid(kakaoUid);
 
 		// then
 		then(userRepository).should().findByKakaoUid(kakaoUid);
 		verifyEveryMocksShouldHaveNoMoreInteractions();
-		assertThat(actualResult)
+		assertThat(actualResult).isNotEmpty();
+		assertThat(actualResult.get())
 			.hasFieldOrPropertyWithValue("id", expectedResult.getId())
 			.hasFieldOrPropertyWithValue("kakaoUid", expectedResult.getKakaoUid());
-	}
-
-	@Test
-	void 카카오_유저_ID가_주어지고_주어진_카카오_유저_ID로_유저를_조회한다_만약_일치하는_유저가_없다면_예외가_발생한다() {
-		// given
-		String kakaoUid = "12345";
-		given(userRepository.findByKakaoUid(kakaoUid)).willReturn(Optional.empty());
-
-		// when
-		Throwable t = catchThrowable(() -> sut.getDtoByKakaoUid(kakaoUid));
-
-		// then
-		then(userRepository).should().findByKakaoUid(kakaoUid);
-		verifyEveryMocksShouldHaveNoMoreInteractions();
-		assertThat(t).isInstanceOf(UserNotFoundByKakaoUidException.class);
 	}
 
 	@Test

@@ -84,4 +84,20 @@ public class User extends TimeTrackedBaseEntity {
 			profileImageUrl, birth, gender, phone, null
 		);
 	}
+
+	@NonNull
+	public static User create(
+		@NonNull String email,
+		@NonNull String password,
+		@NonNull String kakaoUid,
+		@NonNull String profileImageUrl,
+		LocalDate birth,
+		Gender gender,
+		String phone
+	) {
+		return new User(
+			null, Set.of(RoleType.USER), email, password, kakaoUid,
+			profileImageUrl, birth, gender, phone, null
+		);
+	}
 }

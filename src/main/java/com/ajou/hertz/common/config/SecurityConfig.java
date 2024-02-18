@@ -42,7 +42,8 @@ public class SecurityConfig {
 	private static final Map<String, HttpMethod> AUTH_WHITE_LIST = Map.of(
 		"/v*/users", POST,
 		"/v*/users/existence", GET,
-		"/v*/auth/login", POST
+		"/v*/auth/login", POST,
+		"/v*/auth/login/kakao", POST
 	);
 
 	@Bean

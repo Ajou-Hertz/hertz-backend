@@ -1,5 +1,7 @@
 package com.ajou.hertz.domain.user.service;
 
+import java.util.Optional;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -7,7 +9,6 @@ import com.ajou.hertz.domain.user.dto.UserDto;
 import com.ajou.hertz.domain.user.entity.User;
 import com.ajou.hertz.domain.user.exception.UserNotFoundByEmailException;
 import com.ajou.hertz.domain.user.exception.UserNotFoundByIdException;
-import com.ajou.hertz.domain.user.exception.UserNotFoundByKakaoUidException;
 import com.ajou.hertz.domain.user.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -41,6 +42,10 @@ public class UserQueryService {
 		return userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundByEmailException(email));
 	}
 
+	public Optional<UserDto> findDtoByKakaoUid(String kakaoUid) {
+		return userRepository.findByKakaoUid(kakaoUid).map(UserDto::from);
+	}
+
 	/**
 	 * 유저 id로 유저를 조회한다.
 	 *
@@ -61,12 +66,6 @@ public class UserQueryService {
 	 */
 	public UserDto getDtoByEmail(String email) {
 		return UserDto.from(getByEmail(email));
-	}
-
-	public UserDto getDtoByKakaoUid(String kakaoUid) {
-		User user = userRepository.findByKakaoUid(kakaoUid)
-			.orElseThrow(() -> new UserNotFoundByKakaoUidException(kakaoUid));
-		return UserDto.from(user);
 	}
 
 	/**

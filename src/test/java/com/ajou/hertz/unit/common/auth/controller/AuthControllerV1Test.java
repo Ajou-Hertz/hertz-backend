@@ -19,8 +19,10 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import com.ajou.hertz.common.auth.controller.AuthControllerV1;
 import com.ajou.hertz.common.auth.dto.JwtTokenInfoDto;
+import com.ajou.hertz.common.auth.dto.request.KakaoLoginRequest;
 import com.ajou.hertz.common.auth.dto.request.LoginRequest;
 import com.ajou.hertz.common.auth.service.AuthService;
+import com.ajou.hertz.common.kakao.service.KakaoService;
 import com.ajou.hertz.config.ControllerTestConfig;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -31,6 +33,9 @@ class AuthControllerV1Test {
 
 	@MockBean
 	private AuthService authService;
+
+	@MockBean
+	private KakaoService kakaoService;
 
 	private final MockMvc mvc;
 
@@ -59,7 +64,32 @@ class AuthControllerV1Test {
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.token").value(expectedResult.token()));
 		then(authService).should().login(any(LoginRequest.class));
+		verifyEveryMocksShouldHaveNoMoreInteractions();
+	}
+
+	@Test
+	void 카카오_로그인을_위한_정보가_주어지고_카카오_로그인을_진행한다() throws Exception {
+		// given
+		KakaoLoginRequest kakaoLoginRequest = createKakaoLoginRequest();
+		JwtTokenInfoDto expectedResult = createJwtTokenInfoDto();
+		given(kakaoService.login(any(KakaoLoginRequest.class))).willReturn(expectedResult);
+
+		// when & then
+		mvc.perform(
+				post("/v1/auth/login/kakao")
+					.header(API_MINOR_VERSION_HEADER_NAME, 1)
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(objectMapper.writeValueAsString(kakaoLoginRequest))
+			)
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.token").value(expectedResult.token()));
+		then(kakaoService).should().login(any(KakaoLoginRequest.class));
+		verifyEveryMocksShouldHaveNoMoreInteractions();
+	}
+
+	private void verifyEveryMocksShouldHaveNoMoreInteractions() {
 		then(authService).shouldHaveNoMoreInteractions();
+		then(kakaoService).shouldHaveNoMoreInteractions();
 	}
 
 	private LoginRequest createLoginRequest() throws Exception {
@@ -69,6 +99,16 @@ class AuthControllerV1Test {
 		return loginRequestConstructor.newInstance(
 			"test@mail.com",
 			"1q2w3e4r!"
+		);
+	}
+
+	private static KakaoLoginRequest createKakaoLoginRequest() throws Exception {
+		Constructor<KakaoLoginRequest> kakaoLoginRequestConstructor =
+			KakaoLoginRequest.class.getDeclaredConstructor(String.class, String.class);
+		kakaoLoginRequestConstructor.setAccessible(true);
+		return kakaoLoginRequestConstructor.newInstance(
+			"authorization-code",
+			"https://redirect-uri"
 		);
 	}
 
