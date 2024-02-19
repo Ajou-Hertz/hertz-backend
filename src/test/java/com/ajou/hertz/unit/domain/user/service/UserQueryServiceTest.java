@@ -70,7 +70,7 @@ class UserQueryServiceTest {
 	void 이메일이_주어지고_주어진_이메일로_유저를_조회하면_조회된_유저_정보가_반환된다() throws Exception {
 		// given
 		String email = "test@mail.com";
-		User expectedResult = createUser(1L, email);
+		User expectedResult = createUser(1L, email, "1234");
 		given(userRepository.findByEmail(email)).willReturn(Optional.of(expectedResult));
 
 		// when
@@ -100,7 +100,26 @@ class UserQueryServiceTest {
 	}
 
 	@Test
-	void 전달된_이메일을_사용_중인_회원의_존재_여부를_조회한다() {
+	void 카카오_유저_ID가_주어지고_주어진_카카오_유저_ID로_유저를_조회하면_조회된_Optional_유저_정보가_반환된다() throws Exception {
+		// given
+		String kakaoUid = "12345";
+		User expectedResult = createUser(1L, "test@mail.com", kakaoUid);
+		given(userRepository.findByKakaoUid(kakaoUid)).willReturn(Optional.of(expectedResult));
+
+		// when
+		Optional<UserDto> actualResult = sut.findDtoByKakaoUid(kakaoUid);
+
+		// then
+		then(userRepository).should().findByKakaoUid(kakaoUid);
+		verifyEveryMocksShouldHaveNoMoreInteractions();
+		assertThat(actualResult).isNotEmpty();
+		assertThat(actualResult.get())
+			.hasFieldOrPropertyWithValue("id", expectedResult.getId())
+			.hasFieldOrPropertyWithValue("kakaoUid", expectedResult.getKakaoUid());
+	}
+
+	@Test
+	void 이메일이_주어지고_주어진_이메일을_사용_중인_회원의_존재_여부를_조회한다() {
 		// given
 		String email = "test@test.com";
 		boolean expectedResult = true;
@@ -115,11 +134,43 @@ class UserQueryServiceTest {
 		assertThat(actualResult).isEqualTo(expectedResult);
 	}
 
+	@Test
+	void 전화번호가_주어지고_주어진_전화번호를_사용_중인_회원의_존재_여부를_조회한다() {
+		// given
+		String phone = "01012345678";
+		boolean expectedResult = true;
+		given(userRepository.existsByPhone(phone)).willReturn(expectedResult);
+
+		// when
+		boolean actualResult = sut.existsByPhone(phone);
+
+		// then
+		then(userRepository).should().existsByPhone(phone);
+		verifyEveryMocksShouldHaveNoMoreInteractions();
+		assertThat(actualResult).isEqualTo(expectedResult);
+	}
+
+	@Test
+	void 카카오_유저_ID가_주어지고_주어진_ID를_사용_중인_회원의_존재_여부를_조회한다() {
+		// given
+		String kakaoUid = "1234";
+		boolean expectedResult = true;
+		given(userRepository.existsByKakaoUid(kakaoUid)).willReturn(expectedResult);
+
+		// when
+		boolean actualResult = sut.existsByKakaoUid(kakaoUid);
+
+		// then
+		then(userRepository).should().existsByKakaoUid(kakaoUid);
+		verifyEveryMocksShouldHaveNoMoreInteractions();
+		assertThat(actualResult).isEqualTo(expectedResult);
+	}
+
 	private void verifyEveryMocksShouldHaveNoMoreInteractions() {
 		then(userRepository).shouldHaveNoMoreInteractions();
 	}
 
-	private User createUser(Long id, String email) throws Exception {
+	private User createUser(Long id, String email, String kakaoUid) throws Exception {
 		Constructor<User> userConstructor = User.class.getDeclaredConstructor(
 			Long.class, Set.class, String.class, String.class, String.class,
 			String.class, LocalDate.class, Gender.class, String.class, String.class
@@ -130,16 +181,16 @@ class UserQueryServiceTest {
 			Set.of(RoleType.USER),
 			email,
 			"password",
-			"kakao-user-id",
+			kakaoUid,
 			"https://user-default-profile-image-url",
 			LocalDate.of(2024, 1, 1),
 			Gender.ETC,
-			"010-1234-5678",
+			"01012345678",
 			null
 		);
 	}
 
 	private User createUser(Long id) throws Exception {
-		return createUser(id, "test@mail.com");
+		return createUser(id, "test@mail.com", "12345");
 	}
 }

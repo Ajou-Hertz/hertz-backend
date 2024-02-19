@@ -1,21 +1,27 @@
 package com.ajou.hertz.unit.domain.user.service;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.params.provider.Arguments.*;
 import static org.mockito.BDDMockito.*;
 
 import java.lang.reflect.Constructor;
 import java.time.LocalDate;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.event.annotation.BeforeTestMethod;
 
+import com.ajou.hertz.common.kakao.dto.response.KakaoUserInfoResponse;
 import com.ajou.hertz.common.properties.HertzProperties;
 import com.ajou.hertz.domain.user.constant.Gender;
 import com.ajou.hertz.domain.user.constant.RoleType;
@@ -23,6 +29,8 @@ import com.ajou.hertz.domain.user.dto.UserDto;
 import com.ajou.hertz.domain.user.dto.request.SignUpRequest;
 import com.ajou.hertz.domain.user.entity.User;
 import com.ajou.hertz.domain.user.exception.UserEmailDuplicationException;
+import com.ajou.hertz.domain.user.exception.UserKakaoUidDuplicationException;
+import com.ajou.hertz.domain.user.exception.UserPhoneDuplicationException;
 import com.ajou.hertz.domain.user.repository.UserRepository;
 import com.ajou.hertz.domain.user.service.UserCommandService;
 import com.ajou.hertz.domain.user.service.UserQueryService;
@@ -57,8 +65,9 @@ class UserCommandServiceTest {
 		long userId = 1L;
 		SignUpRequest signUpRequest = createSignUpRequest();
 		String passwordEncoded = "$2a$abc123";
-		User expectedResult = createUser(userId, passwordEncoded);
+		User expectedResult = createUser(userId, passwordEncoded, "12345");
 		given(userQueryService.existsByEmail(signUpRequest.getEmail())).willReturn(false);
+		given(userQueryService.existsByPhone(signUpRequest.getPhone())).willReturn(false);
 		given(passwordEncoder.encode(signUpRequest.getPassword())).willReturn(passwordEncoded);
 		given(userRepository.save(any(User.class))).willReturn(expectedResult);
 
@@ -67,6 +76,7 @@ class UserCommandServiceTest {
 
 		// then
 		then(userQueryService).should().existsByEmail(signUpRequest.getEmail());
+		then(userQueryService).should().existsByPhone(signUpRequest.getPhone());
 		then(passwordEncoder).should().encode(signUpRequest.getPassword());
 		then(userRepository).should().save(any(User.class));
 		verifyEveryMocksShouldHaveNoMoreInteractions();
@@ -77,7 +87,7 @@ class UserCommandServiceTest {
 	void 주어진_회원_정보로_신규_회원을_등록한다_이미_사용_중인_이메일이라면_예외가_발생한다() throws Exception {
 		// given
 		String email = "test@test.com";
-		SignUpRequest signUpRequest = createSignUpRequest(email);
+		SignUpRequest signUpRequest = createSignUpRequest(email, "01012345678");
 		given(userQueryService.existsByEmail(email)).willReturn(true);
 
 		// when
@@ -89,13 +99,85 @@ class UserCommandServiceTest {
 		assertThat(t).isInstanceOf(UserEmailDuplicationException.class);
 	}
 
+	@Test
+	void 주어진_회원_정보로_신규_회원을_등록한다_이미_사용_중인_전화번호라면_예외가_발생한다() throws Exception {
+		// given
+		String phone = "01012345678";
+		SignUpRequest signUpRequest = createSignUpRequest(phone, phone);
+		given(userQueryService.existsByEmail(signUpRequest.getEmail())).willReturn(false);
+		given(userQueryService.existsByPhone(phone)).willReturn(true);
+
+		// when
+		Throwable t = catchThrowable(() -> sut.createNewUser(signUpRequest));
+
+		// then
+		then(userQueryService).should().existsByEmail(signUpRequest.getEmail());
+		then(userQueryService).should().existsByPhone(phone);
+		verifyEveryMocksShouldHaveNoMoreInteractions();
+		assertThat(t).isInstanceOf(UserPhoneDuplicationException.class);
+	}
+
+	@MethodSource("testDataForCreateNewUserWithKakao")
+	@ParameterizedTest
+	void 주어진_카카오_유저_정보로_신규_회원을_등록한다(KakaoUserInfoResponse kakaoUserInfo, User expectedResult) throws Exception {
+		// given
+		given(userQueryService.existsByEmail(kakaoUserInfo.email())).willReturn(false);
+		given(userQueryService.existsByPhone(kakaoUserInfo.getKoreanFormatPhoneNumber())).willReturn(false);
+		given(userQueryService.existsByKakaoUid(kakaoUserInfo.id())).willReturn(false);
+		given(passwordEncoder.encode(anyString())).willReturn(expectedResult.getPassword());
+		given(userRepository.save(any(User.class))).willReturn(expectedResult);
+
+		// when
+		UserDto actualResult = sut.createNewUserWithKakao(kakaoUserInfo);
+
+		// then
+		then(userQueryService).should().existsByEmail(kakaoUserInfo.email());
+		then(userQueryService).should().existsByPhone(kakaoUserInfo.getKoreanFormatPhoneNumber());
+		then(userQueryService).should().existsByKakaoUid(kakaoUserInfo.id());
+		then(passwordEncoder).should().encode(anyString());
+		then(userRepository).should().save(any(User.class));
+		verifyEveryMocksShouldHaveNoMoreInteractions();
+		assertThat(actualResult)
+			.hasFieldOrPropertyWithValue("id", expectedResult.getId())
+			.hasFieldOrPropertyWithValue("kakaoUid", expectedResult.getKakaoUid())
+			.hasFieldOrPropertyWithValue("password", expectedResult.getPassword());
+	}
+
+	static Stream<Arguments> testDataForCreateNewUserWithKakao() throws Exception {
+		return Stream.of(
+			arguments(createKakaoUserInfoResponse("male"), createUser(1L, "$2a$abc123", "12345", Gender.MALE)),
+			arguments(createKakaoUserInfoResponse("female"), createUser(1L, "$2a$abc123", "12345", Gender.FEMALE)),
+			arguments(createKakaoUserInfoResponse(""), createUser(1L, "$2a$abc123", "12345", null)),
+			arguments(createKakaoUserInfoResponse(null), createUser(1L, "$2a$abc123", "12345", null))
+		);
+	}
+
+	@Test
+	void 주어진_카카오_유저_정보로_신규_회원을_등록한다_이미_가입한_카카오_계정이라면_예외가_발생한다() throws Exception {
+		// given
+		KakaoUserInfoResponse kakaoUserInfo = createKakaoUserInfoResponse();
+		given(userQueryService.existsByEmail(kakaoUserInfo.email())).willReturn(false);
+		given(userQueryService.existsByPhone(kakaoUserInfo.getKoreanFormatPhoneNumber())).willReturn(false);
+		given(userQueryService.existsByKakaoUid(kakaoUserInfo.id())).willReturn(true);
+
+		// when
+		Throwable t = catchThrowable(() -> sut.createNewUserWithKakao(kakaoUserInfo));
+
+		// then
+		then(userQueryService).should().existsByEmail(kakaoUserInfo.email());
+		then(userQueryService).should().existsByPhone(kakaoUserInfo.getKoreanFormatPhoneNumber());
+		then(userQueryService).should().existsByKakaoUid(kakaoUserInfo.id());
+		verifyEveryMocksShouldHaveNoMoreInteractions();
+		assertThat(t).isInstanceOf(UserKakaoUidDuplicationException.class);
+	}
+
 	private void verifyEveryMocksShouldHaveNoMoreInteractions() {
 		then(userQueryService).shouldHaveNoMoreInteractions();
 		then(userRepository).shouldHaveNoMoreInteractions();
 		then(passwordEncoder).shouldHaveNoMoreInteractions();
 	}
 
-	private User createUser(Long id, String password) throws Exception {
+	private static User createUser(Long id, String password, String kakaoUid, Gender gender) throws Exception {
 		Constructor<User> userConstructor = User.class.getDeclaredConstructor(
 			Long.class, Set.class, String.class, String.class, String.class,
 			String.class, LocalDate.class, Gender.class, String.class, String.class
@@ -106,16 +188,20 @@ class UserCommandServiceTest {
 			Set.of(RoleType.USER),
 			"test@test.com",
 			password,
-			"kakao-user-id",
+			kakaoUid,
 			"https://user-default-profile-image-url",
 			LocalDate.of(2024, 1, 1),
-			Gender.ETC,
+			gender,
 			"010-1234-5678",
 			null
 		);
 	}
 
-	private SignUpRequest createSignUpRequest(String email) throws Exception {
+	private static User createUser(Long id, String password, String kakaoUid) throws Exception {
+		return createUser(id, password, kakaoUid, Gender.ETC);
+	}
+
+	private SignUpRequest createSignUpRequest(String email, String phone) throws Exception {
 		Constructor<SignUpRequest> signUpRequestConstructor = SignUpRequest.class.getDeclaredConstructor(
 			String.class, String.class, LocalDate.class, Gender.class, String.class
 		);
@@ -125,11 +211,45 @@ class UserCommandServiceTest {
 			"1q2w3e4r!",
 			LocalDate.of(2024, 1, 1),
 			Gender.ETC,
-			"01012345678"
+			phone
 		);
 	}
 
 	private SignUpRequest createSignUpRequest() throws Exception {
-		return createSignUpRequest("test@test.com");
+		return createSignUpRequest("test@test.com", "01012345678");
+	}
+
+	private static KakaoUserInfoResponse createKakaoUserInfoResponse(String gender) {
+		return new KakaoUserInfoResponse(
+			"12345",
+			new KakaoUserInfoResponse.KakaoAccount(
+				true,
+				new KakaoUserInfoResponse.KakaoAccount.Profile(
+					"https://profile-image-url",
+					"https://thumbnail-image-url",
+					true
+				),
+				true,
+				true,
+				true,
+				true,
+				"test@mail.com",
+				true,
+				true,
+				"01012345678",
+				true,
+				true,
+				null,
+				true,
+				null,
+				true,
+				true,
+				gender
+			)
+		);
+	}
+
+	private static KakaoUserInfoResponse createKakaoUserInfoResponse() {
+		return createKakaoUserInfoResponse("male");
 	}
 }

@@ -1,5 +1,7 @@
 package com.ajou.hertz.domain.user.service;
 
+import java.util.Optional;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,6 +42,10 @@ public class UserQueryService {
 		return userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundByEmailException(email));
 	}
 
+	public Optional<UserDto> findDtoByKakaoUid(String kakaoUid) {
+		return userRepository.findByKakaoUid(kakaoUid).map(UserDto::from);
+	}
+
 	/**
 	 * 유저 id로 유저를 조회한다.
 	 *
@@ -70,5 +76,25 @@ public class UserQueryService {
 	 */
 	public boolean existsByEmail(String email) {
 		return userRepository.existsByEmail(email);
+	}
+
+	/**
+	 * 전달된 kakaoUid를 사용 중인 회원의 존재 여부를 조회한다.
+	 *
+	 * @param kakaoUid kakao user id
+	 * @return 전달된 kakaoUid를 사용 중인 회원의 존재 여부
+	 */
+	public boolean existsByKakaoUid(String kakaoUid) {
+		return userRepository.existsByKakaoUid(kakaoUid);
+	}
+
+	/**
+	 * 전달된 phone를 사용 중인 회원의 존재 여부를 조회한다.
+	 *
+	 * @param phone phone number
+	 * @return 전달된 phone를 사용 중인 회원의 존재 여부
+	 */
+	public boolean existsByPhone(String phone) {
+		return userRepository.existsByPhone(phone);
 	}
 }
