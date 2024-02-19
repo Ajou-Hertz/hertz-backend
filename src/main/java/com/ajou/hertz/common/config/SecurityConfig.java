@@ -43,7 +43,7 @@ public class SecurityConfig {
 		"/v*/users", POST,
 		"/v*/users/existence", GET,
 		"/v*/auth/login", POST,
-		"/v*/auth/login/kakao", POST
+		"/v*/auth/kakao/login", POST
 	);
 
 	@Bean

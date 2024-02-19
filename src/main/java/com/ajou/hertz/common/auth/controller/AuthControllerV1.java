@@ -61,7 +61,7 @@ public class AuthControllerV1 {
 		),
 		@ApiResponse(responseCode = "Any", description = "[10000] 카카오 서버와의 통신 중 오류가 발생한 경우. Http status code는 kakao에서 응답받은 것과 동일하게 설정하여 응답한다.", content = @Content)
 	})
-	@PostMapping(value = "/login/kakao", headers = API_MINOR_VERSION_HEADER_NAME + "=" + 1)
+	@PostMapping(value = "/kakao/login", headers = API_MINOR_VERSION_HEADER_NAME + "=" + 1)
 	public JwtTokenInfoResponse kakaoLoginV1_1(@RequestBody @Valid KakaoLoginRequest kakaoLoginRequest) {
 		JwtTokenInfoDto jwtTokenInfoDto = kakaoService.login(kakaoLoginRequest);
 		return JwtTokenInfoResponse.from(jwtTokenInfoDto);
