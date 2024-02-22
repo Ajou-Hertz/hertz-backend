@@ -1,10 +1,9 @@
 package com.ajou.hertz.domain.instrument.entity;
 
+import com.ajou.hertz.common.entity.TimeTrackedBaseEntity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
@@ -17,15 +16,13 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(name = "instrument_brand")
-public class InstrumentBrand {
+public class InstrumentBrand extends TimeTrackedBaseEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(nullable = false)
-    private Long id;
+	@Id
+	@Column(nullable = false, updatable = false)
+	private Long id;
 
-    @Column(nullable = false)
-    private String name;
-
+	@Column(nullable = false)
+	private String name;
 
 }
