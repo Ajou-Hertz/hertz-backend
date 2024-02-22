@@ -1,6 +1,7 @@
 package com.ajou.hertz.common.validator;
 
-import java.lang.annotation.ElementType;
+import static java.lang.annotation.ElementType.*;
+
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
@@ -15,7 +16,7 @@ import jakarta.validation.Payload;
  * <p>
  * {@code null} elements are considered valid.
  */
-@Target(ElementType.FIELD)
+@Target({FIELD, PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = PhoneNumberValidator.class)
 public @interface PhoneNumber {
