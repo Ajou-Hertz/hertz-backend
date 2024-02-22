@@ -13,8 +13,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ajou.hertz.common.validator.PhoneNumber;
 import com.ajou.hertz.domain.user.dto.UserDto;
 import com.ajou.hertz.domain.user.dto.request.SignUpRequest;
+import com.ajou.hertz.domain.user.dto.response.UserEmailResponse;
 import com.ajou.hertz.domain.user.dto.response.UserExistenceResponse;
 import com.ajou.hertz.domain.user.dto.response.UserResponse;
 import com.ajou.hertz.domain.user.service.UserCommandService;
@@ -28,6 +30,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 
 @Tag(name = "유저 관련 API")
@@ -53,6 +56,25 @@ public class UserControllerV1 {
 	) {
 		boolean existence = userQueryService.existsByEmail(email);
 		return new UserExistenceResponse(existence);
+	}
+
+	@Operation(
+		summary = "전화번호로 유저 이메일 찾기",
+		description = "특정 유저를 식별할 수 있는 정보(전화번호)를 받아 일치하는 유저의 이메일을 조회합니다."
+	)
+	@ApiResponses({
+		@ApiResponse(responseCode = "200"),
+		@ApiResponse(responseCode = "404", description = "[2206] 전화번호에 해당하는 유저를 찾을 수 없는 경우", content = @Content)
+	})
+	@GetMapping(value = "/email", headers = API_MINOR_VERSION_HEADER_NAME + "=" + 1)
+	public UserEmailResponse getUserEmailByPhoneV1_1(
+		@Parameter(
+			description = "이메일을 찾고자 하는 유저의 전화번호",
+			example = "01012345678"
+		) @RequestParam @NotBlank @PhoneNumber String phone
+	) {
+		UserDto userDto = userQueryService.getDtoByPhone(phone);
+		return new UserEmailResponse(userDto.getEmail());
 	}
 
 	@Operation(
