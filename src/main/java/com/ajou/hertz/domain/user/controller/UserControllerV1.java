@@ -5,6 +5,7 @@ import static com.ajou.hertz.common.constant.GlobalConstants.*;
 import java.net.URI;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,12 +14,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ajou.hertz.common.auth.UserPrincipal;
 import com.ajou.hertz.common.validator.PhoneNumber;
 import com.ajou.hertz.domain.user.dto.UserDto;
 import com.ajou.hertz.domain.user.dto.request.SignUpRequest;
 import com.ajou.hertz.domain.user.dto.response.UserEmailResponse;
 import com.ajou.hertz.domain.user.dto.response.UserExistenceResponse;
 import com.ajou.hertz.domain.user.dto.response.UserResponse;
+import com.ajou.hertz.domain.user.dto.response.UserWithLinkedAccountInfoResponse;
 import com.ajou.hertz.domain.user.service.UserCommandService;
 import com.ajou.hertz.domain.user.service.UserQueryService;
 
@@ -27,6 +30,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
@@ -42,6 +46,19 @@ public class UserControllerV1 {
 
 	private final UserCommandService userCommandService;
 	private final UserQueryService userQueryService;
+
+	@Operation(
+		summary = "내 정보 조회",
+		description = "내 정보를 조회합니다.",
+		security = @SecurityRequirement(name = "access-token")
+	)
+	@GetMapping(value = "/me", headers = API_MINOR_VERSION_HEADER_NAME + "=" + 1)
+	public UserWithLinkedAccountInfoResponse getMyInfoV1_1(
+		@AuthenticationPrincipal UserPrincipal userPrincipal
+	) {
+		UserDto userDto = userQueryService.getDtoById(userPrincipal.getUserId());
+		return UserWithLinkedAccountInfoResponse.from(userDto);
+	}
 
 	@Operation(
 		summary = "회원 존재 여부 조회",
@@ -83,13 +100,10 @@ public class UserControllerV1 {
 	)
 	@ApiResponses({
 		@ApiResponse(responseCode = "200"),
-		@ApiResponse(
-			responseCode = "409", content = @Content,
-			description = """
-				<p>[2200] 이미 다른 사용자가 사용 중인 이메일로 신규 회원을 등록하려고 하는 경우.
-				<p>[2203] 이미 다른 사용자가 사용 중인 전화번호로 신규 회원을 등록하려고 하는 경우.
-				"""
-		)
+		@ApiResponse(responseCode = "409", content = @Content, description = """
+			<p>[2200] 이미 다른 사용자가 사용 중인 이메일로 신규 회원을 등록하려고 하는 경우.
+			<p>[2203] 이미 다른 사용자가 사용 중인 전화번호로 신규 회원을 등록하려고 하는 경우.
+			""")
 	})
 	@PostMapping(headers = API_MINOR_VERSION_HEADER_NAME + "=" + 1)
 	public ResponseEntity<UserResponse> signUpV1_1(

@@ -109,7 +109,8 @@ class AuthServiceTest {
 	private UserDto createUserDto(long id) throws Exception {
 		Constructor<UserDto> userResponseConstructor = UserDto.class.getDeclaredConstructor(
 			Long.class, Set.class, String.class, String.class, String.class,
-			String.class, LocalDate.class, Gender.class, String.class, String.class
+			String.class, LocalDate.class, Gender.class, String.class, String.class,
+			LocalDateTime.class
 		);
 		userResponseConstructor.setAccessible(true);
 		return userResponseConstructor.newInstance(
@@ -122,7 +123,8 @@ class AuthServiceTest {
 			LocalDate.of(2024, 1, 1),
 			Gender.ETC,
 			"01012345678",
-			"https://contack-link"
+			"https://contack-link",
+			LocalDateTime.of(2024, 1, 1, 0, 0)
 		);
 	}
 
