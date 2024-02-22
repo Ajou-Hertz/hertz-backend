@@ -21,6 +21,7 @@ import com.ajou.hertz.domain.user.dto.UserDto;
 import com.ajou.hertz.domain.user.entity.User;
 import com.ajou.hertz.domain.user.exception.UserNotFoundByEmailException;
 import com.ajou.hertz.domain.user.exception.UserNotFoundByIdException;
+import com.ajou.hertz.domain.user.exception.UserNotFoundByPhoneException;
 import com.ajou.hertz.domain.user.repository.UserRepository;
 import com.ajou.hertz.domain.user.service.UserQueryService;
 
@@ -33,6 +34,25 @@ class UserQueryServiceTest {
 
 	@Mock
 	private UserRepository userRepository;
+
+	@Test
+	void 카카오_유저_ID가_주어지고_주어진_카카오_유저_ID로_유저를_조회하면_조회된_유저_정보가_담긴_Optional_DTO가_반환된다() throws Exception {
+		// given
+		String kakaoUid = "12345";
+		User expectedResult = createUser(1L, "test@mail.com", kakaoUid, "01012345678");
+		given(userRepository.findByKakaoUid(kakaoUid)).willReturn(Optional.of(expectedResult));
+
+		// when
+		Optional<UserDto> actualResult = sut.findDtoByKakaoUid(kakaoUid);
+
+		// then
+		then(userRepository).should().findByKakaoUid(kakaoUid);
+		verifyEveryMocksShouldHaveNoMoreInteractions();
+		assertThat(actualResult).isNotEmpty();
+		assertThat(actualResult.get())
+			.hasFieldOrPropertyWithValue("id", expectedResult.getId())
+			.hasFieldOrPropertyWithValue("kakaoUid", expectedResult.getKakaoUid());
+	}
 
 	@Test
 	void 유저_id가_주어지고_주어진_id로_유저를_조회하면_조회된_유저_정보가_반환된다() throws Exception {
@@ -70,7 +90,7 @@ class UserQueryServiceTest {
 	void 이메일이_주어지고_주어진_이메일로_유저를_조회하면_조회된_유저_정보가_반환된다() throws Exception {
 		// given
 		String email = "test@mail.com";
-		User expectedResult = createUser(1L, email, "1234");
+		User expectedResult = createUser(1L, email, "1234", "01012345678");
 		given(userRepository.findByEmail(email)).willReturn(Optional.of(expectedResult));
 
 		// when
@@ -100,22 +120,36 @@ class UserQueryServiceTest {
 	}
 
 	@Test
-	void 카카오_유저_ID가_주어지고_주어진_카카오_유저_ID로_유저를_조회하면_조회된_Optional_유저_정보가_반환된다() throws Exception {
+	void 전화번호가_주어지고_주어진_전화번호로_유저를_조회하면_조회된_유저_정보가_반환된다() throws Exception {
 		// given
-		String kakaoUid = "12345";
-		User expectedResult = createUser(1L, "test@mail.com", kakaoUid);
-		given(userRepository.findByKakaoUid(kakaoUid)).willReturn(Optional.of(expectedResult));
+		String phone = "01012345678";
+		User expectedResult = createUser(1L, "test@mail.com", "1234", phone);
+		given(userRepository.findByPhone(phone)).willReturn(Optional.of(expectedResult));
 
 		// when
-		Optional<UserDto> actualResult = sut.findDtoByKakaoUid(kakaoUid);
+		UserDto actualResult = sut.getDtoByPhone(phone);
 
 		// then
-		then(userRepository).should().findByKakaoUid(kakaoUid);
+		then(userRepository).should().findByPhone(phone);
 		verifyEveryMocksShouldHaveNoMoreInteractions();
-		assertThat(actualResult).isNotEmpty();
-		assertThat(actualResult.get())
+		assertThat(actualResult)
 			.hasFieldOrPropertyWithValue("id", expectedResult.getId())
-			.hasFieldOrPropertyWithValue("kakaoUid", expectedResult.getKakaoUid());
+			.hasFieldOrPropertyWithValue("phone", expectedResult.getPhone());
+	}
+
+	@Test
+	void 전화번호가_주어지고_주어진_전화번호로_유저를_조회한다_만약_일치하는_유저가_없다면_예외가_발생한다() {
+		// given
+		String phone = "01012345678";
+		given(userRepository.findByPhone(phone)).willReturn(Optional.empty());
+
+		// when
+		Throwable t = catchThrowable(() -> sut.getDtoByPhone(phone));
+
+		// then
+		then(userRepository).should().findByPhone(phone);
+		verifyEveryMocksShouldHaveNoMoreInteractions();
+		assertThat(t).isInstanceOf(UserNotFoundByPhoneException.class);
 	}
 
 	@Test
@@ -170,7 +204,7 @@ class UserQueryServiceTest {
 		then(userRepository).shouldHaveNoMoreInteractions();
 	}
 
-	private User createUser(Long id, String email, String kakaoUid) throws Exception {
+	private User createUser(Long id, String email, String kakaoUid, String phone) throws Exception {
 		Constructor<User> userConstructor = User.class.getDeclaredConstructor(
 			Long.class, Set.class, String.class, String.class, String.class,
 			String.class, LocalDate.class, Gender.class, String.class, String.class
@@ -185,12 +219,12 @@ class UserQueryServiceTest {
 			"https://user-default-profile-image-url",
 			LocalDate.of(2024, 1, 1),
 			Gender.ETC,
-			"01012345678",
+			phone,
 			null
 		);
 	}
 
 	private User createUser(Long id) throws Exception {
-		return createUser(id, "test@mail.com", "12345");
+		return createUser(id, "test@mail.com", "12345", "01012345678");
 	}
 }

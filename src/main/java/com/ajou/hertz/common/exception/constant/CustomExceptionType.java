@@ -37,6 +37,7 @@ public enum CustomExceptionType {
 	USER_PHONE_DUPLICATION(2203, "이미 사용 중인 전화번호입니다."),
 	USER_KAKAO_UID_DUPLICATION(2204, "이미 가입한 계정입니다."),
 	USER_NOT_FOUND_BY_KAKAO_UID(2205, "일치하는 회원을 찾을 수 없습니다."),
+	USER_NOT_FOUND_BY_PHONE(2206, "일치하는 회원을 찾을 수 없습니다."),
 
 	KAKAO_CLIENT(10000, "카카오 서버와의 통신 중 오류가 발생했습니다."),
 	;

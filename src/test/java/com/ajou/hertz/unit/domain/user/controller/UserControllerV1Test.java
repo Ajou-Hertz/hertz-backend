@@ -91,6 +91,40 @@ class UserControllerV1Test {
 	}
 
 	@Test
+	void 전화번호가_주어지고_주어진_전화번호를_사용_중인_회원의_이메일을_조회한다() throws Exception {
+		// given
+		String phone = "01012345678";
+		UserDto expectedResult = createUserDto();
+		given(userQueryService.getDtoByPhone(phone)).willReturn(expectedResult);
+
+		// when & then
+		mvc.perform(
+				get("/v1/users/email")
+					.header(API_MINOR_VERSION_HEADER_NAME, 1)
+					.queryParam("phone", phone)
+			)
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("email").value(expectedResult.getEmail()));
+		then(userQueryService).should().getDtoByPhone(phone);
+		verifyEveryMocksShouldHaveNoMoreInteractions();
+	}
+
+	@Test
+	void 전화번호가_주어지고_주어진_전화번호를_사용_중인_회원의_이메일을_조회한다_전달된_전화번호가_잘못된_형식인_경우_에러가_발생한다() throws Exception {
+		// given
+		String phone = "12345";
+
+		// when & then
+		mvc.perform(
+				get("/v1/users/email")
+					.header(API_MINOR_VERSION_HEADER_NAME, 1)
+					.queryParam("phone", phone)
+			)
+			.andExpect(status().isUnprocessableEntity());
+		verifyEveryMocksShouldHaveNoMoreInteractions();
+	}
+
+	@Test
 	void 주어진_회원_정보로_신규_회원을_등록한다() throws Exception {
 		// given
 		long userId = 1L;

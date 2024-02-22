@@ -9,6 +9,7 @@ import com.ajou.hertz.domain.user.dto.UserDto;
 import com.ajou.hertz.domain.user.entity.User;
 import com.ajou.hertz.domain.user.exception.UserNotFoundByEmailException;
 import com.ajou.hertz.domain.user.exception.UserNotFoundByIdException;
+import com.ajou.hertz.domain.user.exception.UserNotFoundByPhoneException;
 import com.ajou.hertz.domain.user.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -66,6 +67,18 @@ public class UserQueryService {
 	 */
 	public UserDto getDtoByEmail(String email) {
 		return UserDto.from(getByEmail(email));
+	}
+
+	/**
+	 * 전화번호로 user 정보를 조회한다.
+	 *
+	 * @param phone 조회하고자 하는 user의 전화번호
+	 * @return 조회한 유저 정보가 담긴 dto
+	 * @throws UserNotFoundByPhoneException 일치하는 유저를 찾지 못한 경우
+	 */
+	public UserDto getDtoByPhone(String phone) {
+		User user = userRepository.findByPhone(phone).orElseThrow(() -> new UserNotFoundByPhoneException(phone));
+		return UserDto.from(user);
 	}
 
 	/**
