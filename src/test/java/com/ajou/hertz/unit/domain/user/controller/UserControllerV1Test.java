@@ -2,11 +2,13 @@ package com.ajou.hertz.unit.domain.user.controller;
 
 import static com.ajou.hertz.common.constant.GlobalConstants.*;
 import static org.mockito.BDDMockito.*;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import java.lang.reflect.Constructor;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Set;
 
 import org.junit.jupiter.api.DisplayName;
@@ -17,6 +19,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.test.context.event.annotation.BeforeTestMethod;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -26,6 +29,7 @@ import com.ajou.hertz.common.auth.JwtAuthenticationEntryPoint;
 import com.ajou.hertz.common.auth.JwtAuthenticationFilter;
 import com.ajou.hertz.common.auth.JwtExceptionFilter;
 import com.ajou.hertz.common.auth.JwtTokenProvider;
+import com.ajou.hertz.common.auth.UserPrincipal;
 import com.ajou.hertz.common.config.SecurityConfig;
 import com.ajou.hertz.domain.user.constant.Gender;
 import com.ajou.hertz.domain.user.constant.RoleType;
@@ -69,6 +73,25 @@ class UserControllerV1Test {
 	@BeforeTestMethod
 	public void securitySetUp() throws Exception {
 		given(userQueryService.getDtoById(anyLong())).willReturn(createUserDto());
+	}
+
+	@Test
+	void 내_정보를_조회한다() throws Exception {
+		// given
+		long userId = 1L;
+		UserDto expectedResult = createUserDto(userId);
+		given(userQueryService.getDtoById(userId)).willReturn(expectedResult);
+
+		// when & then
+		mvc.perform(
+				get("/v1/users/me")
+					.header(API_MINOR_VERSION_HEADER_NAME, 1)
+					.with(user(createTestUser(userId)))
+			)
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.id").value(expectedResult.getId()));
+		then(userQueryService).should().getDtoById(userId);
+		verifyEveryMocksShouldHaveNoMoreInteractions();
 	}
 
 	@Test
@@ -219,7 +242,8 @@ class UserControllerV1Test {
 	private UserDto createUserDto(long id) throws Exception {
 		Constructor<UserDto> userResponseConstructor = UserDto.class.getDeclaredConstructor(
 			Long.class, Set.class, String.class, String.class, String.class,
-			String.class, LocalDate.class, Gender.class, String.class, String.class
+			String.class, LocalDate.class, Gender.class, String.class, String.class,
+			LocalDateTime.class
 		);
 		userResponseConstructor.setAccessible(true);
 		return userResponseConstructor.newInstance(
@@ -232,11 +256,16 @@ class UserControllerV1Test {
 			LocalDate.of(2024, 1, 1),
 			Gender.ETC,
 			"01012345678",
-			"https://contack-link"
+			"https://contack-link",
+			LocalDateTime.of(2024, 1, 1, 0, 0)
 		);
 	}
 
 	private UserDto createUserDto() throws Exception {
 		return createUserDto(1L);
+	}
+
+	private UserDetails createTestUser(Long userId) throws Exception {
+		return new UserPrincipal(createUserDto(userId));
 	}
 }

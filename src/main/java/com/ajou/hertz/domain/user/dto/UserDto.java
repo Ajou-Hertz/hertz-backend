@@ -1,6 +1,7 @@
 package com.ajou.hertz.domain.user.dto;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Set;
 
 import com.ajou.hertz.domain.user.constant.Gender;
@@ -25,6 +26,7 @@ public class UserDto {
 	private Gender gender;
 	private String phone;
 	private String contactLink;
+	private LocalDateTime createdAt;
 
 	public static UserDto from(User user) {
 		return new UserDto(
@@ -37,7 +39,8 @@ public class UserDto {
 			user.getBirth(),
 			user.getGender(),
 			user.getPhone(),
-			user.getContactLink()
+			user.getContactLink(),
+			user.getCreatedAt()
 		);
 	}
 }

@@ -4,6 +4,7 @@ import static org.mockito.BDDMockito.*;
 
 import java.lang.reflect.Constructor;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Set;
 
 import org.springframework.boot.test.context.TestConfiguration;
@@ -46,7 +47,8 @@ public class TestSecurityConfig {
 	private UserDto createUserDto() throws Exception {
 		Constructor<UserDto> userResponseConstructor = UserDto.class.getDeclaredConstructor(
 			Long.class, Set.class, String.class, String.class, String.class,
-			String.class, LocalDate.class, Gender.class, String.class, String.class
+			String.class, LocalDate.class, Gender.class, String.class, String.class,
+			LocalDateTime.class
 		);
 		userResponseConstructor.setAccessible(true);
 		return userResponseConstructor.newInstance(
@@ -59,7 +61,8 @@ public class TestSecurityConfig {
 			LocalDate.of(2024, 1, 1),
 			Gender.ETC,
 			"01012345678",
-			"https://contack-link"
+			"https://contack-link",
+			LocalDateTime.of(2024, 1, 1, 0, 0)
 		);
 	}
 }
