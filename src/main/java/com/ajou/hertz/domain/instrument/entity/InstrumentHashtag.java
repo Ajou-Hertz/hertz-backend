@@ -32,4 +32,8 @@ public class InstrumentHashtag extends BaseEntity {
 
 	@Column(length = 10, nullable = false)
 	private String content;
+
+	public static InstrumentHashtag create(Instrument instrument, String content) {
+		return new InstrumentHashtag(null, instrument, content);
+	}
 }
