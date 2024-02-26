@@ -20,11 +20,9 @@ import jakarta.persistence.InheritanceType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@AllArgsConstructor(access = AccessLevel.PROTECTED)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @DiscriminatorColumn(name = "category")
@@ -62,4 +60,32 @@ public abstract class Instrument extends TimeTrackedBaseEntity {
 
 	@Column(length = 1000, nullable = false)
 	private String description;
+
+	@Embedded
+	private InstrumentImages images = new InstrumentImages();
+
+	@Embedded
+	private InstrumentHashtags hashtags = new InstrumentHashtags();
+
+	protected Instrument(
+		Long id,
+		User seller,
+		String title,
+		InstrumentProgressStatus progressStatus,
+		Address tradeAddress,
+		Short qualityStatus,
+		Integer price,
+		Boolean hasAnomaly,
+		String description
+	) {
+		this.id = id;
+		this.seller = seller;
+		this.title = title;
+		this.progressStatus = progressStatus;
+		this.tradeAddress = tradeAddress;
+		this.qualityStatus = qualityStatus;
+		this.price = price;
+		this.hasAnomaly = hasAnomaly;
+		this.description = description;
+	}
 }
