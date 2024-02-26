@@ -64,6 +64,7 @@ public class BassGuitar extends Instrument {
 	public static BassGuitar create(
 		User seller,
 		String title,
+		InstrumentProgressStatus progressStatus,
 		Address tradeAddress,
 		Short qualityStatus,
 		Integer price,
@@ -75,8 +76,8 @@ public class BassGuitar extends Instrument {
 		GuitarColor color
 	) {
 		return new BassGuitar(
-			null, seller, title, InstrumentProgressStatus.SELLING, tradeAddress,
-			qualityStatus, price, hasAnomaly, description, brand, pickUp, preAmplifier, color
+			null, seller, title, progressStatus, tradeAddress, qualityStatus,
+			price, hasAnomaly, description, brand, pickUp, preAmplifier, color
 		);
 	}
 }
