@@ -57,6 +57,7 @@ public class Amplifier extends Instrument {
 	public static Amplifier create(
 		User seller,
 		String title,
+		InstrumentProgressStatus progressStatus,
 		Address tradeAddress,
 		Short qualityStatus,
 		Integer price,
@@ -67,8 +68,8 @@ public class Amplifier extends Instrument {
 		AmplifierUsage usage
 	) {
 		return new Amplifier(
-			null, seller, title, InstrumentProgressStatus.SELLING, tradeAddress,
-			qualityStatus, price, hasAnomaly, description, type, brand, usage
+			null, seller, title, progressStatus, tradeAddress, qualityStatus,
+			price, hasAnomaly, description, type, brand, usage
 		);
 	}
 }

@@ -50,6 +50,7 @@ public class Effector extends Instrument {
 	public static Effector create(
 		User seller,
 		String title,
+		InstrumentProgressStatus progressStatus,
 		Address tradeAddress,
 		Short qualityStatus,
 		Integer price,
@@ -59,8 +60,8 @@ public class Effector extends Instrument {
 		EffectorFeature feature
 	) {
 		return new Effector(
-			null, seller, title, InstrumentProgressStatus.SELLING, tradeAddress,
-			qualityStatus, price, hasAnomaly, description, type, feature
+			null, seller, title, progressStatus, tradeAddress, qualityStatus,
+			price, hasAnomaly, description, type, feature
 		);
 	}
 }

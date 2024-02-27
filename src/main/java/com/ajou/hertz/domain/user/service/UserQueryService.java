@@ -28,7 +28,7 @@ public class UserQueryService {
 	 * @return 조회한 user entity
 	 * @throws UserNotFoundByIdException 일치하는 유저를 찾지 못한 경우
 	 */
-	private User getById(Long id) {
+	public User getById(Long id) {
 		return userRepository.findById(id).orElseThrow(() -> new UserNotFoundByIdException(id));
 	}
 

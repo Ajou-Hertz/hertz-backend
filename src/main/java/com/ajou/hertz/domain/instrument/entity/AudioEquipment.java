@@ -43,6 +43,7 @@ public class AudioEquipment extends Instrument {
 	public static AudioEquipment create(
 		User seller,
 		String title,
+		InstrumentProgressStatus progressStatus,
 		Address tradeAddress,
 		Short qualityStatus,
 		Integer price,
@@ -51,7 +52,7 @@ public class AudioEquipment extends Instrument {
 		AudioEquipmentType type
 	) {
 		return new AudioEquipment(
-			null, seller, title, InstrumentProgressStatus.SELLING, tradeAddress,
+			null, seller, title, progressStatus, tradeAddress,
 			qualityStatus, price, hasAnomaly, description, type
 		);
 	}

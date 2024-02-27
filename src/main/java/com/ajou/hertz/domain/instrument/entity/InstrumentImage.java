@@ -11,11 +11,9 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Entity
@@ -29,4 +27,20 @@ public class InstrumentImage extends FileEntity {
 	@JoinColumn(name = "instrument_id", nullable = false)
 	@ManyToOne(fetch = FetchType.LAZY)
 	private Instrument instrument;
+
+	private InstrumentImage(Long id, Instrument instrument, String originalName, String storedName, String url) {
+		super(originalName, storedName, url);
+		this.id = id;
+		this.instrument = instrument;
+	}
+
+	public static InstrumentImage create(Instrument instrument, String originalName, String storedName, String url) {
+		return new InstrumentImage(
+			null,
+			instrument,
+			originalName,
+			storedName,
+			url
+		);
+	}
 }

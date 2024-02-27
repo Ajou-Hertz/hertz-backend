@@ -64,6 +64,7 @@ public class AcousticAndClassGuitar extends Instrument {
 	public static AcousticAndClassGuitar create(
 		User seller,
 		String title,
+		InstrumentProgressStatus progressStatus,
 		Address tradeAddress,
 		Short qualityStatus,
 		Integer price,
@@ -75,8 +76,8 @@ public class AcousticAndClassGuitar extends Instrument {
 		AcousticAndClassGuitarPickUp pickUp
 	) {
 		return new AcousticAndClassGuitar(
-			null, seller, title, InstrumentProgressStatus.SELLING, tradeAddress,
-			qualityStatus, price, hasAnomaly, description, brand, model, wood, pickUp
+			null, seller, title, progressStatus, tradeAddress, qualityStatus,
+			price, hasAnomaly, description, brand, model, wood, pickUp
 		);
 	}
 }

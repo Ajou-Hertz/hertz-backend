@@ -62,6 +62,7 @@ public class ElectricGuitar extends Instrument {
 	public static ElectricGuitar create(
 		User seller,
 		String title,
+		InstrumentProgressStatus progressStatus,
 		Address tradeAddress,
 		Short qualityStatus,
 		Integer price,
@@ -73,8 +74,8 @@ public class ElectricGuitar extends Instrument {
 		GuitarColor color
 	) {
 		return new ElectricGuitar(
-			null, seller, title, InstrumentProgressStatus.SELLING, tradeAddress,
-			qualityStatus, price, hasAnomaly, description, brand, model, productionYear, color
+			null, seller, title, progressStatus, tradeAddress, qualityStatus,
+			price, hasAnomaly, description, brand, model, productionYear, color
 		);
 	}
 }
