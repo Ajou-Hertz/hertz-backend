@@ -1,10 +1,10 @@
 package com.ajou.hertz.domain.instrument.entity;
 
 import com.ajou.hertz.common.entity.Address;
-import com.ajou.hertz.domain.instrument.constant.AcousticAndClassGuitarBrand;
-import com.ajou.hertz.domain.instrument.constant.AcousticAndClassGuitarModel;
-import com.ajou.hertz.domain.instrument.constant.AcousticAndClassGuitarPickUp;
-import com.ajou.hertz.domain.instrument.constant.AcousticAndClassGuitarWood;
+import com.ajou.hertz.domain.instrument.constant.AcousticAndClassicGuitarBrand;
+import com.ajou.hertz.domain.instrument.constant.AcousticAndClassicGuitarModel;
+import com.ajou.hertz.domain.instrument.constant.AcousticAndClassicGuitarPickUp;
+import com.ajou.hertz.domain.instrument.constant.AcousticAndClassicGuitarWood;
 import com.ajou.hertz.domain.instrument.constant.InstrumentProgressStatus;
 import com.ajou.hertz.domain.user.entity.User;
 
@@ -21,25 +21,25 @@ import lombok.NoArgsConstructor;
 @Getter
 @DiscriminatorValue("ACOUSTIC_AND_CLASS_GUITAR")
 @Entity
-public class AcousticAndClassGuitar extends Instrument {
+public class AcousticAndClassicGuitar extends Instrument {
 
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false)
-	private AcousticAndClassGuitarBrand brand;
+	private AcousticAndClassicGuitarBrand brand;
 
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false)
-	private AcousticAndClassGuitarModel model;
+	private AcousticAndClassicGuitarModel model;
 
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false)
-	private AcousticAndClassGuitarWood wood;
+	private AcousticAndClassicGuitarWood wood;
 
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false)
-	private AcousticAndClassGuitarPickUp pickUp;
+	private AcousticAndClassicGuitarPickUp pickUp;
 
-	private AcousticAndClassGuitar(
+	private AcousticAndClassicGuitar(
 		Long id,
 		User seller,
 		String title,
@@ -49,10 +49,10 @@ public class AcousticAndClassGuitar extends Instrument {
 		Integer price,
 		Boolean hasAnomaly,
 		String description,
-		AcousticAndClassGuitarBrand brand,
-		AcousticAndClassGuitarModel model,
-		AcousticAndClassGuitarWood wood,
-		AcousticAndClassGuitarPickUp pickUp
+		AcousticAndClassicGuitarBrand brand,
+		AcousticAndClassicGuitarModel model,
+		AcousticAndClassicGuitarWood wood,
+		AcousticAndClassicGuitarPickUp pickUp
 	) {
 		super(id, seller, title, progressStatus, tradeAddress, qualityStatus, price, hasAnomaly, description);
 		this.brand = brand;
@@ -61,7 +61,7 @@ public class AcousticAndClassGuitar extends Instrument {
 		this.pickUp = pickUp;
 	}
 
-	public static AcousticAndClassGuitar create(
+	public static AcousticAndClassicGuitar create(
 		User seller,
 		String title,
 		InstrumentProgressStatus progressStatus,
@@ -70,12 +70,12 @@ public class AcousticAndClassGuitar extends Instrument {
 		Integer price,
 		Boolean hasAnomaly,
 		String description,
-		AcousticAndClassGuitarBrand brand,
-		AcousticAndClassGuitarModel model,
-		AcousticAndClassGuitarWood wood,
-		AcousticAndClassGuitarPickUp pickUp
+		AcousticAndClassicGuitarBrand brand,
+		AcousticAndClassicGuitarModel model,
+		AcousticAndClassicGuitarWood wood,
+		AcousticAndClassicGuitarPickUp pickUp
 	) {
-		return new AcousticAndClassGuitar(
+		return new AcousticAndClassicGuitar(
 			null, seller, title, progressStatus, tradeAddress, qualityStatus,
 			price, hasAnomaly, description, brand, model, wood, pickUp
 		);

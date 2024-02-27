@@ -31,7 +31,7 @@ public class BassGuitarResponse extends InstrumentResponse {
 	@Schema(description = "색상")
 	private GuitarColor color;
 
-	public BassGuitarResponse(
+	private BassGuitarResponse(
 		Long id,
 		Long sellerId,
 		String title,

@@ -5,7 +5,7 @@ import static com.ajou.hertz.domain.instrument.constant.ProductOrigin.*;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
-public enum AcousticAndClassGuitarBrand {
+public enum AcousticAndClassicGuitarBrand {
 
 	PRAYTON(DOMESTIC),
 	CRAFTER(DOMESTIC),

@@ -14,10 +14,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ajou.hertz.common.auth.UserPrincipal;
+import com.ajou.hertz.domain.instrument.dto.AcousticAndClassicGuitarDto;
 import com.ajou.hertz.domain.instrument.dto.BassGuitarDto;
 import com.ajou.hertz.domain.instrument.dto.ElectricGuitarDto;
+import com.ajou.hertz.domain.instrument.dto.request.CreateNewAcousticAndClassicGuitarRequest;
 import com.ajou.hertz.domain.instrument.dto.request.CreateNewBassGuitarRequest;
 import com.ajou.hertz.domain.instrument.dto.request.CreateNewElectricGuitarRequest;
+import com.ajou.hertz.domain.instrument.dto.response.AcousticAndClassicGuitarResponse;
 import com.ajou.hertz.domain.instrument.dto.response.BassGuitarResponse;
 import com.ajou.hertz.domain.instrument.dto.response.ElectricGuitarResponse;
 import com.ajou.hertz.domain.instrument.service.InstrumentCommandService;
@@ -83,5 +86,30 @@ public class InstrumentControllerV1 {
 		return ResponseEntity
 			.created(URI.create("/instruments/" + bassGuitar.getId()))
 			.body(BassGuitarResponse.from(bassGuitar));
+	}
+
+	@Operation(
+		summary = "어쿠스틱&클래식 기타 매물 등록",
+		description = """
+			<p>어쿠스틱&클래식 기타 매물을 등록합니다.
+			<p>요청 시 <strong>multipart/form-data</strong> content-type으로 요쳥해야 합니다.
+			"""
+	)
+	@PostMapping(
+		value = "/acoustic-and-classic-guitars",
+		headers = API_MINOR_VERSION_HEADER_NAME + "=" + 1,
+		consumes = MediaType.MULTIPART_FORM_DATA_VALUE
+	)
+	public ResponseEntity<AcousticAndClassicGuitarResponse> createNewAcousticAndClassicGuitarV1_1(
+		@AuthenticationPrincipal UserPrincipal userPrincipal,
+		@ParameterObject @ModelAttribute @Valid CreateNewAcousticAndClassicGuitarRequest acousticAndClassicGuitarRequest
+	) {
+		AcousticAndClassicGuitarDto acousticAndClassicGuitar = instrumentCommandService.createNewAcousticAndClassicGuitar(
+			userPrincipal.getUserId(),
+			acousticAndClassicGuitarRequest
+		);
+		return ResponseEntity
+			.created(URI.create("/instruments/" + acousticAndClassicGuitar.getId()))
+			.body(AcousticAndClassicGuitarResponse.from(acousticAndClassicGuitar));
 	}
 }
