@@ -22,6 +22,10 @@ import com.ajou.hertz.common.dto.request.AddressRequest;
 import com.ajou.hertz.common.entity.Address;
 import com.ajou.hertz.common.file.dto.FileDto;
 import com.ajou.hertz.common.file.service.FileService;
+import com.ajou.hertz.domain.instrument.constant.AcousticAndClassicGuitarBrand;
+import com.ajou.hertz.domain.instrument.constant.AcousticAndClassicGuitarModel;
+import com.ajou.hertz.domain.instrument.constant.AcousticAndClassicGuitarPickUp;
+import com.ajou.hertz.domain.instrument.constant.AcousticAndClassicGuitarWood;
 import com.ajou.hertz.domain.instrument.constant.BassGuitarBrand;
 import com.ajou.hertz.domain.instrument.constant.BassGuitarPickUp;
 import com.ajou.hertz.domain.instrument.constant.BassGuitarPreAmplifier;
@@ -29,10 +33,13 @@ import com.ajou.hertz.domain.instrument.constant.ElectricGuitarBrand;
 import com.ajou.hertz.domain.instrument.constant.ElectricGuitarModel;
 import com.ajou.hertz.domain.instrument.constant.GuitarColor;
 import com.ajou.hertz.domain.instrument.constant.InstrumentProgressStatus;
+import com.ajou.hertz.domain.instrument.dto.AcousticAndClassicGuitarDto;
 import com.ajou.hertz.domain.instrument.dto.BassGuitarDto;
 import com.ajou.hertz.domain.instrument.dto.ElectricGuitarDto;
+import com.ajou.hertz.domain.instrument.dto.request.CreateNewAcousticAndClassicGuitarRequest;
 import com.ajou.hertz.domain.instrument.dto.request.CreateNewBassGuitarRequest;
 import com.ajou.hertz.domain.instrument.dto.request.CreateNewElectricGuitarRequest;
+import com.ajou.hertz.domain.instrument.entity.AcousticAndClassicGuitar;
 import com.ajou.hertz.domain.instrument.entity.BassGuitar;
 import com.ajou.hertz.domain.instrument.entity.ElectricGuitar;
 import com.ajou.hertz.domain.instrument.entity.Instrument;
@@ -108,7 +115,7 @@ class InstrumentCommandServiceTest {
 	void 베이스_기타의_정보가_주어지면_주어진_정보로_베이스_기타_매물을_등록한다() throws Exception {
 		// given
 		long sellerId = 1L;
-		CreateNewBassGuitarRequest bassGuitarRequest = createNewBassGuitarRequest();
+		CreateNewBassGuitarRequest bassGuitarRequest = createBassGuitarRequest();
 		User seller = createUser(1L);
 		BassGuitar bassGuitar = createBassGuitar(2L, seller);
 		List<InstrumentImage> instrumentImages = List.of(createInstrumentImage(3L, bassGuitar));
@@ -134,6 +141,43 @@ class InstrumentCommandServiceTest {
 		verifyEveryMocksShouldHaveNoMoreInteractions();
 		assertThat(result)
 			.hasFieldOrPropertyWithValue("id", bassGuitar.getId())
+			.hasFieldOrPropertyWithValue("seller.id", seller.getId());
+		assertThat(result.getImages()).hasSize(instrumentImages.size());
+		assertThat(result.getHashtags()).hasSize(instrumentHashtags.size());
+	}
+
+	@Test
+	void 어쿠스틱_클래식_기타의_정보가_주어지면_주어진_정보로_어쿠스틱_클래식_기타_매물을_등록한다() throws Exception {
+		// given
+		long sellerId = 1L;
+		CreateNewAcousticAndClassicGuitarRequest acousticAndClassicGuitarReq = createAcousticAndClassicGuitarRequest();
+		User seller = createUser(1L);
+		AcousticAndClassicGuitar acousticAndClassicGuitar = createAcousticAndClassicGuitar(2L, seller);
+		List<InstrumentImage> instrumentImages = List.of(createInstrumentImage(3L, acousticAndClassicGuitar));
+		List<InstrumentHashtag> instrumentHashtags = List.of(createInstrumentHashtag(4L, acousticAndClassicGuitar));
+		given(userQueryService.getById(sellerId)).willReturn(seller);
+		given(instrumentRepository.save(any(Instrument.class))).willReturn(acousticAndClassicGuitar);
+		given(fileService.uploadFiles(eq(acousticAndClassicGuitarReq.getImages()), anyString()))
+			.willReturn(List.of(createFileDto()));
+		given(instrumentImageRepository.saveAll(ArgumentMatchers.<List<InstrumentImage>>any()))
+			.willReturn(instrumentImages);
+		given(instrumentHashtagRepository.saveAll(ArgumentMatchers.<List<InstrumentHashtag>>any()))
+			.willReturn(instrumentHashtags);
+
+		// when
+		AcousticAndClassicGuitarDto result = sut.createNewAcousticAndClassicGuitar(
+			sellerId, acousticAndClassicGuitarReq
+		);
+
+		// then
+		then(userQueryService).should().getById(sellerId);
+		then(instrumentRepository).should().save(any(Instrument.class));
+		then(fileService).should().uploadFiles(eq(acousticAndClassicGuitarReq.getImages()), anyString());
+		then(instrumentImageRepository).should().saveAll(ArgumentMatchers.<List<InstrumentImage>>any());
+		then(instrumentHashtagRepository).should().saveAll(ArgumentMatchers.<List<InstrumentHashtag>>any());
+		verifyEveryMocksShouldHaveNoMoreInteractions();
+		assertThat(result)
+			.hasFieldOrPropertyWithValue("id", acousticAndClassicGuitar.getId())
 			.hasFieldOrPropertyWithValue("seller.id", seller.getId());
 		assertThat(result.getImages()).hasSize(instrumentImages.size());
 		assertThat(result.getHashtags()).hasSize(instrumentHashtags.size());
@@ -250,6 +294,32 @@ class InstrumentCommandServiceTest {
 		);
 	}
 
+	private AcousticAndClassicGuitar createAcousticAndClassicGuitar(long id, User seller) throws Exception {
+		Constructor<AcousticAndClassicGuitar> acousticAndClassicGuitarConstructor =
+			AcousticAndClassicGuitar.class.getDeclaredConstructor(
+				Long.class, User.class, String.class, InstrumentProgressStatus.class, Address.class,
+				Short.class, Integer.class, Boolean.class, String.class,
+				AcousticAndClassicGuitarBrand.class, AcousticAndClassicGuitarModel.class,
+				AcousticAndClassicGuitarWood.class, AcousticAndClassicGuitarPickUp.class
+			);
+		acousticAndClassicGuitarConstructor.setAccessible(true);
+		return acousticAndClassicGuitarConstructor.newInstance(
+			id,
+			seller,
+			"Test electric guitar",
+			InstrumentProgressStatus.SELLING,
+			createAddress(),
+			(short)3,
+			550000,
+			true,
+			"description",
+			AcousticAndClassicGuitarBrand.HEX,
+			AcousticAndClassicGuitarModel.JUMBO_BODY,
+			AcousticAndClassicGuitarWood.PLYWOOD,
+			AcousticAndClassicGuitarPickUp.MICROPHONE
+		);
+	}
+
 	private FileDto createFileDto() throws Exception {
 		Constructor<FileDto> fileDtoConstructor = FileDto.class.getDeclaredConstructor(
 			String.class, String.class, String.class
@@ -291,7 +361,7 @@ class InstrumentCommandServiceTest {
 		);
 	}
 
-	private CreateNewBassGuitarRequest createNewBassGuitarRequest() throws Exception {
+	private CreateNewBassGuitarRequest createBassGuitarRequest() throws Exception {
 		Constructor<CreateNewBassGuitarRequest> createNewBassGuitarRequestConstructor =
 			CreateNewBassGuitarRequest.class.getDeclaredConstructor(
 				String.class, InstrumentProgressStatus.class, AddressRequest.class, Short.class,
@@ -313,6 +383,32 @@ class InstrumentCommandServiceTest {
 			BassGuitarPickUp.JAZZ,
 			BassGuitarPreAmplifier.ACTIVE,
 			GuitarColor.RED
+		);
+	}
+
+	private CreateNewAcousticAndClassicGuitarRequest createAcousticAndClassicGuitarRequest() throws Exception {
+		Constructor<CreateNewAcousticAndClassicGuitarRequest> createNewAcousticAndClassicGuitarRequestConstructor =
+			CreateNewAcousticAndClassicGuitarRequest.class.getDeclaredConstructor(
+				String.class, InstrumentProgressStatus.class, AddressRequest.class, Short.class,
+				Integer.class, Boolean.class, String.class, List.class, List.class,
+				AcousticAndClassicGuitarBrand.class, AcousticAndClassicGuitarModel.class,
+				AcousticAndClassicGuitarWood.class, AcousticAndClassicGuitarPickUp.class
+			);
+		createNewAcousticAndClassicGuitarRequestConstructor.setAccessible(true);
+		return createNewAcousticAndClassicGuitarRequestConstructor.newInstance(
+			"Title",
+			InstrumentProgressStatus.SELLING,
+			createAddressRequest(),
+			(short)3,
+			550000,
+			true,
+			"description",
+			List.of(createMultipartFile()),
+			List.of("Fender", "Guitar"),
+			AcousticAndClassicGuitarBrand.CORT,
+			AcousticAndClassicGuitarModel.JUMBO_BODY,
+			AcousticAndClassicGuitarWood.SOLID_WOOD,
+			AcousticAndClassicGuitarPickUp.MICROPHONE
 		);
 	}
 }
