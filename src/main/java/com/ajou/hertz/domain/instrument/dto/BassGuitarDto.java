@@ -3,11 +3,12 @@ package com.ajou.hertz.domain.instrument.dto;
 import java.util.List;
 
 import com.ajou.hertz.common.dto.AddressDto;
-import com.ajou.hertz.domain.instrument.constant.ElectricGuitarBrand;
-import com.ajou.hertz.domain.instrument.constant.ElectricGuitarModel;
+import com.ajou.hertz.domain.instrument.constant.BassGuitarBrand;
+import com.ajou.hertz.domain.instrument.constant.BassGuitarPickUp;
+import com.ajou.hertz.domain.instrument.constant.BassGuitarPreAmplifier;
 import com.ajou.hertz.domain.instrument.constant.GuitarColor;
 import com.ajou.hertz.domain.instrument.constant.InstrumentProgressStatus;
-import com.ajou.hertz.domain.instrument.entity.ElectricGuitar;
+import com.ajou.hertz.domain.instrument.entity.BassGuitar;
 import com.ajou.hertz.domain.user.dto.UserDto;
 
 import lombok.AccessLevel;
@@ -16,14 +17,14 @@ import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @Getter
-public class ElectricGuitarDto extends InstrumentDto {
+public class BassGuitarDto extends InstrumentDto {
 
-	private ElectricGuitarBrand brand;
-	private ElectricGuitarModel model;
-	private Short productionYear;
+	private BassGuitarBrand brand;
+	private BassGuitarPickUp pickUp;
+	private BassGuitarPreAmplifier preAmplifier;
 	private GuitarColor color;
 
-	private ElectricGuitarDto(
+	private BassGuitarDto(
 		Long id,
 		UserDto seller,
 		String title,
@@ -33,26 +34,26 @@ public class ElectricGuitarDto extends InstrumentDto {
 		Integer price,
 		Boolean hasAnomaly,
 		String description,
-		ElectricGuitarBrand brand,
-		ElectricGuitarModel model,
-		Short productionYear,
-		GuitarColor color,
 		List<InstrumentImageDto> images,
-		List<String> hashtags
+		List<String> hashtags,
+		BassGuitarBrand brand,
+		BassGuitarPickUp pickUp,
+		BassGuitarPreAmplifier preAmplifier,
+		GuitarColor color
 	) {
 		super(
 			id, seller, title, progressStatus, tradeAddress, qualityStatus,
 			price, hasAnomaly, description, images, hashtags
 		);
 		this.brand = brand;
-		this.model = model;
-		this.productionYear = productionYear;
+		this.pickUp = pickUp;
+		this.preAmplifier = preAmplifier;
 		this.color = color;
 	}
 
-	public static ElectricGuitarDto from(ElectricGuitar electricGuitar) {
-		InstrumentDto instrumentDto = InstrumentDto.from(electricGuitar);
-		return new ElectricGuitarDto(
+	public static BassGuitarDto from(BassGuitar bassGuitar) {
+		InstrumentDto instrumentDto = InstrumentDto.from(bassGuitar);
+		return new BassGuitarDto(
 			instrumentDto.getId(),
 			instrumentDto.getSeller(),
 			instrumentDto.getTitle(),
@@ -62,12 +63,12 @@ public class ElectricGuitarDto extends InstrumentDto {
 			instrumentDto.getPrice(),
 			instrumentDto.getHasAnomaly(),
 			instrumentDto.getDescription(),
-			electricGuitar.getBrand(),
-			electricGuitar.getModel(),
-			electricGuitar.getProductionYear(),
-			electricGuitar.getColor(),
 			instrumentDto.getImages(),
-			instrumentDto.getHashtags()
+			instrumentDto.getHashtags(),
+			bassGuitar.getBrand(),
+			bassGuitar.getPickUp(),
+			bassGuitar.getPreAmplifier(),
+			bassGuitar.getColor()
 		);
 	}
 }

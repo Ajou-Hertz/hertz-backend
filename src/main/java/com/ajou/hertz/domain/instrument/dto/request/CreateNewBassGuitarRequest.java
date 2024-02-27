@@ -5,14 +5,14 @@ import java.util.List;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.ajou.hertz.common.dto.request.AddressRequest;
-import com.ajou.hertz.domain.instrument.constant.ElectricGuitarBrand;
-import com.ajou.hertz.domain.instrument.constant.ElectricGuitarModel;
+import com.ajou.hertz.domain.instrument.constant.BassGuitarBrand;
+import com.ajou.hertz.domain.instrument.constant.BassGuitarPickUp;
+import com.ajou.hertz.domain.instrument.constant.BassGuitarPreAmplifier;
 import com.ajou.hertz.domain.instrument.constant.GuitarColor;
 import com.ajou.hertz.domain.instrument.constant.InstrumentProgressStatus;
-import com.ajou.hertz.domain.instrument.entity.ElectricGuitar;
+import com.ajou.hertz.domain.instrument.entity.BassGuitar;
 import com.ajou.hertz.domain.user.entity.User;
 
-import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -22,45 +22,44 @@ import lombok.Setter;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @Setter    // for multipart/form-data with @ModelAttribute
 @Getter
-public class CreateNewElectricGuitarRequest extends CreateNewInstrumentRequest<ElectricGuitar> {
+public class CreateNewBassGuitarRequest extends CreateNewInstrumentRequest<BassGuitar> {
 
 	@NotNull
-	private ElectricGuitarBrand brand;
+	private BassGuitarBrand brand;
 
 	@NotNull
-	private ElectricGuitarModel model;
+	private BassGuitarPickUp pickUp;
 
-	@Schema(description = "생상연도", example = "2014")
 	@NotNull
-	private Short productionYear;
+	private BassGuitarPreAmplifier preAmplifier;
 
 	@NotNull
 	private GuitarColor color;
 
-	private CreateNewElectricGuitarRequest(
+	private CreateNewBassGuitarRequest(
 		String title,
-		List<MultipartFile> images,
 		InstrumentProgressStatus progressStatus,
 		AddressRequest tradeAddress,
 		Short qualityStatus,
 		Integer price,
 		Boolean hasAnomaly,
 		String description,
-		ElectricGuitarBrand brand,
-		ElectricGuitarModel model,
-		Short productionYear,
-		GuitarColor color,
-		List<String> hashtags
+		List<MultipartFile> images,
+		List<String> hashtags,
+		BassGuitarBrand brand,
+		BassGuitarPickUp pickUp,
+		BassGuitarPreAmplifier preAmplifier,
+		GuitarColor color
 	) {
 		super(title, progressStatus, tradeAddress, qualityStatus, price, hasAnomaly, description, images, hashtags);
 		this.brand = brand;
-		this.model = model;
-		this.productionYear = productionYear;
+		this.pickUp = pickUp;
+		this.preAmplifier = preAmplifier;
 		this.color = color;
 	}
 
-	public ElectricGuitar toEntity(User seller) {
-		return ElectricGuitar.create(
+	public BassGuitar toEntity(User seller) {
+		return BassGuitar.create(
 			seller,
 			getTitle(),
 			getProgressStatus(),
@@ -70,8 +69,8 @@ public class CreateNewElectricGuitarRequest extends CreateNewInstrumentRequest<E
 			getHasAnomaly(),
 			getDescription(),
 			getBrand(),
-			getModel(),
-			getProductionYear(),
+			getPickUp(),
+			getPreAmplifier(),
 			getColor()
 		);
 	}

@@ -14,8 +14,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ajou.hertz.common.auth.UserPrincipal;
+import com.ajou.hertz.domain.instrument.dto.BassGuitarDto;
 import com.ajou.hertz.domain.instrument.dto.ElectricGuitarDto;
+import com.ajou.hertz.domain.instrument.dto.request.CreateNewBassGuitarRequest;
 import com.ajou.hertz.domain.instrument.dto.request.CreateNewElectricGuitarRequest;
+import com.ajou.hertz.domain.instrument.dto.response.BassGuitarResponse;
 import com.ajou.hertz.domain.instrument.dto.response.ElectricGuitarResponse;
 import com.ajou.hertz.domain.instrument.service.InstrumentCommandService;
 
@@ -44,7 +47,7 @@ public class InstrumentControllerV1 {
 		headers = API_MINOR_VERSION_HEADER_NAME + "=" + 1,
 		consumes = MediaType.MULTIPART_FORM_DATA_VALUE
 	)
-	public ResponseEntity<ElectricGuitarResponse> createNewInstrumentV1_1(
+	public ResponseEntity<ElectricGuitarResponse> createNewElectricGuitarV1_1(
 		@AuthenticationPrincipal UserPrincipal userPrincipal,
 		@ParameterObject @ModelAttribute @Valid CreateNewElectricGuitarRequest createNewElectricGuitarRequest
 	) {
@@ -55,5 +58,30 @@ public class InstrumentControllerV1 {
 		return ResponseEntity
 			.created(URI.create("/instruments/" + electricGuitar.getId()))
 			.body(ElectricGuitarResponse.from(electricGuitar));
+	}
+
+	@Operation(
+		summary = "베이스 기타 매물 등록",
+		description = """
+			<p>베이스 기타 매물을 등록합니다.
+			<p>요청 시 <strong>multipart/form-data</strong> content-type으로 요쳥해야 합니다.
+			"""
+	)
+	@PostMapping(
+		value = "/bass-guitars",
+		headers = API_MINOR_VERSION_HEADER_NAME + "=" + 1,
+		consumes = MediaType.MULTIPART_FORM_DATA_VALUE
+	)
+	public ResponseEntity<BassGuitarResponse> createNewBassGuitarV1_1(
+		@AuthenticationPrincipal UserPrincipal userPrincipal,
+		@ParameterObject @ModelAttribute @Valid CreateNewBassGuitarRequest createNewBassGuitarRequest
+	) {
+		BassGuitarDto bassGuitar = instrumentCommandService.createNewBassGuitar(
+			userPrincipal.getUserId(),
+			createNewBassGuitarRequest
+		);
+		return ResponseEntity
+			.created(URI.create("/instruments/" + bassGuitar.getId()))
+			.body(BassGuitarResponse.from(bassGuitar));
 	}
 }
