@@ -34,6 +34,8 @@ import com.ajou.hertz.domain.instrument.constant.AcousticAndClassicGuitarWood;
 import com.ajou.hertz.domain.instrument.constant.BassGuitarBrand;
 import com.ajou.hertz.domain.instrument.constant.BassGuitarPickUp;
 import com.ajou.hertz.domain.instrument.constant.BassGuitarPreAmplifier;
+import com.ajou.hertz.domain.instrument.constant.EffectorFeature;
+import com.ajou.hertz.domain.instrument.constant.EffectorType;
 import com.ajou.hertz.domain.instrument.constant.ElectricGuitarBrand;
 import com.ajou.hertz.domain.instrument.constant.ElectricGuitarModel;
 import com.ajou.hertz.domain.instrument.constant.GuitarColor;
@@ -41,9 +43,11 @@ import com.ajou.hertz.domain.instrument.constant.InstrumentProgressStatus;
 import com.ajou.hertz.domain.instrument.controller.InstrumentControllerV1;
 import com.ajou.hertz.domain.instrument.dto.AcousticAndClassicGuitarDto;
 import com.ajou.hertz.domain.instrument.dto.BassGuitarDto;
+import com.ajou.hertz.domain.instrument.dto.EffectorDto;
 import com.ajou.hertz.domain.instrument.dto.ElectricGuitarDto;
 import com.ajou.hertz.domain.instrument.dto.request.CreateNewAcousticAndClassicGuitarRequest;
 import com.ajou.hertz.domain.instrument.dto.request.CreateNewBassGuitarRequest;
+import com.ajou.hertz.domain.instrument.dto.request.CreateNewEffectorRequest;
 import com.ajou.hertz.domain.instrument.dto.request.CreateNewElectricGuitarRequest;
 import com.ajou.hertz.domain.instrument.service.InstrumentCommandService;
 import com.ajou.hertz.domain.user.constant.Gender;
@@ -203,6 +207,48 @@ class InstrumentControllerV1Test {
 		verifyEveryMocksShouldHaveNoMoreInteractions();
 	}
 
+	@Test
+	void 이펙터_정보가_주어지면_주어진_정보로_이펙터_매물을_등록한다() throws Exception {
+		// given
+		long sellerId = 1L;
+		CreateNewEffectorRequest request = createEffectorRequest();
+		EffectorDto expectedResult = createEffectorDto(2L, sellerId);
+		given(instrumentCommandService.createNewEffector(
+			eq(sellerId), any(CreateNewEffectorRequest.class))
+		).willReturn(expectedResult);
+
+		// when & then
+		mvc.perform(
+				multipart("/v1/instruments/effectors")
+					.file("images[0]", request.getImages().get(0).getBytes())
+					.file("images[1]", request.getImages().get(1).getBytes())
+					.file("images[2]", request.getImages().get(2).getBytes())
+					.file("images[3]", request.getImages().get(3).getBytes())
+					.header(API_MINOR_VERSION_HEADER_NAME, 1)
+					.param("title", request.getTitle())
+					.param("progressStatus", request.getProgressStatus().name())
+					.param("tradeAddress.sido", request.getTradeAddress().getSido())
+					.param("tradeAddress.sgg", request.getTradeAddress().getSgg())
+					.param("tradeAddress.emd", request.getTradeAddress().getEmd())
+					.param("qualityStatus", String.valueOf(request.getQualityStatus()))
+					.param("price", String.valueOf(request.getPrice()))
+					.param("hasAnomaly", String.valueOf(request.getHasAnomaly()))
+					.param("description", request.getDescription())
+					.param("type", request.getType().name())
+					.param("feature", request.getFeature().name())
+					.with(user(createTestUser(sellerId)))
+			)
+			.andExpect(status().isCreated())
+			.andExpect(jsonPath("$.id").value(expectedResult.getId()))
+			.andExpect(jsonPath("$.sellerId").value(sellerId))
+			.andExpect(jsonPath("$.images").isArray())
+			.andExpect(jsonPath("$.images.size()").value(expectedResult.getImages().size()))
+			.andExpect(jsonPath("$.hashtags").isArray())
+			.andExpect(jsonPath("$.hashtags.size()").value(expectedResult.getHashtags().size()));
+		then(instrumentCommandService).should().createNewEffector(eq(sellerId), any(CreateNewEffectorRequest.class));
+		verifyEveryMocksShouldHaveNoMoreInteractions();
+	}
+
 	private void verifyEveryMocksShouldHaveNoMoreInteractions() {
 		then(instrumentCommandService).shouldHaveNoMoreInteractions();
 	}
@@ -330,6 +376,30 @@ class InstrumentControllerV1Test {
 		);
 	}
 
+	private EffectorDto createEffectorDto(long id, long sellerId) throws Exception {
+		Constructor<EffectorDto> effectorDtoConstructor = EffectorDto.class.getDeclaredConstructor(
+			Long.class, UserDto.class, String.class, InstrumentProgressStatus.class, AddressDto.class, Short.class,
+			Integer.class, Boolean.class, String.class, List.class, List.class,
+			EffectorType.class, EffectorFeature.class
+		);
+		effectorDtoConstructor.setAccessible(true);
+		return effectorDtoConstructor.newInstance(
+			id,
+			createUserDto(sellerId),
+			"Test electric guitar",
+			InstrumentProgressStatus.SELLING,
+			createAddressDto(),
+			(short)3,
+			550000,
+			true,
+			"description",
+			List.of(),
+			List.of(),
+			EffectorType.GUITAR,
+			EffectorFeature.ETC
+		);
+	}
+
 	private AddressRequest createAddressRequest() throws Exception {
 		Constructor<AddressRequest> addressRequestConstructor = AddressRequest.class.getDeclaredConstructor(
 			String.class, String.class, String.class
@@ -410,6 +480,29 @@ class InstrumentControllerV1Test {
 			AcousticAndClassicGuitarModel.JUMBO_BODY,
 			AcousticAndClassicGuitarWood.SOLID_WOOD,
 			AcousticAndClassicGuitarPickUp.MICROPHONE
+		);
+	}
+
+	private CreateNewEffectorRequest createEffectorRequest() throws Exception {
+		Constructor<CreateNewEffectorRequest> createNewEffectorRequestConstructor =
+			CreateNewEffectorRequest.class.getDeclaredConstructor(
+				String.class, InstrumentProgressStatus.class, AddressRequest.class, Short.class,
+				Integer.class, Boolean.class, String.class, List.class, List.class,
+				EffectorType.class, EffectorFeature.class
+			);
+		createNewEffectorRequestConstructor.setAccessible(true);
+		return createNewEffectorRequestConstructor.newInstance(
+			"Title",
+			InstrumentProgressStatus.SELLING,
+			createAddressRequest(),
+			(short)3,
+			550000,
+			true,
+			"description",
+			List.of(createMultipartFile(), createMultipartFile(), createMultipartFile(), createMultipartFile()),
+			List.of("Fender", "Guitar"),
+			EffectorType.GUITAR,
+			EffectorFeature.ETC
 		);
 	}
 }

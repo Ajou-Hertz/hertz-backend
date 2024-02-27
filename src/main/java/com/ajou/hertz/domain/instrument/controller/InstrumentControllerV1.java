@@ -16,12 +16,15 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ajou.hertz.common.auth.UserPrincipal;
 import com.ajou.hertz.domain.instrument.dto.AcousticAndClassicGuitarDto;
 import com.ajou.hertz.domain.instrument.dto.BassGuitarDto;
+import com.ajou.hertz.domain.instrument.dto.EffectorDto;
 import com.ajou.hertz.domain.instrument.dto.ElectricGuitarDto;
 import com.ajou.hertz.domain.instrument.dto.request.CreateNewAcousticAndClassicGuitarRequest;
 import com.ajou.hertz.domain.instrument.dto.request.CreateNewBassGuitarRequest;
+import com.ajou.hertz.domain.instrument.dto.request.CreateNewEffectorRequest;
 import com.ajou.hertz.domain.instrument.dto.request.CreateNewElectricGuitarRequest;
 import com.ajou.hertz.domain.instrument.dto.response.AcousticAndClassicGuitarResponse;
 import com.ajou.hertz.domain.instrument.dto.response.BassGuitarResponse;
+import com.ajou.hertz.domain.instrument.dto.response.EffectorResponse;
 import com.ajou.hertz.domain.instrument.dto.response.ElectricGuitarResponse;
 import com.ajou.hertz.domain.instrument.service.InstrumentCommandService;
 
@@ -111,5 +114,30 @@ public class InstrumentControllerV1 {
 		return ResponseEntity
 			.created(URI.create("/instruments/" + acousticAndClassicGuitar.getId()))
 			.body(AcousticAndClassicGuitarResponse.from(acousticAndClassicGuitar));
+	}
+
+	@Operation(
+		summary = "이펙터 매물 등록",
+		description = """
+			<p>이펙터 매물을 등록합니다.
+			<p>요청 시 <strong>multipart/form-data</strong> content-type으로 요쳥해야 합니다.
+			"""
+	)
+	@PostMapping(
+		value = "/effectors",
+		headers = API_MINOR_VERSION_HEADER_NAME + "=" + 1,
+		consumes = MediaType.MULTIPART_FORM_DATA_VALUE
+	)
+	public ResponseEntity<EffectorResponse> createNewEffectorV1_1(
+		@AuthenticationPrincipal UserPrincipal userPrincipal,
+		@ParameterObject @ModelAttribute @Valid CreateNewEffectorRequest createNewEffectorRequest
+	) {
+		EffectorDto effector = instrumentCommandService.createNewEffector(
+			userPrincipal.getUserId(),
+			createNewEffectorRequest
+		);
+		return ResponseEntity
+			.created(URI.create("/instruments/" + effector.getId()))
+			.body(EffectorResponse.from(effector));
 	}
 }
