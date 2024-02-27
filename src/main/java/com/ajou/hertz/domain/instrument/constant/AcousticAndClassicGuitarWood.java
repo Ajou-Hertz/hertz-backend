@@ -1,6 +1,6 @@
 package com.ajou.hertz.domain.instrument.constant;
 
-public enum AcousticAndClassGuitarWood {
+public enum AcousticAndClassicGuitarWood {
 
 	PLYWOOD,
 	SOLID_WOOD,
