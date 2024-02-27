@@ -182,10 +182,11 @@ class InstrumentControllerV1Test {
 	}
 
 	private CreateNewElectricGuitarRequest createElectricGuitarRequest() throws Exception {
-		Constructor<CreateNewElectricGuitarRequest> createNewElectricGuitarRequestConstructor = CreateNewElectricGuitarRequest.class
-			.getDeclaredConstructor(String.class, List.class, InstrumentProgressStatus.class, AddressRequest.class,
-				Short.class, Integer.class, Boolean.class, String.class, ElectricGuitarBrand.class,
-				ElectricGuitarModel.class, Short.class, GuitarColor.class, List.class);
+		Constructor<CreateNewElectricGuitarRequest> createNewElectricGuitarRequestConstructor = CreateNewElectricGuitarRequest.class.getDeclaredConstructor(
+			String.class, List.class, InstrumentProgressStatus.class, AddressRequest.class,
+			Short.class, Integer.class, Boolean.class, String.class, ElectricGuitarBrand.class,
+			ElectricGuitarModel.class, Short.class, GuitarColor.class, List.class
+		);
 		createNewElectricGuitarRequestConstructor.setAccessible(true);
 		return createNewElectricGuitarRequestConstructor.newInstance(
 			"Test electric guitar",

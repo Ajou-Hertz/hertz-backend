@@ -11,48 +11,63 @@ import com.ajou.hertz.domain.instrument.entity.ElectricGuitar;
 import com.ajou.hertz.domain.user.dto.UserDto;
 
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @Getter
-public class ElectricGuitarDto {
+public class ElectricGuitarDto extends InstrumentDto {
 
-	private Long id;
-	private UserDto seller;
-	private String title;
-	private InstrumentProgressStatus progressStatus;
-	private AddressDto tradeAddress;
-	private Short qualityStatus;
-	private Integer price;
-	private Boolean hasAnomaly;
-	private String description;
 	private ElectricGuitarBrand brand;
 	private ElectricGuitarModel model;
 	private Short productionYear;
 	private GuitarColor color;
-	private List<InstrumentImageDto> images;
-	private List<String> hashtags;
+
+	private ElectricGuitarDto(
+		Long id,
+		UserDto seller,
+		String title,
+		InstrumentProgressStatus progressStatus,
+		AddressDto tradeAddress,
+		Short qualityStatus,
+		Integer price,
+		Boolean hasAnomaly,
+		String description,
+		ElectricGuitarBrand brand,
+		ElectricGuitarModel model,
+		Short productionYear,
+		GuitarColor color,
+		List<InstrumentImageDto> images,
+		List<String> hashtags
+	) {
+		super(
+			id, seller, title, progressStatus, tradeAddress, qualityStatus,
+			price, hasAnomaly, description, images, hashtags
+		);
+		this.brand = brand;
+		this.model = model;
+		this.productionYear = productionYear;
+		this.color = color;
+	}
 
 	public static ElectricGuitarDto from(ElectricGuitar electricGuitar) {
+		InstrumentDto instrumentDto = InstrumentDto.from(electricGuitar);
 		return new ElectricGuitarDto(
-			electricGuitar.getId(),
-			UserDto.from(electricGuitar.getSeller()),
-			electricGuitar.getTitle(),
-			electricGuitar.getProgressStatus(),
-			AddressDto.from(electricGuitar.getTradeAddress()),
-			electricGuitar.getQualityStatus(),
-			electricGuitar.getPrice(),
-			electricGuitar.getHasAnomaly(),
-			electricGuitar.getDescription(),
+			instrumentDto.getId(),
+			instrumentDto.getSeller(),
+			instrumentDto.getTitle(),
+			instrumentDto.getProgressStatus(),
+			instrumentDto.getTradeAddress(),
+			instrumentDto.getQualityStatus(),
+			instrumentDto.getPrice(),
+			instrumentDto.getHasAnomaly(),
+			instrumentDto.getDescription(),
 			electricGuitar.getBrand(),
 			electricGuitar.getModel(),
 			electricGuitar.getProductionYear(),
 			electricGuitar.getColor(),
-			electricGuitar.getImages().toDtos(),
-			electricGuitar.getHashtags().toStrings()
+			instrumentDto.getImages(),
+			instrumentDto.getHashtags()
 		);
 	}
 }
