@@ -27,12 +27,17 @@ import com.ajou.hertz.common.auth.UserPrincipal;
 import com.ajou.hertz.common.dto.AddressDto;
 import com.ajou.hertz.common.dto.request.AddressRequest;
 import com.ajou.hertz.config.ControllerTestConfig;
+import com.ajou.hertz.domain.instrument.constant.BassGuitarBrand;
+import com.ajou.hertz.domain.instrument.constant.BassGuitarPickUp;
+import com.ajou.hertz.domain.instrument.constant.BassGuitarPreAmplifier;
 import com.ajou.hertz.domain.instrument.constant.ElectricGuitarBrand;
 import com.ajou.hertz.domain.instrument.constant.ElectricGuitarModel;
 import com.ajou.hertz.domain.instrument.constant.GuitarColor;
 import com.ajou.hertz.domain.instrument.constant.InstrumentProgressStatus;
 import com.ajou.hertz.domain.instrument.controller.InstrumentControllerV1;
+import com.ajou.hertz.domain.instrument.dto.BassGuitarDto;
 import com.ajou.hertz.domain.instrument.dto.ElectricGuitarDto;
+import com.ajou.hertz.domain.instrument.dto.request.CreateNewBassGuitarRequest;
 import com.ajou.hertz.domain.instrument.dto.request.CreateNewElectricGuitarRequest;
 import com.ajou.hertz.domain.instrument.service.InstrumentCommandService;
 import com.ajou.hertz.domain.user.constant.Gender;
@@ -97,6 +102,52 @@ class InstrumentControllerV1Test {
 		then(instrumentCommandService).should().createNewElectricGuitar(
 			eq(sellerId), any(CreateNewElectricGuitarRequest.class)
 		);
+		verifyEveryMocksShouldHaveNoMoreInteractions();
+	}
+
+	@Test
+	void 베이스_기타_정보가_주어지면_주어진_정보로_베이스_기타_매물을_등록한다() throws Exception {
+		// given
+		long sellerId = 1L;
+		CreateNewBassGuitarRequest bassGuitarRequest = createNewBassGuitarRequest();
+		BassGuitarDto expectedResult = createBassGuitarDto(2L, sellerId);
+		given(instrumentCommandService.createNewBassGuitar(
+			eq(sellerId), any(CreateNewBassGuitarRequest.class)
+		)).willReturn(expectedResult);
+
+		// when & then
+		mvc.perform(
+				multipart("/v1/instruments/bass-guitars")
+					.file("images[0]", bassGuitarRequest.getImages().get(0).getBytes())
+					.file("images[1]", bassGuitarRequest.getImages().get(1).getBytes())
+					.file("images[2]", bassGuitarRequest.getImages().get(2).getBytes())
+					.file("images[3]", bassGuitarRequest.getImages().get(3).getBytes())
+					.header(API_MINOR_VERSION_HEADER_NAME, 1)
+					.param("title", bassGuitarRequest.getTitle())
+					.param("progressStatus", bassGuitarRequest.getProgressStatus().name())
+					.param("tradeAddress.sido", bassGuitarRequest.getTradeAddress().getSido())
+					.param("tradeAddress.sgg", bassGuitarRequest.getTradeAddress().getSgg())
+					.param("tradeAddress.emd", bassGuitarRequest.getTradeAddress().getEmd())
+					.param("qualityStatus", String.valueOf(bassGuitarRequest.getQualityStatus()))
+					.param("price", String.valueOf(bassGuitarRequest.getPrice()))
+					.param("hasAnomaly", String.valueOf(bassGuitarRequest.getHasAnomaly()))
+					.param("description", bassGuitarRequest.getDescription())
+					.param("brand", bassGuitarRequest.getBrand().name())
+					.param("pickUp", bassGuitarRequest.getPickUp().name())
+					.param("preAmplifier", bassGuitarRequest.getPreAmplifier().name())
+					.param("color", bassGuitarRequest.getColor().name())
+					.with(user(createTestUser(sellerId)))
+			)
+			.andExpect(status().isCreated())
+			.andExpect(jsonPath("$.id").value(expectedResult.getId()))
+			.andExpect(jsonPath("$.sellerId").value(sellerId))
+			.andExpect(jsonPath("$.images").isArray())
+			.andExpect(jsonPath("$.images.size()").value(expectedResult.getImages().size()))
+			.andExpect(jsonPath("$.hashtags").isArray())
+			.andExpect(jsonPath("$.hashtags.size()").value(expectedResult.getHashtags().size()));
+		then(instrumentCommandService)
+			.should()
+			.createNewBassGuitar(eq(sellerId), any(CreateNewBassGuitarRequest.class));
 		verifyEveryMocksShouldHaveNoMoreInteractions();
 	}
 
@@ -173,6 +224,32 @@ class InstrumentControllerV1Test {
 		);
 	}
 
+	private BassGuitarDto createBassGuitarDto(long id, long sellerId) throws Exception {
+		Constructor<BassGuitarDto> bassGuitarDtoConstructor = BassGuitarDto.class.getDeclaredConstructor(
+			Long.class, UserDto.class, String.class, InstrumentProgressStatus.class, AddressDto.class, Short.class,
+			Integer.class, Boolean.class, String.class, List.class, List.class,
+			BassGuitarBrand.class, BassGuitarPickUp.class, BassGuitarPreAmplifier.class, GuitarColor.class
+		);
+		bassGuitarDtoConstructor.setAccessible(true);
+		return bassGuitarDtoConstructor.newInstance(
+			id,
+			createUserDto(sellerId),
+			"Test electric guitar",
+			InstrumentProgressStatus.SELLING,
+			createAddressDto(),
+			(short)3,
+			550000,
+			true,
+			"description",
+			List.of(),
+			List.of(),
+			BassGuitarBrand.FENDER,
+			BassGuitarPickUp.JAZZ,
+			BassGuitarPreAmplifier.ACTIVE,
+			GuitarColor.RED
+		);
+	}
+
 	private AddressRequest createAddressRequest() throws Exception {
 		Constructor<AddressRequest> addressRequestConstructor = AddressRequest.class.getDeclaredConstructor(
 			String.class, String.class, String.class
@@ -202,6 +279,31 @@ class InstrumentControllerV1Test {
 			(short)2014,
 			GuitarColor.RED,
 			List.of("Fender", "Guitar")
+		);
+	}
+
+	private CreateNewBassGuitarRequest createNewBassGuitarRequest() throws Exception {
+		Constructor<CreateNewBassGuitarRequest> createNewBassGuitarRequestConstructor =
+			CreateNewBassGuitarRequest.class.getDeclaredConstructor(
+				String.class, InstrumentProgressStatus.class, AddressRequest.class, Short.class,
+				Integer.class, Boolean.class, String.class, List.class, List.class,
+				BassGuitarBrand.class, BassGuitarPickUp.class, BassGuitarPreAmplifier.class, GuitarColor.class
+			);
+		createNewBassGuitarRequestConstructor.setAccessible(true);
+		return createNewBassGuitarRequestConstructor.newInstance(
+			"Title",
+			InstrumentProgressStatus.SELLING,
+			createAddressRequest(),
+			(short)3,
+			550000,
+			true,
+			"description",
+			List.of(createMultipartFile(), createMultipartFile(), createMultipartFile(), createMultipartFile()),
+			List.of("Fender", "Guitar"),
+			BassGuitarBrand.FENDER,
+			BassGuitarPickUp.JAZZ,
+			BassGuitarPreAmplifier.ACTIVE,
+			GuitarColor.RED
 		);
 	}
 }

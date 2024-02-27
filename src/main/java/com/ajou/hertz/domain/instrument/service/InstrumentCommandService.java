@@ -7,9 +7,12 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.ajou.hertz.common.file.service.FileService;
+import com.ajou.hertz.domain.instrument.dto.BassGuitarDto;
 import com.ajou.hertz.domain.instrument.dto.ElectricGuitarDto;
+import com.ajou.hertz.domain.instrument.dto.request.CreateNewBassGuitarRequest;
 import com.ajou.hertz.domain.instrument.dto.request.CreateNewElectricGuitarRequest;
 import com.ajou.hertz.domain.instrument.dto.request.CreateNewInstrumentRequest;
+import com.ajou.hertz.domain.instrument.entity.BassGuitar;
 import com.ajou.hertz.domain.instrument.entity.ElectricGuitar;
 import com.ajou.hertz.domain.instrument.entity.Instrument;
 import com.ajou.hertz.domain.instrument.entity.InstrumentHashtag;
@@ -17,6 +20,7 @@ import com.ajou.hertz.domain.instrument.entity.InstrumentImage;
 import com.ajou.hertz.domain.instrument.repository.InstrumentHashtagRepository;
 import com.ajou.hertz.domain.instrument.repository.InstrumentImageRepository;
 import com.ajou.hertz.domain.instrument.repository.InstrumentRepository;
+import com.ajou.hertz.domain.instrument.strategy.BassGuitarCreationStrategy;
 import com.ajou.hertz.domain.instrument.strategy.ElectricGuitarCreationStrategy;
 import com.ajou.hertz.domain.instrument.strategy.InstrumentCreationStrategy;
 import com.ajou.hertz.domain.user.entity.User;
@@ -40,6 +44,11 @@ public class InstrumentCommandService {
 	public ElectricGuitarDto createNewElectricGuitar(Long sellerId, CreateNewElectricGuitarRequest request) {
 		ElectricGuitar electricGuitar = createNewInstrument(sellerId, request, new ElectricGuitarCreationStrategy());
 		return ElectricGuitarDto.from(electricGuitar);
+	}
+
+	public BassGuitarDto createNewBassGuitar(Long sellerId, CreateNewBassGuitarRequest request) {
+		BassGuitar bassGuitar = createNewInstrument(sellerId, request, new BassGuitarCreationStrategy());
+		return BassGuitarDto.from(bassGuitar);
 	}
 
 	private <T extends Instrument, U extends CreateNewInstrumentRequest<T>> T createNewInstrument(
