@@ -22,7 +22,7 @@ import lombok.Setter;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @Setter    // for multipart/form-data with @ModelAttribute
 @Getter
-public class CreateNewElectricGuitarRequest extends CreateNewInstrumentRequest {
+public class CreateNewElectricGuitarRequest extends CreateNewInstrumentRequest<ElectricGuitar> {
 
 	@NotNull
 	private ElectricGuitarBrand brand;

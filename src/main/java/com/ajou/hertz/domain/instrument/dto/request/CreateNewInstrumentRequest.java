@@ -7,6 +7,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.ajou.hertz.common.dto.request.AddressRequest;
 import com.ajou.hertz.domain.instrument.constant.InstrumentProgressStatus;
+import com.ajou.hertz.domain.instrument.entity.Instrument;
+import com.ajou.hertz.domain.user.entity.User;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Max;
@@ -24,7 +26,7 @@ import lombok.Setter;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Setter    // for multipart/form-data with @ModelAttribute
 @Getter
-public abstract class CreateNewInstrumentRequest {
+public abstract class CreateNewInstrumentRequest<T extends Instrument> {
 
 	@Schema(description = "제목", example = "펜더 로드원 텔레캐스터")
 	@NotBlank
@@ -62,4 +64,6 @@ public abstract class CreateNewInstrumentRequest {
 
 	@Schema(description = "해시태그(각 해시태그마다 최대 10글자)", example = "[\"펜더\", \"Fender\"]")
 	private List<@NotBlank @Length(max = 10) String> hashtags;
+
+	public abstract T toEntity(User seller);
 }
