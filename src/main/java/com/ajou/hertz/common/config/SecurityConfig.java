@@ -44,7 +44,10 @@ public class SecurityConfig {
 		"/v*/auth/kakao/login", POST,
 		"/v*/users", POST,
 		"/v*/users/existence", GET,
-		"/v*/users/email", GET
+		"/v*/users/email", GET,
+		"/v*/administrative-area/sido", GET,
+		"/v*/administrative-area/sido/sgg", GET,
+		"/v*/administrative-area/sido/sgg/emd", GET
 	);
 
 	@Bean
