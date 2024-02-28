@@ -10,12 +10,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ajou.hertz.domain.administrative_area.dto.AdministrativeAreaDto;
-import com.ajou.hertz.domain.administrative_area.dto.response.AdministrativeAreaEmdResponse;
-import com.ajou.hertz.domain.administrative_area.dto.response.AdministrativeAreaSggResponse;
-import com.ajou.hertz.domain.administrative_area.dto.response.AdministrativeAreaSidoResponse;
-import com.ajou.hertz.domain.administrative_area.entity.AdministrativeAreaEmd;
-import com.ajou.hertz.domain.administrative_area.entity.AdministrativeAreaSgg;
-import com.ajou.hertz.domain.administrative_area.entity.AdministrativeAreaSido;
+import com.ajou.hertz.domain.administrative_area.dto.response.AdministrativeAreaListResponse;
+import com.ajou.hertz.domain.administrative_area.dto.response.AdministrativeAreaResponse;
 import com.ajou.hertz.domain.administrative_area.repository.AdministrativeEmdRepository;
 import com.ajou.hertz.domain.administrative_area.repository.AdministrativeSggRepository;
 import com.ajou.hertz.domain.administrative_area.repository.AdministrativeSidoRepository;
@@ -36,33 +32,41 @@ public class AdministrativeAreaControllerV1 {
 
 	@Operation(summary = "행정구역 시도 조회", description = "행정구역 시도를 조회합니다.")
 	@GetMapping(value = "/sido", headers = API_MINOR_VERSION_HEADER_NAME + "=" + 1)
-	public AdministrativeAreaSidoResponse getSidoList() {
-		List<AdministrativeAreaSido> sidoEntities = administrativeSidoRepository.findAll();
-		List<AdministrativeAreaDto> dtos = sidoEntities.stream()
+	public AdministrativeAreaListResponse getSidoList() {
+		List<AdministrativeAreaResponse> sidoList = administrativeSidoRepository
+			.findAll()
+			.stream()
 			.map(AdministrativeAreaDto::from)
+			.map(AdministrativeAreaResponse::from)
 			.toList();
-		return new AdministrativeAreaSidoResponse(dtos);
+		return new AdministrativeAreaListResponse(sidoList);
 	}
 
 	@Operation(summary = "행정구역 시군구 조회", description = "행정구역 시군구를 조회합니다.")
 	@GetMapping(value = "/sgg", headers = API_MINOR_VERSION_HEADER_NAME + "=" + 1)
-	public AdministrativeAreaSggResponse getSggList(
-		@Parameter(description = "시도 id를 입력하면 됩니다", example = "1") @RequestParam Long sidoId) {
-		List<AdministrativeAreaSgg> sggEntities = administrativeSggRepository.findBySido_Id(sidoId);
-		List<AdministrativeAreaDto> dtos = sggEntities.stream()
+	public AdministrativeAreaListResponse getSggList(
+		@Parameter(description = "시도 id를 입력하면 됩니다", example = "1") @RequestParam Long sidoId
+	) {
+		List<AdministrativeAreaResponse> sggList = administrativeSggRepository
+			.findBySido_Id(sidoId)
+			.stream()
 			.map(AdministrativeAreaDto::from)
+			.map(AdministrativeAreaResponse::from)
 			.toList();
-		return new AdministrativeAreaSggResponse(dtos);
+		return new AdministrativeAreaListResponse(sggList);
 	}
 
 	@Operation(summary = "행정구역 읍면동 조회", description = "행정구역 읍면동을 조회합니다.")
 	@GetMapping(value = "/emd", headers = API_MINOR_VERSION_HEADER_NAME + "=" + 1)
-	public AdministrativeAreaEmdResponse getEmdList(
-		@Parameter(description = "시군구 id를 입력하면 됩니다", example = "1") @RequestParam Long sggId) {
-		List<AdministrativeAreaEmd> emdEntities = administrativeEmdRepository.findBySgg_Id(sggId);
-		List<AdministrativeAreaDto> dtos = emdEntities.stream()
+	public AdministrativeAreaListResponse getEmdList(
+		@Parameter(description = "시군구 id를 입력하면 됩니다", example = "1") @RequestParam Long sggId
+	) {
+		List<AdministrativeAreaResponse> emdList = administrativeEmdRepository
+			.findBySgg_Id(sggId)
+			.stream()
 			.map(AdministrativeAreaDto::from)
+			.map(AdministrativeAreaResponse::from)
 			.toList();
-		return new AdministrativeAreaEmdResponse(dtos);
+		return new AdministrativeAreaListResponse(emdList);
 	}
 }

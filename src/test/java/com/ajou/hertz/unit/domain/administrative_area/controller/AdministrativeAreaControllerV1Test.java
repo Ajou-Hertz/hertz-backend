@@ -57,9 +57,9 @@ public class AdministrativeAreaControllerV1Test {
 					.header(API_MINOR_VERSION_HEADER_NAME, 1)
 			)
 			.andExpect(status().isOk())
-			.andExpect(jsonPath("$.sidoList", hasSize(1)))
-			.andExpect(jsonPath("$.sidoList[0].id").value(expectedResult.get(0).getId()))
-			.andExpect(jsonPath("$.sidoList[0].name").value(expectedResult.get(0).getName()));
+			.andExpect(jsonPath("$.content", hasSize(1)))
+			.andExpect(jsonPath("$.content[0].id").value(expectedResult.get(0).getId()))
+			.andExpect(jsonPath("$.content[0].name").value(expectedResult.get(0).getName()));
 		then(administrativeSidoRepository).should().findAll();
 		verifyEveryMocksShouldHaveNoMoreInteractions();
 	}
@@ -77,9 +77,9 @@ public class AdministrativeAreaControllerV1Test {
 				.header(API_MINOR_VERSION_HEADER_NAME, 1)
 				.param("sidoId", "1"))
 			.andExpect(status().isOk())
-			.andExpect(jsonPath("$.sggList", hasSize(1)))
-			.andExpect(jsonPath("$.sggList[0].id", is(1)))
-			.andExpect(jsonPath("$.sggList[0].name", is("시군구")));
+			.andExpect(jsonPath("$.content", hasSize(1)))
+			.andExpect(jsonPath("$.content[0].id", is(1)))
+			.andExpect(jsonPath("$.content[0].name", is("시군구")));
 		then(administrativeSggRepository).should().findBySido_Id(1L);
 		verifyEveryMocksShouldHaveNoMoreInteractions();
 	}
@@ -98,9 +98,9 @@ public class AdministrativeAreaControllerV1Test {
 				.header(API_MINOR_VERSION_HEADER_NAME, 1)
 				.param("sggId", "1"))
 			.andExpect(status().isOk())
-			.andExpect(jsonPath("$.emdList", hasSize(1)))
-			.andExpect(jsonPath("$.emdList[0].id", is(1)))
-			.andExpect(jsonPath("$.emdList[0].name", is("읍면동")));
+			.andExpect(jsonPath("$.content", hasSize(1)))
+			.andExpect(jsonPath("$.content[0].id", is(1)))
+			.andExpect(jsonPath("$.content[0].name", is("읍면동")));
 		then(administrativeEmdRepository).should().findBySgg_Id(1L);
 		verifyEveryMocksShouldHaveNoMoreInteractions();
 	}
