@@ -11,12 +11,10 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 public class AdministrativeAreaEmd extends TimeTrackedBaseEntity {
@@ -31,5 +29,11 @@ public class AdministrativeAreaEmd extends TimeTrackedBaseEntity {
 
 	@Column(nullable = false)
 	private String name;
+
+	public AdministrativeAreaEmd(Long id, AdministrativeAreaSgg sgg, String name) {
+		this.id = id;
+		this.sgg = sgg;
+		this.name = name;
+	}
 
 }

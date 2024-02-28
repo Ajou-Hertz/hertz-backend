@@ -15,15 +15,15 @@ public class AdministrativeAreaDto {
 	private Long id;
 	private String name;
 
-	public static AdministrativeAreaDto fromSido(AdministrativeAreaSido sido) {
+	public static AdministrativeAreaDto from(AdministrativeAreaSido sido) {
 		return new AdministrativeAreaDto(sido.getId(), sido.getName());
 	}
 
-	public static AdministrativeAreaDto fromSgg(AdministrativeAreaSgg sgg) {
+	public static AdministrativeAreaDto from(AdministrativeAreaSgg sgg) {
 		return new AdministrativeAreaDto(sgg.getId(), sgg.getName());
 	}
 
-	public static AdministrativeAreaDto fromEmd(AdministrativeAreaEmd emd) {
+	public static AdministrativeAreaDto from(AdministrativeAreaEmd emd) {
 		return new AdministrativeAreaDto(emd.getId(), emd.getName());
 	}
 }

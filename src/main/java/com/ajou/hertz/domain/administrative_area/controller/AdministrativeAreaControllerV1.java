@@ -3,7 +3,6 @@ package com.ajou.hertz.domain.administrative_area.controller;
 import static com.ajou.hertz.common.constant.GlobalConstants.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,7 +27,7 @@ import lombok.RequiredArgsConstructor;
 
 @Tag(name = "행정구역 관련 API")
 @RestController
-@RequestMapping("/v1/administrative-area")
+@RequestMapping("/v1/administrative-areas")
 @RequiredArgsConstructor
 public class AdministrativeAreaControllerV1 {
 	private final AdministrativeSidoRepository administrativeSidoRepository;
@@ -36,37 +35,34 @@ public class AdministrativeAreaControllerV1 {
 	private final AdministrativeEmdRepository administrativeEmdRepository;
 
 	@Operation(summary = "행정구역 시도 조회", description = "행정구역 시도를 조회합니다.")
-
 	@GetMapping(value = "/sido", headers = API_MINOR_VERSION_HEADER_NAME + "=" + 1)
 	public AdministrativeAreaSidoResponse getSidoList() {
 		List<AdministrativeAreaSido> sidoEntities = administrativeSidoRepository.findAll();
 		List<AdministrativeAreaDto> dtos = sidoEntities.stream()
-			.map(AdministrativeAreaDto::fromSido)
-			.collect(Collectors.toList());
+			.map(AdministrativeAreaDto::from)
+			.toList();
 		return new AdministrativeAreaSidoResponse(dtos);
 	}
 
 	@Operation(summary = "행정구역 시군구 조회", description = "행정구역 시군구를 조회합니다.")
-
-	@GetMapping(value = "/sido/sgg", headers = API_MINOR_VERSION_HEADER_NAME + "=" + 1)
+	@GetMapping(value = "/sgg", headers = API_MINOR_VERSION_HEADER_NAME + "=" + 1)
 	public AdministrativeAreaSggResponse getSggList(
 		@Parameter(description = "시도 id를 입력하면 됩니다", example = "1") @RequestParam Long sidoId) {
 		List<AdministrativeAreaSgg> sggEntities = administrativeSggRepository.findBySido_Id(sidoId);
 		List<AdministrativeAreaDto> dtos = sggEntities.stream()
-			.map(AdministrativeAreaDto::fromSgg)
-			.collect(Collectors.toList());
+			.map(AdministrativeAreaDto::from)
+			.toList();
 		return new AdministrativeAreaSggResponse(dtos);
 	}
 
 	@Operation(summary = "행정구역 읍면동 조회", description = "행정구역 읍면동을 조회합니다.")
-
-	@GetMapping(value = "/sido/sgg/emd", headers = API_MINOR_VERSION_HEADER_NAME + "=" + 1)
+	@GetMapping(value = "/emd", headers = API_MINOR_VERSION_HEADER_NAME + "=" + 1)
 	public AdministrativeAreaEmdResponse getEmdList(
 		@Parameter(description = "시군구 id를 입력하면 됩니다", example = "1") @RequestParam Long sggId) {
 		List<AdministrativeAreaEmd> emdEntities = administrativeEmdRepository.findBySgg_Id(sggId);
 		List<AdministrativeAreaDto> dtos = emdEntities.stream()
-			.map(AdministrativeAreaDto::fromEmd)
-			.collect(Collectors.toList());
+			.map(AdministrativeAreaDto::from)
+			.toList();
 		return new AdministrativeAreaEmdResponse(dtos);
 	}
 }
