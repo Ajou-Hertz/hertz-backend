@@ -1,4 +1,4 @@
-package com.ajou.hertz.unit.domain.AdministrativeArea.controller;
+package com.ajou.hertz.unit.domain.administrative_area.controller;
 
 import static com.ajou.hertz.common.constant.GlobalConstants.*;
 import static org.hamcrest.Matchers.*;
