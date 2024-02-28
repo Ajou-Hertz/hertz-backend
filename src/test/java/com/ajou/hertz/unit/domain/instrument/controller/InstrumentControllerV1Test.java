@@ -34,6 +34,7 @@ import com.ajou.hertz.domain.instrument.constant.AcousticAndClassicGuitarWood;
 import com.ajou.hertz.domain.instrument.constant.AmplifierBrand;
 import com.ajou.hertz.domain.instrument.constant.AmplifierType;
 import com.ajou.hertz.domain.instrument.constant.AmplifierUsage;
+import com.ajou.hertz.domain.instrument.constant.AudioEquipmentType;
 import com.ajou.hertz.domain.instrument.constant.BassGuitarBrand;
 import com.ajou.hertz.domain.instrument.constant.BassGuitarPickUp;
 import com.ajou.hertz.domain.instrument.constant.BassGuitarPreAmplifier;
@@ -46,11 +47,13 @@ import com.ajou.hertz.domain.instrument.constant.InstrumentProgressStatus;
 import com.ajou.hertz.domain.instrument.controller.InstrumentControllerV1;
 import com.ajou.hertz.domain.instrument.dto.AcousticAndClassicGuitarDto;
 import com.ajou.hertz.domain.instrument.dto.AmplifierDto;
+import com.ajou.hertz.domain.instrument.dto.AudioEquipmentDto;
 import com.ajou.hertz.domain.instrument.dto.BassGuitarDto;
 import com.ajou.hertz.domain.instrument.dto.EffectorDto;
 import com.ajou.hertz.domain.instrument.dto.ElectricGuitarDto;
 import com.ajou.hertz.domain.instrument.dto.request.CreateNewAcousticAndClassicGuitarRequest;
 import com.ajou.hertz.domain.instrument.dto.request.CreateNewAmplifierRequest;
+import com.ajou.hertz.domain.instrument.dto.request.CreateNewAudioEquipmentRequest;
 import com.ajou.hertz.domain.instrument.dto.request.CreateNewBassGuitarRequest;
 import com.ajou.hertz.domain.instrument.dto.request.CreateNewEffectorRequest;
 import com.ajou.hertz.domain.instrument.dto.request.CreateNewElectricGuitarRequest;
@@ -297,6 +300,49 @@ class InstrumentControllerV1Test {
 		verifyEveryMocksShouldHaveNoMoreInteractions();
 	}
 
+	@Test
+	void 음향_장비_정보가_주어지면_주어진_정보로_음향_장비_매물을_등록한다() throws Exception {
+		// given
+		long sellerId = 1L;
+		CreateNewAudioEquipmentRequest request = createAudioEquipmentRequest();
+		AudioEquipmentDto expectedResult = createAudioEquipmentDto(2L, sellerId);
+		given(instrumentCommandService.createNewAudioEquipment(
+			eq(sellerId), any(CreateNewAudioEquipmentRequest.class))
+		).willReturn(expectedResult);
+
+		// when & then
+		mvc.perform(
+				multipart("/v1/instruments/audio-equipments")
+					.file("images[0]", request.getImages().get(0).getBytes())
+					.file("images[1]", request.getImages().get(1).getBytes())
+					.file("images[2]", request.getImages().get(2).getBytes())
+					.file("images[3]", request.getImages().get(3).getBytes())
+					.header(API_MINOR_VERSION_HEADER_NAME, 1)
+					.param("title", request.getTitle())
+					.param("progressStatus", request.getProgressStatus().name())
+					.param("tradeAddress.sido", request.getTradeAddress().getSido())
+					.param("tradeAddress.sgg", request.getTradeAddress().getSgg())
+					.param("tradeAddress.emd", request.getTradeAddress().getEmd())
+					.param("qualityStatus", String.valueOf(request.getQualityStatus()))
+					.param("price", String.valueOf(request.getPrice()))
+					.param("hasAnomaly", String.valueOf(request.getHasAnomaly()))
+					.param("description", request.getDescription())
+					.param("type", request.getType().name())
+					.with(user(createTestUser(sellerId)))
+			)
+			.andExpect(status().isCreated())
+			.andExpect(jsonPath("$.id").value(expectedResult.getId()))
+			.andExpect(jsonPath("$.sellerId").value(sellerId))
+			.andExpect(jsonPath("$.images").isArray())
+			.andExpect(jsonPath("$.images.size()").value(expectedResult.getImages().size()))
+			.andExpect(jsonPath("$.hashtags").isArray())
+			.andExpect(jsonPath("$.hashtags.size()").value(expectedResult.getHashtags().size()));
+		then(instrumentCommandService)
+			.should()
+			.createNewAudioEquipment(eq(sellerId), any(CreateNewAudioEquipmentRequest.class));
+		verifyEveryMocksShouldHaveNoMoreInteractions();
+	}
+
 	private void verifyEveryMocksShouldHaveNoMoreInteractions() {
 		then(instrumentCommandService).shouldHaveNoMoreInteractions();
 	}
@@ -473,6 +519,29 @@ class InstrumentControllerV1Test {
 		);
 	}
 
+	private AudioEquipmentDto createAudioEquipmentDto(long id, long sellerId) throws Exception {
+		Constructor<AudioEquipmentDto> audioEquipmentDtoConstructor = AudioEquipmentDto.class.getDeclaredConstructor(
+			Long.class, UserDto.class, String.class, InstrumentProgressStatus.class, AddressDto.class, Short.class,
+			Integer.class, Boolean.class, String.class, List.class, List.class,
+			AudioEquipmentType.class
+		);
+		audioEquipmentDtoConstructor.setAccessible(true);
+		return audioEquipmentDtoConstructor.newInstance(
+			id,
+			createUserDto(sellerId),
+			"Test electric guitar",
+			InstrumentProgressStatus.SELLING,
+			createAddressDto(),
+			(short)3,
+			550000,
+			true,
+			"description",
+			List.of(),
+			List.of(),
+			AudioEquipmentType.AUDIO_EQUIPMENT
+		);
+	}
+
 	private AddressRequest createAddressRequest() throws Exception {
 		Constructor<AddressRequest> addressRequestConstructor = AddressRequest.class.getDeclaredConstructor(
 			String.class, String.class, String.class
@@ -600,6 +669,28 @@ class InstrumentControllerV1Test {
 			AmplifierType.GUITAR,
 			AmplifierBrand.FENDER,
 			AmplifierUsage.HOME
+		);
+	}
+
+	private CreateNewAudioEquipmentRequest createAudioEquipmentRequest() throws Exception {
+		Constructor<CreateNewAudioEquipmentRequest> createNewAudioEquipmentRequestConstructor =
+			CreateNewAudioEquipmentRequest.class.getDeclaredConstructor(
+				String.class, InstrumentProgressStatus.class, AddressRequest.class, Short.class,
+				Integer.class, Boolean.class, String.class, List.class, List.class,
+				AudioEquipmentType.class
+			);
+		createNewAudioEquipmentRequestConstructor.setAccessible(true);
+		return createNewAudioEquipmentRequestConstructor.newInstance(
+			"Title",
+			InstrumentProgressStatus.SELLING,
+			createAddressRequest(),
+			(short)3,
+			550000,
+			true,
+			"description",
+			List.of(createMultipartFile(), createMultipartFile(), createMultipartFile(), createMultipartFile()),
+			List.of("Fender", "Guitar"),
+			AudioEquipmentType.AUDIO_EQUIPMENT
 		);
 	}
 }
