@@ -31,7 +31,7 @@ public class Amplifier extends Instrument {
 	private AmplifierBrand brand;
 
 	@Enumerated(EnumType.STRING)
-	@Column(nullable = false)
+	@Column(name = "amp_usage", nullable = false)
 	private AmplifierUsage usage;
 
 	private Amplifier(
