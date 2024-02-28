@@ -32,7 +32,7 @@ public class AdministrativeAreaControllerV1 {
 
 	@Operation(summary = "행정구역 시도 조회", description = "행정구역 시도를 조회합니다.")
 	@GetMapping(value = "/sido", headers = API_MINOR_VERSION_HEADER_NAME + "=" + 1)
-	public AdministrativeAreaListResponse getSidoList() {
+	public AdministrativeAreaListResponse getSidoListV1_1() {
 		List<AdministrativeAreaResponse> sidoList = administrativeSidoRepository
 			.findAll()
 			.stream()
@@ -44,7 +44,7 @@ public class AdministrativeAreaControllerV1 {
 
 	@Operation(summary = "행정구역 시군구 조회", description = "행정구역 시군구를 조회합니다.")
 	@GetMapping(value = "/sgg", headers = API_MINOR_VERSION_HEADER_NAME + "=" + 1)
-	public AdministrativeAreaListResponse getSggList(
+	public AdministrativeAreaListResponse getSggListV1_1(
 		@Parameter(description = "시도 id를 입력하면 됩니다", example = "1") @RequestParam Long sidoId
 	) {
 		List<AdministrativeAreaResponse> sggList = administrativeSggRepository
@@ -58,7 +58,7 @@ public class AdministrativeAreaControllerV1 {
 
 	@Operation(summary = "행정구역 읍면동 조회", description = "행정구역 읍면동을 조회합니다.")
 	@GetMapping(value = "/emd", headers = API_MINOR_VERSION_HEADER_NAME + "=" + 1)
-	public AdministrativeAreaListResponse getEmdList(
+	public AdministrativeAreaListResponse getEmdListV1_1(
 		@Parameter(description = "시군구 id를 입력하면 됩니다", example = "1") @RequestParam Long sggId
 	) {
 		List<AdministrativeAreaResponse> emdList = administrativeEmdRepository
