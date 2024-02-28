@@ -15,14 +15,17 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ajou.hertz.common.auth.UserPrincipal;
 import com.ajou.hertz.domain.instrument.dto.AcousticAndClassicGuitarDto;
+import com.ajou.hertz.domain.instrument.dto.AmplifierDto;
 import com.ajou.hertz.domain.instrument.dto.BassGuitarDto;
 import com.ajou.hertz.domain.instrument.dto.EffectorDto;
 import com.ajou.hertz.domain.instrument.dto.ElectricGuitarDto;
 import com.ajou.hertz.domain.instrument.dto.request.CreateNewAcousticAndClassicGuitarRequest;
+import com.ajou.hertz.domain.instrument.dto.request.CreateNewAmplifierRequest;
 import com.ajou.hertz.domain.instrument.dto.request.CreateNewBassGuitarRequest;
 import com.ajou.hertz.domain.instrument.dto.request.CreateNewEffectorRequest;
 import com.ajou.hertz.domain.instrument.dto.request.CreateNewElectricGuitarRequest;
 import com.ajou.hertz.domain.instrument.dto.response.AcousticAndClassicGuitarResponse;
+import com.ajou.hertz.domain.instrument.dto.response.AmplifierResponse;
 import com.ajou.hertz.domain.instrument.dto.response.BassGuitarResponse;
 import com.ajou.hertz.domain.instrument.dto.response.EffectorResponse;
 import com.ajou.hertz.domain.instrument.dto.response.ElectricGuitarResponse;
@@ -139,5 +142,30 @@ public class InstrumentControllerV1 {
 		return ResponseEntity
 			.created(URI.create("/instruments/" + effector.getId()))
 			.body(EffectorResponse.from(effector));
+	}
+
+	@Operation(
+		summary = "앰프 매물 등록",
+		description = """
+			<p>앰프 매물을 등록합니다.
+			<p>요청 시 <strong>multipart/form-data</strong> content-type으로 요쳥해야 합니다.
+			"""
+	)
+	@PostMapping(
+		value = "/amplifiers",
+		headers = API_MINOR_VERSION_HEADER_NAME + "=" + 1,
+		consumes = MediaType.MULTIPART_FORM_DATA_VALUE
+	)
+	public ResponseEntity<AmplifierResponse> createNewAmplifierV1_1(
+		@AuthenticationPrincipal UserPrincipal userPrincipal,
+		@ParameterObject @ModelAttribute @Valid CreateNewAmplifierRequest createNewAmplifierRequest
+	) {
+		AmplifierDto amplifier = instrumentCommandService.createNewAmplifier(
+			userPrincipal.getUserId(),
+			createNewAmplifierRequest
+		);
+		return ResponseEntity
+			.created(URI.create("/instruments/" + amplifier.getId()))
+			.body(AmplifierResponse.from(amplifier));
 	}
 }

@@ -26,6 +26,9 @@ import com.ajou.hertz.domain.instrument.constant.AcousticAndClassicGuitarBrand;
 import com.ajou.hertz.domain.instrument.constant.AcousticAndClassicGuitarModel;
 import com.ajou.hertz.domain.instrument.constant.AcousticAndClassicGuitarPickUp;
 import com.ajou.hertz.domain.instrument.constant.AcousticAndClassicGuitarWood;
+import com.ajou.hertz.domain.instrument.constant.AmplifierBrand;
+import com.ajou.hertz.domain.instrument.constant.AmplifierType;
+import com.ajou.hertz.domain.instrument.constant.AmplifierUsage;
 import com.ajou.hertz.domain.instrument.constant.BassGuitarBrand;
 import com.ajou.hertz.domain.instrument.constant.BassGuitarPickUp;
 import com.ajou.hertz.domain.instrument.constant.BassGuitarPreAmplifier;
@@ -36,14 +39,17 @@ import com.ajou.hertz.domain.instrument.constant.ElectricGuitarModel;
 import com.ajou.hertz.domain.instrument.constant.GuitarColor;
 import com.ajou.hertz.domain.instrument.constant.InstrumentProgressStatus;
 import com.ajou.hertz.domain.instrument.dto.AcousticAndClassicGuitarDto;
+import com.ajou.hertz.domain.instrument.dto.AmplifierDto;
 import com.ajou.hertz.domain.instrument.dto.BassGuitarDto;
 import com.ajou.hertz.domain.instrument.dto.EffectorDto;
 import com.ajou.hertz.domain.instrument.dto.ElectricGuitarDto;
 import com.ajou.hertz.domain.instrument.dto.request.CreateNewAcousticAndClassicGuitarRequest;
+import com.ajou.hertz.domain.instrument.dto.request.CreateNewAmplifierRequest;
 import com.ajou.hertz.domain.instrument.dto.request.CreateNewBassGuitarRequest;
 import com.ajou.hertz.domain.instrument.dto.request.CreateNewEffectorRequest;
 import com.ajou.hertz.domain.instrument.dto.request.CreateNewElectricGuitarRequest;
 import com.ajou.hertz.domain.instrument.entity.AcousticAndClassicGuitar;
+import com.ajou.hertz.domain.instrument.entity.Amplifier;
 import com.ajou.hertz.domain.instrument.entity.BassGuitar;
 import com.ajou.hertz.domain.instrument.entity.Effector;
 import com.ajou.hertz.domain.instrument.entity.ElectricGuitar;
@@ -223,6 +229,41 @@ class InstrumentCommandServiceTest {
 		assertThat(result.getHashtags()).hasSize(instrumentHashtags.size());
 	}
 
+	@Test
+	void 앰프_정보가_주어지면_주어진_정보로_앰프_매물을_등록한다() throws Exception {
+		// given
+		long sellerId = 1L;
+		CreateNewAmplifierRequest amplifierRequest = createAmplifierRequest();
+		User seller = createUser(1L);
+		Amplifier amplifier = createAmplifier(2L, seller);
+		List<InstrumentImage> instrumentImages = List.of(createInstrumentImage(3L, amplifier));
+		List<InstrumentHashtag> instrumentHashtags = List.of(createInstrumentHashtag(4L, amplifier));
+		given(userQueryService.getById(sellerId)).willReturn(seller);
+		given(instrumentRepository.save(any(Instrument.class))).willReturn(amplifier);
+		given(fileService.uploadFiles(eq(amplifierRequest.getImages()), anyString()))
+			.willReturn(List.of(createFileDto()));
+		given(instrumentImageRepository.saveAll(ArgumentMatchers.<List<InstrumentImage>>any()))
+			.willReturn(instrumentImages);
+		given(instrumentHashtagRepository.saveAll(ArgumentMatchers.<List<InstrumentHashtag>>any()))
+			.willReturn(instrumentHashtags);
+
+		// when
+		AmplifierDto result = sut.createNewAmplifier(sellerId, amplifierRequest);
+
+		// then
+		then(userQueryService).should().getById(sellerId);
+		then(instrumentRepository).should().save(any(Instrument.class));
+		then(fileService).should().uploadFiles(eq(amplifierRequest.getImages()), anyString());
+		then(instrumentImageRepository).should().saveAll(ArgumentMatchers.<List<InstrumentImage>>any());
+		then(instrumentHashtagRepository).should().saveAll(ArgumentMatchers.<List<InstrumentHashtag>>any());
+		verifyEveryMocksShouldHaveNoMoreInteractions();
+		assertThat(result)
+			.hasFieldOrPropertyWithValue("id", amplifier.getId())
+			.hasFieldOrPropertyWithValue("seller.id", seller.getId());
+		assertThat(result.getImages()).hasSize(instrumentImages.size());
+		assertThat(result.getHashtags()).hasSize(instrumentHashtags.size());
+	}
+
 	private void verifyEveryMocksShouldHaveNoMoreInteractions() {
 		then(userQueryService).shouldHaveNoMoreInteractions();
 		then(fileService).shouldHaveNoMoreInteractions();
@@ -382,6 +423,29 @@ class InstrumentCommandServiceTest {
 		);
 	}
 
+	private Amplifier createAmplifier(long id, User seller) throws Exception {
+		Constructor<Amplifier> amplifierConstructor = Amplifier.class.getDeclaredConstructor(
+			Long.class, User.class, String.class, InstrumentProgressStatus.class, Address.class,
+			Short.class, Integer.class, Boolean.class, String.class,
+			AmplifierType.class, AmplifierBrand.class, AmplifierUsage.class
+		);
+		amplifierConstructor.setAccessible(true);
+		return amplifierConstructor.newInstance(
+			id,
+			seller,
+			"Title",
+			InstrumentProgressStatus.SELLING,
+			createAddress(),
+			(short)3,
+			550000,
+			true,
+			"description",
+			AmplifierType.GUITAR,
+			AmplifierBrand.FENDER,
+			AmplifierUsage.HOME
+		);
+	}
+
 	private FileDto createFileDto() throws Exception {
 		Constructor<FileDto> fileDtoConstructor = FileDto.class.getDeclaredConstructor(
 			String.class, String.class, String.class
@@ -494,6 +558,30 @@ class InstrumentCommandServiceTest {
 			List.of("Fender", "Guitar"),
 			EffectorType.GUITAR,
 			EffectorFeature.ETC
+		);
+	}
+
+	private CreateNewAmplifierRequest createAmplifierRequest() throws Exception {
+		Constructor<CreateNewAmplifierRequest> createNewAmplifierRequestConstructor =
+			CreateNewAmplifierRequest.class.getDeclaredConstructor(
+				String.class, InstrumentProgressStatus.class, AddressRequest.class, Short.class,
+				Integer.class, Boolean.class, String.class, List.class, List.class,
+				AmplifierType.class, AmplifierBrand.class, AmplifierUsage.class
+			);
+		createNewAmplifierRequestConstructor.setAccessible(true);
+		return createNewAmplifierRequestConstructor.newInstance(
+			"Title",
+			InstrumentProgressStatus.SELLING,
+			createAddressRequest(),
+			(short)3,
+			550000,
+			true,
+			"description",
+			List.of(createMultipartFile()),
+			List.of("Fender", "Guitar"),
+			AmplifierType.GUITAR,
+			AmplifierBrand.FENDER,
+			AmplifierUsage.HOME
 		);
 	}
 }
