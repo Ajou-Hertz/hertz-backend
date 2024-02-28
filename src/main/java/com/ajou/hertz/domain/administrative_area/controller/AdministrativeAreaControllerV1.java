@@ -48,7 +48,7 @@ public class AdministrativeAreaControllerV1 {
 		@Parameter(description = "시도 id를 입력하면 됩니다", example = "1") @RequestParam Long sidoId
 	) {
 		List<AdministrativeAreaResponse> sggList = administrativeSggRepository
-			.findBySido_Id(sidoId)
+			.findAllBySido_Id(sidoId)
 			.stream()
 			.map(AdministrativeAreaDto::from)
 			.map(AdministrativeAreaResponse::from)
@@ -62,7 +62,7 @@ public class AdministrativeAreaControllerV1 {
 		@Parameter(description = "시군구 id를 입력하면 됩니다", example = "1") @RequestParam Long sggId
 	) {
 		List<AdministrativeAreaResponse> emdList = administrativeEmdRepository
-			.findBySgg_Id(sggId)
+			.findAllBySgg_Id(sggId)
 			.stream()
 			.map(AdministrativeAreaDto::from)
 			.map(AdministrativeAreaResponse::from)

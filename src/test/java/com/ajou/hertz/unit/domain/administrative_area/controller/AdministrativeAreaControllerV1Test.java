@@ -71,7 +71,7 @@ public class AdministrativeAreaControllerV1Test {
 			createSgg(2L, sido, "강남구"),
 			createSgg(3L, sido, "서초구")
 		);
-		given(administrativeSggRepository.findBySido_Id(sido.getId())).willReturn(expectedResult);
+		given(administrativeSggRepository.findAllBySido_Id(sido.getId())).willReturn(expectedResult);
 
 		// when & then
 		mvc.perform(
@@ -86,7 +86,7 @@ public class AdministrativeAreaControllerV1Test {
 			.andExpect(jsonPath("$.content[0].name").value(expectedResult.get(0).getName()))
 			.andExpect(jsonPath("$.content[1].id").value(expectedResult.get(1).getId()))
 			.andExpect(jsonPath("$.content[1].name").value(expectedResult.get(1).getName()));
-		then(administrativeSggRepository).should().findBySido_Id(1L);
+		then(administrativeSggRepository).should().findAllBySido_Id(1L);
 		verifyEveryMocksShouldHaveNoMoreInteractions();
 	}
 
@@ -99,7 +99,7 @@ public class AdministrativeAreaControllerV1Test {
 			createEmd(3L, sgg, "청담동"),
 			createEmd(4L, sgg, "신사동")
 		);
-		given(administrativeEmdRepository.findBySgg_Id(sgg.getId())).willReturn(expectedResult);
+		given(administrativeEmdRepository.findAllBySgg_Id(sgg.getId())).willReturn(expectedResult);
 
 		// when & then
 		mvc.perform(
@@ -114,7 +114,7 @@ public class AdministrativeAreaControllerV1Test {
 			.andExpect(jsonPath("$.content[0].name").value(expectedResult.get(0).getName()))
 			.andExpect(jsonPath("$.content[1].id").value(expectedResult.get(1).getId()))
 			.andExpect(jsonPath("$.content[1].name").value(expectedResult.get(1).getName()));
-		then(administrativeEmdRepository).should().findBySgg_Id(sgg.getId());
+		then(administrativeEmdRepository).should().findAllBySgg_Id(sgg.getId());
 		verifyEveryMocksShouldHaveNoMoreInteractions();
 	}
 

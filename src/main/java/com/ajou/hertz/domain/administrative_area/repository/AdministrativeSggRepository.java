@@ -7,5 +7,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import com.ajou.hertz.domain.administrative_area.entity.AdministrativeAreaSgg;
 
 public interface AdministrativeSggRepository extends JpaRepository<AdministrativeAreaSgg, Long> {
-	List<AdministrativeAreaSgg> findBySido_Id(Long sidoId);
+	List<AdministrativeAreaSgg> findAllBySido_Id(Long sidoId);
 }
