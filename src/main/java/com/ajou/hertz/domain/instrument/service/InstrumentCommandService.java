@@ -8,14 +8,23 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.ajou.hertz.common.file.service.FileService;
 import com.ajou.hertz.domain.instrument.dto.AcousticAndClassicGuitarDto;
+import com.ajou.hertz.domain.instrument.dto.AmplifierDto;
+import com.ajou.hertz.domain.instrument.dto.AudioEquipmentDto;
 import com.ajou.hertz.domain.instrument.dto.BassGuitarDto;
+import com.ajou.hertz.domain.instrument.dto.EffectorDto;
 import com.ajou.hertz.domain.instrument.dto.ElectricGuitarDto;
 import com.ajou.hertz.domain.instrument.dto.request.CreateNewAcousticAndClassicGuitarRequest;
+import com.ajou.hertz.domain.instrument.dto.request.CreateNewAmplifierRequest;
+import com.ajou.hertz.domain.instrument.dto.request.CreateNewAudioEquipmentRequest;
 import com.ajou.hertz.domain.instrument.dto.request.CreateNewBassGuitarRequest;
+import com.ajou.hertz.domain.instrument.dto.request.CreateNewEffectorRequest;
 import com.ajou.hertz.domain.instrument.dto.request.CreateNewElectricGuitarRequest;
 import com.ajou.hertz.domain.instrument.dto.request.CreateNewInstrumentRequest;
 import com.ajou.hertz.domain.instrument.entity.AcousticAndClassicGuitar;
+import com.ajou.hertz.domain.instrument.entity.Amplifier;
+import com.ajou.hertz.domain.instrument.entity.AudioEquipment;
 import com.ajou.hertz.domain.instrument.entity.BassGuitar;
+import com.ajou.hertz.domain.instrument.entity.Effector;
 import com.ajou.hertz.domain.instrument.entity.ElectricGuitar;
 import com.ajou.hertz.domain.instrument.entity.Instrument;
 import com.ajou.hertz.domain.instrument.entity.InstrumentHashtag;
@@ -24,7 +33,10 @@ import com.ajou.hertz.domain.instrument.repository.InstrumentHashtagRepository;
 import com.ajou.hertz.domain.instrument.repository.InstrumentImageRepository;
 import com.ajou.hertz.domain.instrument.repository.InstrumentRepository;
 import com.ajou.hertz.domain.instrument.strategy.AcousticAndClassicGuitarCreationStrategy;
+import com.ajou.hertz.domain.instrument.strategy.AmplifierCreationStrategy;
+import com.ajou.hertz.domain.instrument.strategy.AudioEquipmentCreationStrategy;
 import com.ajou.hertz.domain.instrument.strategy.BassGuitarCreationStrategy;
+import com.ajou.hertz.domain.instrument.strategy.EffectorCreationStrategy;
 import com.ajou.hertz.domain.instrument.strategy.ElectricGuitarCreationStrategy;
 import com.ajou.hertz.domain.instrument.strategy.InstrumentCreationStrategy;
 import com.ajou.hertz.domain.user.entity.User;
@@ -86,6 +98,42 @@ public class InstrumentCommandService {
 			new AcousticAndClassicGuitarCreationStrategy()
 		);
 		return AcousticAndClassicGuitarDto.from(acousticAndClassicGuitar);
+	}
+
+	/**
+	 * 신규 이펙터 매물을 생성 및 저장한다.
+	 *
+	 * @param sellerId 악기 판매자의 id
+	 * @param request  판매하고자 하는 이펙터의 정보
+	 * @return 생성된 이펙터 정보가 담긴 DTO
+	 */
+	public EffectorDto createNewEffector(Long sellerId, CreateNewEffectorRequest request) {
+		Effector effector = createNewInstrument(sellerId, request, new EffectorCreationStrategy());
+		return EffectorDto.from(effector);
+	}
+
+	/**
+	 * 신규 앰프 매물을 생성 및 저장한다.
+	 *
+	 * @param sellerId 악기 판매자의 id
+	 * @param request  판매하고자 하는 앰프의 정보
+	 * @return 생성된 앰프 정보가 담긴 DTO
+	 */
+	public AmplifierDto createNewAmplifier(Long sellerId, CreateNewAmplifierRequest request) {
+		Amplifier amplifier = createNewInstrument(sellerId, request, new AmplifierCreationStrategy());
+		return AmplifierDto.from(amplifier);
+	}
+
+	/**
+	 * 신규 음향 장비 매물을 생성 및 저장한다.
+	 *
+	 * @param sellerId 악기 판매자의 id
+	 * @param request  판매하고자 하는 음향 장비의 정보
+	 * @return 생성된 음향 장비 정보가 담긴 DTO
+	 */
+	public AudioEquipmentDto createNewAudioEquipment(Long sellerId, CreateNewAudioEquipmentRequest request) {
+		AudioEquipment audioEquipment = createNewInstrument(sellerId, request, new AudioEquipmentCreationStrategy());
+		return AudioEquipmentDto.from(audioEquipment);
 	}
 
 	/**

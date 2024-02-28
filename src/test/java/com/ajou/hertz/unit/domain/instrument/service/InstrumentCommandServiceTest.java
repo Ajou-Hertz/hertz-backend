@@ -26,21 +26,36 @@ import com.ajou.hertz.domain.instrument.constant.AcousticAndClassicGuitarBrand;
 import com.ajou.hertz.domain.instrument.constant.AcousticAndClassicGuitarModel;
 import com.ajou.hertz.domain.instrument.constant.AcousticAndClassicGuitarPickUp;
 import com.ajou.hertz.domain.instrument.constant.AcousticAndClassicGuitarWood;
+import com.ajou.hertz.domain.instrument.constant.AmplifierBrand;
+import com.ajou.hertz.domain.instrument.constant.AmplifierType;
+import com.ajou.hertz.domain.instrument.constant.AmplifierUsage;
+import com.ajou.hertz.domain.instrument.constant.AudioEquipmentType;
 import com.ajou.hertz.domain.instrument.constant.BassGuitarBrand;
 import com.ajou.hertz.domain.instrument.constant.BassGuitarPickUp;
 import com.ajou.hertz.domain.instrument.constant.BassGuitarPreAmplifier;
+import com.ajou.hertz.domain.instrument.constant.EffectorFeature;
+import com.ajou.hertz.domain.instrument.constant.EffectorType;
 import com.ajou.hertz.domain.instrument.constant.ElectricGuitarBrand;
 import com.ajou.hertz.domain.instrument.constant.ElectricGuitarModel;
 import com.ajou.hertz.domain.instrument.constant.GuitarColor;
 import com.ajou.hertz.domain.instrument.constant.InstrumentProgressStatus;
 import com.ajou.hertz.domain.instrument.dto.AcousticAndClassicGuitarDto;
+import com.ajou.hertz.domain.instrument.dto.AmplifierDto;
+import com.ajou.hertz.domain.instrument.dto.AudioEquipmentDto;
 import com.ajou.hertz.domain.instrument.dto.BassGuitarDto;
+import com.ajou.hertz.domain.instrument.dto.EffectorDto;
 import com.ajou.hertz.domain.instrument.dto.ElectricGuitarDto;
 import com.ajou.hertz.domain.instrument.dto.request.CreateNewAcousticAndClassicGuitarRequest;
+import com.ajou.hertz.domain.instrument.dto.request.CreateNewAmplifierRequest;
+import com.ajou.hertz.domain.instrument.dto.request.CreateNewAudioEquipmentRequest;
 import com.ajou.hertz.domain.instrument.dto.request.CreateNewBassGuitarRequest;
+import com.ajou.hertz.domain.instrument.dto.request.CreateNewEffectorRequest;
 import com.ajou.hertz.domain.instrument.dto.request.CreateNewElectricGuitarRequest;
 import com.ajou.hertz.domain.instrument.entity.AcousticAndClassicGuitar;
+import com.ajou.hertz.domain.instrument.entity.Amplifier;
+import com.ajou.hertz.domain.instrument.entity.AudioEquipment;
 import com.ajou.hertz.domain.instrument.entity.BassGuitar;
+import com.ajou.hertz.domain.instrument.entity.Effector;
 import com.ajou.hertz.domain.instrument.entity.ElectricGuitar;
 import com.ajou.hertz.domain.instrument.entity.Instrument;
 import com.ajou.hertz.domain.instrument.entity.InstrumentHashtag;
@@ -183,6 +198,111 @@ class InstrumentCommandServiceTest {
 		assertThat(result.getHashtags()).hasSize(instrumentHashtags.size());
 	}
 
+	@Test
+	void 이펙터_정보가_주어지면_주어진_정보로_이펙터_매물을_등록한다() throws Exception {
+		// given
+		long sellerId = 1L;
+		CreateNewEffectorRequest effectorRequest = createEffectorRequest();
+		User seller = createUser(1L);
+		Effector effector = createEffector(2L, seller);
+		List<InstrumentImage> instrumentImages = List.of(createInstrumentImage(3L, effector));
+		List<InstrumentHashtag> instrumentHashtags = List.of(createInstrumentHashtag(4L, effector));
+		given(userQueryService.getById(sellerId)).willReturn(seller);
+		given(instrumentRepository.save(any(Instrument.class))).willReturn(effector);
+		given(fileService.uploadFiles(eq(effectorRequest.getImages()), anyString()))
+			.willReturn(List.of(createFileDto()));
+		given(instrumentImageRepository.saveAll(ArgumentMatchers.<List<InstrumentImage>>any()))
+			.willReturn(instrumentImages);
+		given(instrumentHashtagRepository.saveAll(ArgumentMatchers.<List<InstrumentHashtag>>any()))
+			.willReturn(instrumentHashtags);
+
+		// when
+		EffectorDto result = sut.createNewEffector(sellerId, effectorRequest);
+
+		// then
+		then(userQueryService).should().getById(sellerId);
+		then(instrumentRepository).should().save(any(Instrument.class));
+		then(fileService).should().uploadFiles(eq(effectorRequest.getImages()), anyString());
+		then(instrumentImageRepository).should().saveAll(ArgumentMatchers.<List<InstrumentImage>>any());
+		then(instrumentHashtagRepository).should().saveAll(ArgumentMatchers.<List<InstrumentHashtag>>any());
+		verifyEveryMocksShouldHaveNoMoreInteractions();
+		assertThat(result)
+			.hasFieldOrPropertyWithValue("id", effector.getId())
+			.hasFieldOrPropertyWithValue("seller.id", seller.getId());
+		assertThat(result.getImages()).hasSize(instrumentImages.size());
+		assertThat(result.getHashtags()).hasSize(instrumentHashtags.size());
+	}
+
+	@Test
+	void 앰프_정보가_주어지면_주어진_정보로_앰프_매물을_등록한다() throws Exception {
+		// given
+		long sellerId = 1L;
+		CreateNewAmplifierRequest amplifierRequest = createAmplifierRequest();
+		User seller = createUser(1L);
+		Amplifier amplifier = createAmplifier(2L, seller);
+		List<InstrumentImage> instrumentImages = List.of(createInstrumentImage(3L, amplifier));
+		List<InstrumentHashtag> instrumentHashtags = List.of(createInstrumentHashtag(4L, amplifier));
+		given(userQueryService.getById(sellerId)).willReturn(seller);
+		given(instrumentRepository.save(any(Instrument.class))).willReturn(amplifier);
+		given(fileService.uploadFiles(eq(amplifierRequest.getImages()), anyString()))
+			.willReturn(List.of(createFileDto()));
+		given(instrumentImageRepository.saveAll(ArgumentMatchers.<List<InstrumentImage>>any()))
+			.willReturn(instrumentImages);
+		given(instrumentHashtagRepository.saveAll(ArgumentMatchers.<List<InstrumentHashtag>>any()))
+			.willReturn(instrumentHashtags);
+
+		// when
+		AmplifierDto result = sut.createNewAmplifier(sellerId, amplifierRequest);
+
+		// then
+		then(userQueryService).should().getById(sellerId);
+		then(instrumentRepository).should().save(any(Instrument.class));
+		then(fileService).should().uploadFiles(eq(amplifierRequest.getImages()), anyString());
+		then(instrumentImageRepository).should().saveAll(ArgumentMatchers.<List<InstrumentImage>>any());
+		then(instrumentHashtagRepository).should().saveAll(ArgumentMatchers.<List<InstrumentHashtag>>any());
+		verifyEveryMocksShouldHaveNoMoreInteractions();
+		assertThat(result)
+			.hasFieldOrPropertyWithValue("id", amplifier.getId())
+			.hasFieldOrPropertyWithValue("seller.id", seller.getId());
+		assertThat(result.getImages()).hasSize(instrumentImages.size());
+		assertThat(result.getHashtags()).hasSize(instrumentHashtags.size());
+	}
+
+	@Test
+	void 음향_장비_정보가_주어지면_주어진_정보로_음향_장비_매물을_등록한다() throws Exception {
+		// given
+		long sellerId = 1L;
+		CreateNewAudioEquipmentRequest audioEquipmentRequest = createAudioEquipmentRequest();
+		User seller = createUser(1L);
+		AudioEquipment audioEquipment = createAudioEquipment(2L, seller);
+		List<InstrumentImage> instrumentImages = List.of(createInstrumentImage(3L, audioEquipment));
+		List<InstrumentHashtag> instrumentHashtags = List.of(createInstrumentHashtag(4L, audioEquipment));
+		given(userQueryService.getById(sellerId)).willReturn(seller);
+		given(instrumentRepository.save(any(Instrument.class))).willReturn(audioEquipment);
+		given(fileService.uploadFiles(eq(audioEquipmentRequest.getImages()), anyString()))
+			.willReturn(List.of(createFileDto()));
+		given(instrumentImageRepository.saveAll(ArgumentMatchers.<List<InstrumentImage>>any()))
+			.willReturn(instrumentImages);
+		given(instrumentHashtagRepository.saveAll(ArgumentMatchers.<List<InstrumentHashtag>>any()))
+			.willReturn(instrumentHashtags);
+
+		// when
+		AudioEquipmentDto result = sut.createNewAudioEquipment(sellerId, audioEquipmentRequest);
+
+		// then
+		then(userQueryService).should().getById(sellerId);
+		then(instrumentRepository).should().save(any(Instrument.class));
+		then(fileService).should().uploadFiles(eq(audioEquipmentRequest.getImages()), anyString());
+		then(instrumentImageRepository).should().saveAll(ArgumentMatchers.<List<InstrumentImage>>any());
+		then(instrumentHashtagRepository).should().saveAll(ArgumentMatchers.<List<InstrumentHashtag>>any());
+		verifyEveryMocksShouldHaveNoMoreInteractions();
+		assertThat(result)
+			.hasFieldOrPropertyWithValue("id", audioEquipment.getId())
+			.hasFieldOrPropertyWithValue("seller.id", seller.getId());
+		assertThat(result.getImages()).hasSize(instrumentImages.size());
+		assertThat(result.getHashtags()).hasSize(instrumentHashtags.size());
+	}
+
 	private void verifyEveryMocksShouldHaveNoMoreInteractions() {
 		then(userQueryService).shouldHaveNoMoreInteractions();
 		then(fileService).shouldHaveNoMoreInteractions();
@@ -320,6 +440,72 @@ class InstrumentCommandServiceTest {
 		);
 	}
 
+	private Effector createEffector(long id, User seller) throws Exception {
+		Constructor<Effector> effectorConstructor = Effector.class.getDeclaredConstructor(
+			Long.class, User.class, String.class, InstrumentProgressStatus.class, Address.class,
+			Short.class, Integer.class, Boolean.class, String.class,
+			EffectorType.class, EffectorFeature.class
+		);
+		effectorConstructor.setAccessible(true);
+		return effectorConstructor.newInstance(
+			id,
+			seller,
+			"Title",
+			InstrumentProgressStatus.SELLING,
+			createAddress(),
+			(short)3,
+			550000,
+			true,
+			"description",
+			EffectorType.GUITAR,
+			EffectorFeature.ETC
+		);
+	}
+
+	private Amplifier createAmplifier(long id, User seller) throws Exception {
+		Constructor<Amplifier> amplifierConstructor = Amplifier.class.getDeclaredConstructor(
+			Long.class, User.class, String.class, InstrumentProgressStatus.class, Address.class,
+			Short.class, Integer.class, Boolean.class, String.class,
+			AmplifierType.class, AmplifierBrand.class, AmplifierUsage.class
+		);
+		amplifierConstructor.setAccessible(true);
+		return amplifierConstructor.newInstance(
+			id,
+			seller,
+			"Title",
+			InstrumentProgressStatus.SELLING,
+			createAddress(),
+			(short)3,
+			550000,
+			true,
+			"description",
+			AmplifierType.GUITAR,
+			AmplifierBrand.FENDER,
+			AmplifierUsage.HOME
+		);
+	}
+
+	private AudioEquipment createAudioEquipment(long id, User seller) throws Exception {
+		Constructor<AudioEquipment> audioEquipmentConstructor = AudioEquipment.class.getDeclaredConstructor(
+			Long.class, User.class, String.class, InstrumentProgressStatus.class, Address.class,
+			Short.class, Integer.class, Boolean.class, String.class,
+			AudioEquipmentType.class
+		);
+		audioEquipmentConstructor.setAccessible(true);
+		return audioEquipmentConstructor.newInstance(
+			id,
+			seller,
+			"Title",
+			InstrumentProgressStatus.SELLING,
+			createAddress(),
+			(short)3,
+			550000,
+			true,
+			"description",
+			AudioEquipmentType.AUDIO_EQUIPMENT
+		);
+	}
+
 	private FileDto createFileDto() throws Exception {
 		Constructor<FileDto> fileDtoConstructor = FileDto.class.getDeclaredConstructor(
 			String.class, String.class, String.class
@@ -409,6 +595,75 @@ class InstrumentCommandServiceTest {
 			AcousticAndClassicGuitarModel.JUMBO_BODY,
 			AcousticAndClassicGuitarWood.SOLID_WOOD,
 			AcousticAndClassicGuitarPickUp.MICROPHONE
+		);
+	}
+
+	private CreateNewEffectorRequest createEffectorRequest() throws Exception {
+		Constructor<CreateNewEffectorRequest> createNewEffectorRequestConstructor =
+			CreateNewEffectorRequest.class.getDeclaredConstructor(
+				String.class, InstrumentProgressStatus.class, AddressRequest.class, Short.class,
+				Integer.class, Boolean.class, String.class, List.class, List.class,
+				EffectorType.class, EffectorFeature.class
+			);
+		createNewEffectorRequestConstructor.setAccessible(true);
+		return createNewEffectorRequestConstructor.newInstance(
+			"Title",
+			InstrumentProgressStatus.SELLING,
+			createAddressRequest(),
+			(short)3,
+			550000,
+			true,
+			"description",
+			List.of(createMultipartFile()),
+			List.of("Fender", "Guitar"),
+			EffectorType.GUITAR,
+			EffectorFeature.ETC
+		);
+	}
+
+	private CreateNewAmplifierRequest createAmplifierRequest() throws Exception {
+		Constructor<CreateNewAmplifierRequest> createNewAmplifierRequestConstructor =
+			CreateNewAmplifierRequest.class.getDeclaredConstructor(
+				String.class, InstrumentProgressStatus.class, AddressRequest.class, Short.class,
+				Integer.class, Boolean.class, String.class, List.class, List.class,
+				AmplifierType.class, AmplifierBrand.class, AmplifierUsage.class
+			);
+		createNewAmplifierRequestConstructor.setAccessible(true);
+		return createNewAmplifierRequestConstructor.newInstance(
+			"Title",
+			InstrumentProgressStatus.SELLING,
+			createAddressRequest(),
+			(short)3,
+			550000,
+			true,
+			"description",
+			List.of(createMultipartFile()),
+			List.of("Fender", "Guitar"),
+			AmplifierType.GUITAR,
+			AmplifierBrand.FENDER,
+			AmplifierUsage.HOME
+		);
+	}
+
+	private CreateNewAudioEquipmentRequest createAudioEquipmentRequest() throws Exception {
+		Constructor<CreateNewAudioEquipmentRequest> createNewAudioEquipmentRequestConstructor =
+			CreateNewAudioEquipmentRequest.class.getDeclaredConstructor(
+				String.class, InstrumentProgressStatus.class, AddressRequest.class, Short.class,
+				Integer.class, Boolean.class, String.class, List.class, List.class,
+				AudioEquipmentType.class
+			);
+		createNewAudioEquipmentRequestConstructor.setAccessible(true);
+		return createNewAudioEquipmentRequestConstructor.newInstance(
+			"Title",
+			InstrumentProgressStatus.SELLING,
+			createAddressRequest(),
+			(short)3,
+			550000,
+			true,
+			"description",
+			List.of(createMultipartFile()),
+			List.of("Fender", "Guitar"),
+			AudioEquipmentType.AUDIO_EQUIPMENT
 		);
 	}
 }

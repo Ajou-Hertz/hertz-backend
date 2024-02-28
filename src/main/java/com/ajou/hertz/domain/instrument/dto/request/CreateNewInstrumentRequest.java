@@ -57,7 +57,7 @@ public abstract class CreateNewInstrumentRequest<T extends Instrument> {
 	@NotNull
 	private String description;
 
-	@Schema(description = "악기 사진")
+	@Schema(description = "악기 사진 (최소 4개, 최대 7개)")
 	@NotNull
 	@Size(min = 4, max = 7)
 	private List<MultipartFile> images;

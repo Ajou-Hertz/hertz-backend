@@ -10,6 +10,7 @@ import com.ajou.hertz.domain.instrument.constant.AcousticAndClassicGuitarWood;
 import com.ajou.hertz.domain.instrument.constant.InstrumentProgressStatus;
 import com.ajou.hertz.domain.instrument.dto.AcousticAndClassicGuitarDto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,9 +19,16 @@ import lombok.NoArgsConstructor;
 @Getter
 public class AcousticAndClassicGuitarResponse extends InstrumentResponse {
 
+	@Schema(description = "브랜드")
 	private AcousticAndClassicGuitarBrand brand;
+
+	@Schema(description = "모델")
 	private AcousticAndClassicGuitarModel model;
+
+	@Schema(description = "목재")
 	private AcousticAndClassicGuitarWood wood;
+
+	@Schema(description = "픽업 종류")
 	private AcousticAndClassicGuitarPickUp pickUp;
 
 	private AcousticAndClassicGuitarResponse(
