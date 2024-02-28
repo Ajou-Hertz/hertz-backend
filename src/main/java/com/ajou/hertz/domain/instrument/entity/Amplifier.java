@@ -32,7 +32,7 @@ public class Amplifier extends Instrument {
 
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false)
-	private AmplifierUsage ampUsage;
+	private AmplifierUsage usage;
 
 	private Amplifier(
 		Long id,
@@ -46,12 +46,12 @@ public class Amplifier extends Instrument {
 		String description,
 		AmplifierType type,
 		AmplifierBrand brand,
-		AmplifierUsage ampUsage
+		AmplifierUsage usage
 	) {
 		super(id, seller, title, progressStatus, tradeAddress, qualityStatus, price, hasAnomaly, description);
 		this.type = type;
 		this.brand = brand;
-		this.ampUsage = ampUsage;
+		this.usage = usage;
 	}
 
 	public static Amplifier create(
