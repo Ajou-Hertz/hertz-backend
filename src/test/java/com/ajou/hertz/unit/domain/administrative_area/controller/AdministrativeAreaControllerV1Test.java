@@ -2,13 +2,11 @@ package com.ajou.hertz.unit.domain.administrative_area.controller;
 
 import static com.ajou.hertz.common.constant.GlobalConstants.*;
 import static org.hamcrest.Matchers.*;
-import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import java.lang.reflect.Constructor;
-import java.util.Arrays;
 import java.util.List;
 
 import org.junit.jupiter.api.DisplayName;
@@ -46,9 +44,9 @@ public class AdministrativeAreaControllerV1Test {
 	private AdministrativeEmdRepository administrativeEmdRepository;
 
 	@Test
-	void 행정구역_시도를_조회한다() throws Exception {
+	void 전체_시도_목록을_조회한다() throws Exception {
 		// given
-		List<AdministrativeAreaSido> expectedResult = List.of(createEntity(AdministrativeAreaSido.class, 1L, "시도"));
+		List<AdministrativeAreaSido> expectedResult = List.of(createSido(1L, "서울특별시"));
 		given(administrativeSidoRepository.findAll()).willReturn(expectedResult);
 
 		// when & then
@@ -57,6 +55,7 @@ public class AdministrativeAreaControllerV1Test {
 					.header(API_MINOR_VERSION_HEADER_NAME, 1)
 			)
 			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.content").isArray())
 			.andExpect(jsonPath("$.content", hasSize(1)))
 			.andExpect(jsonPath("$.content[0].id").value(expectedResult.get(0).getId()))
 			.andExpect(jsonPath("$.content[0].name").value(expectedResult.get(0).getName()));
@@ -65,53 +64,83 @@ public class AdministrativeAreaControllerV1Test {
 	}
 
 	@Test
-	void 시도id값을_통해_시군구를_조회한다() throws Exception {
+	void 시도_id가_주어지면_해당하는_시도에_대한_시군구_목록을_조회한다() throws Exception {
 		// given
-		AdministrativeAreaSido sido = createEntity(AdministrativeAreaSido.class, 1L, "시도");
-		AdministrativeAreaSgg sgg = createEntity(AdministrativeAreaSgg.class, 1L, sido, "시군구");
-		List<AdministrativeAreaSgg> expectedResult = List.of(sgg);
-		given(administrativeSggRepository.findBySido_Id(anyLong())).willReturn(expectedResult);
+		AdministrativeAreaSido sido = createSido(1L, "서울특별시");
+		List<AdministrativeAreaSgg> expectedResult = List.of(
+			createSgg(2L, sido, "강남구"),
+			createSgg(3L, sido, "서초구")
+		);
+		given(administrativeSggRepository.findBySido_Id(sido.getId())).willReturn(expectedResult);
 
 		// when & then
-		mvc.perform(get("/v1/administrative-areas/sgg")
-				.header(API_MINOR_VERSION_HEADER_NAME, 1)
-				.param("sidoId", "1"))
+		mvc.perform(
+				get("/v1/administrative-areas/sgg")
+					.header(API_MINOR_VERSION_HEADER_NAME, 1)
+					.param("sidoId", String.valueOf(sido.getId()))
+			)
 			.andExpect(status().isOk())
-			.andExpect(jsonPath("$.content", hasSize(1)))
-			.andExpect(jsonPath("$.content[0].id", is(1)))
-			.andExpect(jsonPath("$.content[0].name", is("시군구")));
+			.andExpect(jsonPath("$.content").isArray())
+			.andExpect(jsonPath("$.content", hasSize(2)))
+			.andExpect(jsonPath("$.content[0].id").value(expectedResult.get(0).getId()))
+			.andExpect(jsonPath("$.content[0].name").value(expectedResult.get(0).getName()))
+			.andExpect(jsonPath("$.content[1].id").value(expectedResult.get(1).getId()))
+			.andExpect(jsonPath("$.content[1].name").value(expectedResult.get(1).getName()));
 		then(administrativeSggRepository).should().findBySido_Id(1L);
 		verifyEveryMocksShouldHaveNoMoreInteractions();
 	}
 
 	@Test
-	void 시도id와_시군구id값을_통해_읍면동을_조회한다() throws Exception {
+	void 시군구_id가_주어지면_해당하는_시군구에_대한_읍면동_목록을_조회한다() throws Exception {
 		// given
-		AdministrativeAreaSido sido = createEntity(AdministrativeAreaSido.class, 1L, "시도");
-		AdministrativeAreaSgg sgg = createEntity(AdministrativeAreaSgg.class, 1L, sido, "시군구");
-		AdministrativeAreaEmd emd = createEntity(AdministrativeAreaEmd.class, 1L, sgg, "읍면동");
-		List<AdministrativeAreaEmd> expectedResult = List.of(emd);
-		given(administrativeEmdRepository.findBySgg_Id(anyLong())).willReturn(expectedResult);
+		AdministrativeAreaSido sido = createSido(1L, "서울특별시");
+		AdministrativeAreaSgg sgg = createSgg(2L, sido, "강남구");
+		List<AdministrativeAreaEmd> expectedResult = List.of(
+			createEmd(3L, sgg, "청담동"),
+			createEmd(4L, sgg, "신사동")
+		);
+		given(administrativeEmdRepository.findBySgg_Id(sgg.getId())).willReturn(expectedResult);
 
 		// when & then
-		mvc.perform(get("/v1/administrative-areas/emd")
-				.header(API_MINOR_VERSION_HEADER_NAME, 1)
-				.param("sggId", "1"))
+		mvc.perform(
+				get("/v1/administrative-areas/emd")
+					.header(API_MINOR_VERSION_HEADER_NAME, 1)
+					.param("sggId", String.valueOf(sgg.getId()))
+			)
 			.andExpect(status().isOk())
-			.andExpect(jsonPath("$.content", hasSize(1)))
-			.andExpect(jsonPath("$.content[0].id", is(1)))
-			.andExpect(jsonPath("$.content[0].name", is("읍면동")));
-		then(administrativeEmdRepository).should().findBySgg_Id(1L);
+			.andExpect(jsonPath("$.content").isArray())
+			.andExpect(jsonPath("$.content", hasSize(2)))
+			.andExpect(jsonPath("$.content[0].id").value(expectedResult.get(0).getId()))
+			.andExpect(jsonPath("$.content[0].name").value(expectedResult.get(0).getName()))
+			.andExpect(jsonPath("$.content[1].id").value(expectedResult.get(1).getId()))
+			.andExpect(jsonPath("$.content[1].name").value(expectedResult.get(1).getName()));
+		then(administrativeEmdRepository).should().findBySgg_Id(sgg.getId());
 		verifyEveryMocksShouldHaveNoMoreInteractions();
 	}
 
-	private <T> T createEntity(Class<T> clazz, Object... args) throws Exception {
-		Class<?>[] argClasses = Arrays.stream(args)
-			.map(Object::getClass)
-			.toArray(Class[]::new);
-		Constructor<T> constructor = clazz.getDeclaredConstructor(argClasses);
-		constructor.setAccessible(true);
-		return constructor.newInstance(args);
+	private AdministrativeAreaSido createSido(long id, String name) throws Exception {
+		Constructor<AdministrativeAreaSido> sidoConstructor = AdministrativeAreaSido.class.getDeclaredConstructor(
+			Long.class, String.class
+		);
+		sidoConstructor.setAccessible(true);
+		return sidoConstructor.newInstance(id, name);
+	}
+
+	private AdministrativeAreaSgg createSgg(long id, AdministrativeAreaSido sido, String name) throws
+		Exception {
+		Constructor<AdministrativeAreaSgg> sidoConstructor = AdministrativeAreaSgg.class.getDeclaredConstructor(
+			Long.class, AdministrativeAreaSido.class, String.class
+		);
+		sidoConstructor.setAccessible(true);
+		return sidoConstructor.newInstance(id, sido, name);
+	}
+
+	private AdministrativeAreaEmd createEmd(long id, AdministrativeAreaSgg sgg, String name) throws Exception {
+		Constructor<AdministrativeAreaEmd> sidoConstructor = AdministrativeAreaEmd.class.getDeclaredConstructor(
+			Long.class, AdministrativeAreaSgg.class, String.class
+		);
+		sidoConstructor.setAccessible(true);
+		return sidoConstructor.newInstance(id, sgg, name);
 	}
 
 	private void verifyEveryMocksShouldHaveNoMoreInteractions() {
