@@ -89,7 +89,7 @@ class InstrumentControllerV1Test {
 
 		// when & then
 		mvc.perform(
-				multipart("/v1/instruments/electric-guitars")
+				multipart("/api/v1/instruments/electric-guitars")
 					.file("images[0]", electricGuitarRequest.getImages().get(0).getBytes())
 					.file("images[1]", electricGuitarRequest.getImages().get(1).getBytes())
 					.file("images[2]", electricGuitarRequest.getImages().get(2).getBytes())
@@ -135,7 +135,7 @@ class InstrumentControllerV1Test {
 
 		// when & then
 		mvc.perform(
-				multipart("/v1/instruments/bass-guitars")
+				multipart("/api/v1/instruments/bass-guitars")
 					.file("images[0]", bassGuitarRequest.getImages().get(0).getBytes())
 					.file("images[1]", bassGuitarRequest.getImages().get(1).getBytes())
 					.file("images[2]", bassGuitarRequest.getImages().get(2).getBytes())
@@ -181,7 +181,7 @@ class InstrumentControllerV1Test {
 
 		// when & then
 		mvc.perform(
-				multipart("/v1/instruments/acoustic-and-classic-guitars")
+				multipart("/api/v1/instruments/acoustic-and-classic-guitars")
 					.file("images[0]", request.getImages().get(0).getBytes())
 					.file("images[1]", request.getImages().get(1).getBytes())
 					.file("images[2]", request.getImages().get(2).getBytes())
@@ -227,7 +227,7 @@ class InstrumentControllerV1Test {
 
 		// when & then
 		mvc.perform(
-				multipart("/v1/instruments/effectors")
+				multipart("/api/v1/instruments/effectors")
 					.file("images[0]", request.getImages().get(0).getBytes())
 					.file("images[1]", request.getImages().get(1).getBytes())
 					.file("images[2]", request.getImages().get(2).getBytes())
@@ -269,7 +269,7 @@ class InstrumentControllerV1Test {
 
 		// when & then
 		mvc.perform(
-				multipart("/v1/instruments/amplifiers")
+				multipart("/api/v1/instruments/amplifiers")
 					.file("images[0]", request.getImages().get(0).getBytes())
 					.file("images[1]", request.getImages().get(1).getBytes())
 					.file("images[2]", request.getImages().get(2).getBytes())
@@ -312,7 +312,7 @@ class InstrumentControllerV1Test {
 
 		// when & then
 		mvc.perform(
-				multipart("/v1/instruments/audio-equipments")
+				multipart("/api/v1/instruments/audio-equipments")
 					.file("images[0]", request.getImages().get(0).getBytes())
 					.file("images[1]", request.getImages().get(1).getBytes())
 					.file("images[2]", request.getImages().get(2).getBytes())

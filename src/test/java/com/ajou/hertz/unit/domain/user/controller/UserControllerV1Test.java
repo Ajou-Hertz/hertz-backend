@@ -84,7 +84,7 @@ class UserControllerV1Test {
 
 		// when & then
 		mvc.perform(
-				get("/v1/users/me")
+				get("/api/v1/users/me")
 					.header(API_MINOR_VERSION_HEADER_NAME, 1)
 					.with(user(createTestUser(userId)))
 			)
@@ -103,7 +103,7 @@ class UserControllerV1Test {
 
 		// when & then
 		mvc.perform(
-				get("/v1/users/existence")
+				get("/api/v1/users/existence")
 					.header(API_MINOR_VERSION_HEADER_NAME, 1)
 					.queryParam("email", email)
 			)
@@ -122,7 +122,7 @@ class UserControllerV1Test {
 
 		// when & then
 		mvc.perform(
-				get("/v1/users/email")
+				get("/api/v1/users/email")
 					.header(API_MINOR_VERSION_HEADER_NAME, 1)
 					.queryParam("phone", phone)
 			)
@@ -139,7 +139,7 @@ class UserControllerV1Test {
 
 		// when & then
 		mvc.perform(
-				get("/v1/users/email")
+				get("/api/v1/users/email")
 					.header(API_MINOR_VERSION_HEADER_NAME, 1)
 					.queryParam("phone", phone)
 			)
@@ -157,7 +157,7 @@ class UserControllerV1Test {
 
 		// when & then
 		mvc.perform(
-				post("/v1/users")
+				post("/api/v1/users")
 					.header(API_MINOR_VERSION_HEADER_NAME, 1)
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(objectMapper.writeValueAsString(signUpRequest))
@@ -183,7 +183,7 @@ class UserControllerV1Test {
 
 		// when & then
 		mvc.perform(
-				post("/v1/users")
+				post("/api/v1/users")
 					.header(API_MINOR_VERSION_HEADER_NAME, 1)
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(objectMapper.writeValueAsString(signUpRequest))
@@ -203,7 +203,7 @@ class UserControllerV1Test {
 
 		// when & then
 		mvc.perform(
-				post("/v1/users")
+				post("/api/v1/users")
 					.header(API_MINOR_VERSION_HEADER_NAME, 1)
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(objectMapper.writeValueAsString(signUpRequest))

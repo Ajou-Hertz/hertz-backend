@@ -42,7 +42,7 @@ import lombok.RequiredArgsConstructor;
 
 @Tag(name = "중고 악기 관련 API")
 @RequiredArgsConstructor
-@RequestMapping("/v1/instruments")
+@RequestMapping("/api/v1/instruments")
 @RestController
 public class InstrumentControllerV1 {
 
