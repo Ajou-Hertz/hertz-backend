@@ -56,7 +56,7 @@ class AuthControllerV1Test {
 
 		// when & then
 		mvc.perform(
-				post("/v1/auth/login")
+				post("/api/v1/auth/login")
 					.header(API_MINOR_VERSION_HEADER_NAME, 1)
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(objectMapper.writeValueAsString(loginRequest))
@@ -76,7 +76,7 @@ class AuthControllerV1Test {
 
 		// when & then
 		mvc.perform(
-				post("/v1/auth/kakao/login")
+				post("/api/v1/auth/kakao/login")
 					.header(API_MINOR_VERSION_HEADER_NAME, 1)
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(objectMapper.writeValueAsString(kakaoLoginRequest))
