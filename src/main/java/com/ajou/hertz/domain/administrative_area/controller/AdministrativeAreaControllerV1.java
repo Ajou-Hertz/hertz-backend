@@ -23,7 +23,7 @@ import lombok.RequiredArgsConstructor;
 
 @Tag(name = "행정구역 관련 API")
 @RestController
-@RequestMapping("/v1/administrative-areas")
+@RequestMapping("/api/v1/administrative-areas")
 @RequiredArgsConstructor
 public class AdministrativeAreaControllerV1 {
 	private final AdministrativeSidoRepository administrativeSidoRepository;

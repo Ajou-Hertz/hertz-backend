@@ -51,7 +51,7 @@ public class AdministrativeAreaControllerV1Test {
 
 		// when & then
 		mvc.perform(
-				get("/v1/administrative-areas/sido")
+				get("/api/v1/administrative-areas/sido")
 					.header(API_MINOR_VERSION_HEADER_NAME, 1)
 			)
 			.andExpect(status().isOk())
@@ -75,7 +75,7 @@ public class AdministrativeAreaControllerV1Test {
 
 		// when & then
 		mvc.perform(
-				get("/v1/administrative-areas/sgg")
+				get("/api/v1/administrative-areas/sgg")
 					.header(API_MINOR_VERSION_HEADER_NAME, 1)
 					.param("sidoId", String.valueOf(sido.getId()))
 			)
@@ -103,7 +103,7 @@ public class AdministrativeAreaControllerV1Test {
 
 		// when & then
 		mvc.perform(
-				get("/v1/administrative-areas/emd")
+				get("/api/v1/administrative-areas/emd")
 					.header(API_MINOR_VERSION_HEADER_NAME, 1)
 					.param("sggId", String.valueOf(sgg.getId()))
 			)
