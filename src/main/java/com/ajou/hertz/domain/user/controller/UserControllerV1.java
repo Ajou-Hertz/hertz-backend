@@ -40,7 +40,7 @@ import lombok.RequiredArgsConstructor;
 @Tag(name = "유저 관련 API")
 @Validated
 @RequiredArgsConstructor
-@RequestMapping("/v1/users")
+@RequestMapping("/api/v1/users")
 @RestController
 public class UserControllerV1 {
 
