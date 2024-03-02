@@ -47,7 +47,8 @@ public class SecurityConfig {
 		"/api/v*/users/email", GET,
 		"/api/v*/administrative-areas/sido", GET,
 		"/api/v*/administrative-areas/sgg", GET,
-		"/api/v*/administrative-areas/emd", GET
+		"/api/v*/administrative-areas/emd", GET,
+		"/api/v*/instruments", GET
 	);
 
 	@Bean

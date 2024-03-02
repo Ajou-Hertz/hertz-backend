@@ -1,6 +1,7 @@
 package com.ajou.hertz.unit.domain.instrument.controller;
 
 import static com.ajou.hertz.common.constant.GlobalConstants.*;
+import static org.hamcrest.collection.IsCollectionWithSize.*;
 import static org.mockito.BDDMockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -18,6 +19,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -44,6 +48,7 @@ import com.ajou.hertz.domain.instrument.constant.ElectricGuitarBrand;
 import com.ajou.hertz.domain.instrument.constant.ElectricGuitarModel;
 import com.ajou.hertz.domain.instrument.constant.GuitarColor;
 import com.ajou.hertz.domain.instrument.constant.InstrumentProgressStatus;
+import com.ajou.hertz.domain.instrument.constant.InstrumentSortOption;
 import com.ajou.hertz.domain.instrument.controller.InstrumentControllerV1;
 import com.ajou.hertz.domain.instrument.dto.AcousticAndClassicGuitarDto;
 import com.ajou.hertz.domain.instrument.dto.AmplifierDto;
@@ -51,6 +56,8 @@ import com.ajou.hertz.domain.instrument.dto.AudioEquipmentDto;
 import com.ajou.hertz.domain.instrument.dto.BassGuitarDto;
 import com.ajou.hertz.domain.instrument.dto.EffectorDto;
 import com.ajou.hertz.domain.instrument.dto.ElectricGuitarDto;
+import com.ajou.hertz.domain.instrument.dto.InstrumentDto;
+import com.ajou.hertz.domain.instrument.dto.InstrumentImageDto;
 import com.ajou.hertz.domain.instrument.dto.request.CreateNewAcousticAndClassicGuitarRequest;
 import com.ajou.hertz.domain.instrument.dto.request.CreateNewAmplifierRequest;
 import com.ajou.hertz.domain.instrument.dto.request.CreateNewAudioEquipmentRequest;
@@ -58,6 +65,7 @@ import com.ajou.hertz.domain.instrument.dto.request.CreateNewBassGuitarRequest;
 import com.ajou.hertz.domain.instrument.dto.request.CreateNewEffectorRequest;
 import com.ajou.hertz.domain.instrument.dto.request.CreateNewElectricGuitarRequest;
 import com.ajou.hertz.domain.instrument.service.InstrumentCommandService;
+import com.ajou.hertz.domain.instrument.service.InstrumentQueryService;
 import com.ajou.hertz.domain.user.constant.Gender;
 import com.ajou.hertz.domain.user.constant.RoleType;
 import com.ajou.hertz.domain.user.dto.UserDto;
@@ -70,11 +78,44 @@ class InstrumentControllerV1Test {
 	@MockBean
 	private InstrumentCommandService instrumentCommandService;
 
+	@MockBean
+	private InstrumentQueryService instrumentQueryService;
+
 	private final MockMvc mvc;
 
 	@Autowired
 	public InstrumentControllerV1Test(MockMvc mvc) {
 		this.mvc = mvc;
+	}
+
+	@Test
+	void 전체_악기_매물_목록을_조회한다() throws Exception {
+		// given
+		long userId = 1L;
+		int pageNumber = 0;
+		int pageSize = 10;
+		InstrumentSortOption sortOption = InstrumentSortOption.CREATED_BY_DESC;
+		Page<InstrumentDto> expectedResult = new PageImpl<>(List.of(
+			createBassGuitarDto(2L, userId),
+			createBassGuitarDto(3L, userId),
+			createBassGuitarDto(4L, userId)
+		));
+		given(instrumentQueryService.findInstruments(any(Pageable.class))).willReturn(expectedResult);
+
+		// when & then
+		mvc.perform(
+				get("/api/v1/instruments")
+					.header(API_MINOR_VERSION_HEADER_NAME, 1)
+					.param("page", String.valueOf(pageNumber))
+					.param("size", String.valueOf(pageSize))
+					.param("sort", sortOption.name())
+			)
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.numberOfElements").value(expectedResult.getNumberOfElements()))
+			.andExpect(jsonPath("$.content").isArray())
+			.andExpect(jsonPath("$.content", hasSize(expectedResult.getNumberOfElements())));
+		then(instrumentQueryService).should().findInstruments(any(Pageable.class));
+		verifyEveryMocksShouldHaveNoMoreInteractions();
 	}
 
 	@Test
@@ -345,6 +386,7 @@ class InstrumentControllerV1Test {
 
 	private void verifyEveryMocksShouldHaveNoMoreInteractions() {
 		then(instrumentCommandService).shouldHaveNoMoreInteractions();
+		then(instrumentQueryService).shouldHaveNoMoreInteractions();
 	}
 
 	private UserDetails createTestUser(Long userId) throws Exception {
@@ -390,6 +432,18 @@ class InstrumentControllerV1Test {
 		return addressDtoConstructor.newInstance("서울특별시", "강남구", "청담동");
 	}
 
+	private InstrumentImageDto createInstrumentImageDto(long instrumentImageId) throws Exception {
+		Constructor<InstrumentImageDto> instrumentImageDtoConstructor = InstrumentImageDto.class.getDeclaredConstructor(
+			Long.class, String.class, String.class
+		);
+		instrumentImageDtoConstructor.setAccessible(true);
+		return instrumentImageDtoConstructor.newInstance(
+			instrumentImageId,
+			"image-name",
+			"https://instrument-image-url"
+		);
+	}
+
 	private ElectricGuitarDto createElectricGuitarDto(long id, long sellerId) throws Exception {
 		Constructor<ElectricGuitarDto> electricGuitarDtoConstructor = ElectricGuitarDto.class.getDeclaredConstructor(
 			Long.class, UserDto.class, String.class, InstrumentProgressStatus.class, AddressDto.class, Short.class,
@@ -411,7 +465,12 @@ class InstrumentControllerV1Test {
 			ElectricGuitarModel.TELECASTER,
 			(short)2014,
 			GuitarColor.RED,
-			List.of(),
+			List.of(
+				createInstrumentImageDto(id + 1),
+				createInstrumentImageDto(id + 2),
+				createInstrumentImageDto(id + 3),
+				createInstrumentImageDto(id + 4)
+			),
 			List.of()
 		);
 	}
@@ -433,7 +492,12 @@ class InstrumentControllerV1Test {
 			550000,
 			true,
 			"description",
-			List.of(),
+			List.of(
+				createInstrumentImageDto(id + 1),
+				createInstrumentImageDto(id + 2),
+				createInstrumentImageDto(id + 3),
+				createInstrumentImageDto(id + 4)
+			),
 			List.of(),
 			BassGuitarBrand.FENDER,
 			BassGuitarPickUp.JAZZ,
@@ -461,7 +525,12 @@ class InstrumentControllerV1Test {
 			550000,
 			true,
 			"description",
-			List.of(),
+			List.of(
+				createInstrumentImageDto(id + 1),
+				createInstrumentImageDto(id + 2),
+				createInstrumentImageDto(id + 3),
+				createInstrumentImageDto(id + 4)
+			),
 			List.of(),
 			AcousticAndClassicGuitarBrand.HEX,
 			AcousticAndClassicGuitarModel.JUMBO_BODY,
@@ -487,7 +556,12 @@ class InstrumentControllerV1Test {
 			550000,
 			true,
 			"description",
-			List.of(),
+			List.of(
+				createInstrumentImageDto(id + 1),
+				createInstrumentImageDto(id + 2),
+				createInstrumentImageDto(id + 3),
+				createInstrumentImageDto(id + 4)
+			),
 			List.of(),
 			EffectorType.GUITAR,
 			EffectorFeature.ETC
@@ -511,7 +585,12 @@ class InstrumentControllerV1Test {
 			550000,
 			true,
 			"description",
-			List.of(),
+			List.of(
+				createInstrumentImageDto(id + 1),
+				createInstrumentImageDto(id + 2),
+				createInstrumentImageDto(id + 3),
+				createInstrumentImageDto(id + 4)
+			),
 			List.of(),
 			AmplifierType.GUITAR,
 			AmplifierBrand.FENDER,
@@ -536,7 +615,12 @@ class InstrumentControllerV1Test {
 			550000,
 			true,
 			"description",
-			List.of(),
+			List.of(
+				createInstrumentImageDto(id + 1),
+				createInstrumentImageDto(id + 2),
+				createInstrumentImageDto(id + 3),
+				createInstrumentImageDto(id + 4)
+			),
 			List.of(),
 			AudioEquipmentType.AUDIO_EQUIPMENT
 		);
