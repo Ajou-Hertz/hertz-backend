@@ -40,9 +40,9 @@ import lombok.RequiredArgsConstructor;
 @Tag(name = "유저 관련 API")
 @Validated
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/users")
+@RequestMapping("/api/users")
 @RestController
-public class UserControllerV1 {
+public class UserController {
 
 	private final UserCommandService userCommandService;
 	private final UserQueryService userQueryService;
@@ -52,8 +52,8 @@ public class UserControllerV1 {
 		description = "내 정보를 조회합니다.",
 		security = @SecurityRequirement(name = "access-token")
 	)
-	@GetMapping(value = "/me", headers = API_MINOR_VERSION_HEADER_NAME + "=" + 1)
-	public UserWithLinkedAccountInfoResponse getMyInfoV1_1(
+	@GetMapping(value = "/me", headers = API_VERSION_HEADER_NAME + "=" + 1)
+	public UserWithLinkedAccountInfoResponse getMyInfoV1(
 		@AuthenticationPrincipal UserPrincipal userPrincipal
 	) {
 		UserDto userDto = userQueryService.getDtoById(userPrincipal.getUserId());
@@ -64,8 +64,8 @@ public class UserControllerV1 {
 		summary = "회원 존재 여부 조회",
 		description = "전달받은 값들에 일치하는 회원이 존재하는지 확인힙니다."
 	)
-	@GetMapping(value = "/existence", headers = API_MINOR_VERSION_HEADER_NAME + "=" + 1)
-	public UserExistenceResponse getExistenceOfUserByEmailV1_1(
+	@GetMapping(value = "/existence", headers = API_VERSION_HEADER_NAME + "=" + 1)
+	public UserExistenceResponse getExistenceOfUserByEmailV1(
 		@Parameter(
 			description = "이메일. 입력된 이메일을 사용 중인 회원이 존재하는지 조회합니다.",
 			example = "example@mail.com"
@@ -83,8 +83,8 @@ public class UserControllerV1 {
 		@ApiResponse(responseCode = "200"),
 		@ApiResponse(responseCode = "404", description = "[2206] 전화번호에 해당하는 유저를 찾을 수 없는 경우", content = @Content)
 	})
-	@GetMapping(value = "/email", headers = API_MINOR_VERSION_HEADER_NAME + "=" + 1)
-	public UserEmailResponse getUserEmailByPhoneV1_1(
+	@GetMapping(value = "/email", headers = API_VERSION_HEADER_NAME + "=" + 1)
+	public UserEmailResponse getUserEmailByPhoneV1(
 		@Parameter(
 			description = "이메일을 찾고자 하는 유저의 전화번호",
 			example = "01012345678"
@@ -105,8 +105,8 @@ public class UserControllerV1 {
 			<p>[2203] 이미 다른 사용자가 사용 중인 전화번호로 신규 회원을 등록하려고 하는 경우.
 			""")
 	})
-	@PostMapping(headers = API_MINOR_VERSION_HEADER_NAME + "=" + 1)
-	public ResponseEntity<UserResponse> signUpV1_1(
+	@PostMapping(headers = API_VERSION_HEADER_NAME + "=" + 1)
+	public ResponseEntity<UserResponse> signUpV1(
 		@RequestBody @Valid SignUpRequest signUpRequest
 	) {
 		UserDto userCreated = userCommandService.createNewUser(signUpRequest);

@@ -49,7 +49,7 @@ import com.ajou.hertz.domain.instrument.constant.ElectricGuitarModel;
 import com.ajou.hertz.domain.instrument.constant.GuitarColor;
 import com.ajou.hertz.domain.instrument.constant.InstrumentProgressStatus;
 import com.ajou.hertz.domain.instrument.constant.InstrumentSortOption;
-import com.ajou.hertz.domain.instrument.controller.InstrumentControllerV1;
+import com.ajou.hertz.domain.instrument.controller.InstrumentController;
 import com.ajou.hertz.domain.instrument.dto.AcousticAndClassicGuitarDto;
 import com.ajou.hertz.domain.instrument.dto.AmplifierDto;
 import com.ajou.hertz.domain.instrument.dto.AudioEquipmentDto;
@@ -70,10 +70,10 @@ import com.ajou.hertz.domain.user.constant.Gender;
 import com.ajou.hertz.domain.user.constant.RoleType;
 import com.ajou.hertz.domain.user.dto.UserDto;
 
-@DisplayName("[Unit] Controller - Instrument(V1)")
+@DisplayName("[Unit] Controller - Instrument")
 @Import(ControllerTestConfig.class)
-@WebMvcTest(controllers = InstrumentControllerV1.class)
-class InstrumentControllerV1Test {
+@WebMvcTest(controllers = InstrumentController.class)
+class InstrumentControllerTest {
 
 	@MockBean
 	private InstrumentCommandService instrumentCommandService;
@@ -84,7 +84,7 @@ class InstrumentControllerV1Test {
 	private final MockMvc mvc;
 
 	@Autowired
-	public InstrumentControllerV1Test(MockMvc mvc) {
+	public InstrumentControllerTest(MockMvc mvc) {
 		this.mvc = mvc;
 	}
 
@@ -104,8 +104,8 @@ class InstrumentControllerV1Test {
 
 		// when & then
 		mvc.perform(
-				get("/api/v1/instruments")
-					.header(API_MINOR_VERSION_HEADER_NAME, 1)
+				get("/api/instruments")
+					.header(API_VERSION_HEADER_NAME, 1)
 					.param("page", String.valueOf(pageNumber))
 					.param("size", String.valueOf(pageSize))
 					.param("sort", sortOption.name())
@@ -130,12 +130,12 @@ class InstrumentControllerV1Test {
 
 		// when & then
 		mvc.perform(
-				multipart("/api/v1/instruments/electric-guitars")
+				multipart("/api/instruments/electric-guitars")
 					.file("images[0]", electricGuitarRequest.getImages().get(0).getBytes())
 					.file("images[1]", electricGuitarRequest.getImages().get(1).getBytes())
 					.file("images[2]", electricGuitarRequest.getImages().get(2).getBytes())
 					.file("images[3]", electricGuitarRequest.getImages().get(3).getBytes())
-					.header(API_MINOR_VERSION_HEADER_NAME, 1)
+					.header(API_VERSION_HEADER_NAME, 1)
 					.param("title", electricGuitarRequest.getTitle())
 					.param("progressStatus", electricGuitarRequest.getProgressStatus().name())
 					.param("tradeAddress.sido", electricGuitarRequest.getTradeAddress().getSido())
@@ -176,12 +176,12 @@ class InstrumentControllerV1Test {
 
 		// when & then
 		mvc.perform(
-				multipart("/api/v1/instruments/bass-guitars")
+				multipart("/api/instruments/bass-guitars")
 					.file("images[0]", bassGuitarRequest.getImages().get(0).getBytes())
 					.file("images[1]", bassGuitarRequest.getImages().get(1).getBytes())
 					.file("images[2]", bassGuitarRequest.getImages().get(2).getBytes())
 					.file("images[3]", bassGuitarRequest.getImages().get(3).getBytes())
-					.header(API_MINOR_VERSION_HEADER_NAME, 1)
+					.header(API_VERSION_HEADER_NAME, 1)
 					.param("title", bassGuitarRequest.getTitle())
 					.param("progressStatus", bassGuitarRequest.getProgressStatus().name())
 					.param("tradeAddress.sido", bassGuitarRequest.getTradeAddress().getSido())
@@ -222,12 +222,12 @@ class InstrumentControllerV1Test {
 
 		// when & then
 		mvc.perform(
-				multipart("/api/v1/instruments/acoustic-and-classic-guitars")
+				multipart("/api/instruments/acoustic-and-classic-guitars")
 					.file("images[0]", request.getImages().get(0).getBytes())
 					.file("images[1]", request.getImages().get(1).getBytes())
 					.file("images[2]", request.getImages().get(2).getBytes())
 					.file("images[3]", request.getImages().get(3).getBytes())
-					.header(API_MINOR_VERSION_HEADER_NAME, 1)
+					.header(API_VERSION_HEADER_NAME, 1)
 					.param("title", request.getTitle())
 					.param("progressStatus", request.getProgressStatus().name())
 					.param("tradeAddress.sido", request.getTradeAddress().getSido())
@@ -268,12 +268,12 @@ class InstrumentControllerV1Test {
 
 		// when & then
 		mvc.perform(
-				multipart("/api/v1/instruments/effectors")
+				multipart("/api/instruments/effectors")
 					.file("images[0]", request.getImages().get(0).getBytes())
 					.file("images[1]", request.getImages().get(1).getBytes())
 					.file("images[2]", request.getImages().get(2).getBytes())
 					.file("images[3]", request.getImages().get(3).getBytes())
-					.header(API_MINOR_VERSION_HEADER_NAME, 1)
+					.header(API_VERSION_HEADER_NAME, 1)
 					.param("title", request.getTitle())
 					.param("progressStatus", request.getProgressStatus().name())
 					.param("tradeAddress.sido", request.getTradeAddress().getSido())
@@ -310,12 +310,12 @@ class InstrumentControllerV1Test {
 
 		// when & then
 		mvc.perform(
-				multipart("/api/v1/instruments/amplifiers")
+				multipart("/api/instruments/amplifiers")
 					.file("images[0]", request.getImages().get(0).getBytes())
 					.file("images[1]", request.getImages().get(1).getBytes())
 					.file("images[2]", request.getImages().get(2).getBytes())
 					.file("images[3]", request.getImages().get(3).getBytes())
-					.header(API_MINOR_VERSION_HEADER_NAME, 1)
+					.header(API_VERSION_HEADER_NAME, 1)
 					.param("title", request.getTitle())
 					.param("progressStatus", request.getProgressStatus().name())
 					.param("tradeAddress.sido", request.getTradeAddress().getSido())
@@ -353,12 +353,12 @@ class InstrumentControllerV1Test {
 
 		// when & then
 		mvc.perform(
-				multipart("/api/v1/instruments/audio-equipments")
+				multipart("/api/instruments/audio-equipments")
 					.file("images[0]", request.getImages().get(0).getBytes())
 					.file("images[1]", request.getImages().get(1).getBytes())
 					.file("images[2]", request.getImages().get(2).getBytes())
 					.file("images[3]", request.getImages().get(3).getBytes())
-					.header(API_MINOR_VERSION_HEADER_NAME, 1)
+					.header(API_VERSION_HEADER_NAME, 1)
 					.param("title", request.getTitle())
 					.param("progressStatus", request.getProgressStatus().name())
 					.param("tradeAddress.sido", request.getTradeAddress().getSido())
