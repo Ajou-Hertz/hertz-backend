@@ -33,14 +33,14 @@ import com.ajou.hertz.common.auth.UserPrincipal;
 import com.ajou.hertz.common.config.SecurityConfig;
 import com.ajou.hertz.domain.user.constant.Gender;
 import com.ajou.hertz.domain.user.constant.RoleType;
-import com.ajou.hertz.domain.user.controller.UserControllerV1;
+import com.ajou.hertz.domain.user.controller.UserController;
 import com.ajou.hertz.domain.user.dto.UserDto;
 import com.ajou.hertz.domain.user.dto.request.SignUpRequest;
 import com.ajou.hertz.domain.user.service.UserCommandService;
 import com.ajou.hertz.domain.user.service.UserQueryService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-@DisplayName("[Unit] Controller - User(V1)")
+@DisplayName("[Unit] Controller - User")
 @MockBean(JpaMetamodelMappingContext.class)
 @Import({
 	SecurityConfig.class,
@@ -51,8 +51,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 	JwtTokenProvider.class,
 	CustomUserDetailsService.class
 })
-@WebMvcTest(controllers = UserControllerV1.class)
-class UserControllerV1Test {
+@WebMvcTest(controllers = UserController.class)
+class UserControllerTest {
 
 	@MockBean
 	private UserCommandService userCommandService;
@@ -65,7 +65,7 @@ class UserControllerV1Test {
 	private final ObjectMapper objectMapper;
 
 	@Autowired
-	public UserControllerV1Test(MockMvc mvc, ObjectMapper objectMapper) {
+	public UserControllerTest(MockMvc mvc, ObjectMapper objectMapper) {
 		this.mvc = mvc;
 		this.objectMapper = objectMapper;
 	}
@@ -84,8 +84,8 @@ class UserControllerV1Test {
 
 		// when & then
 		mvc.perform(
-				get("/api/v1/users/me")
-					.header(API_MINOR_VERSION_HEADER_NAME, 1)
+				get("/api/users/me")
+					.header(API_VERSION_HEADER_NAME, 1)
 					.with(user(createTestUser(userId)))
 			)
 			.andExpect(status().isOk())
@@ -103,8 +103,8 @@ class UserControllerV1Test {
 
 		// when & then
 		mvc.perform(
-				get("/api/v1/users/existence")
-					.header(API_MINOR_VERSION_HEADER_NAME, 1)
+				get("/api/users/existence")
+					.header(API_VERSION_HEADER_NAME, 1)
 					.queryParam("email", email)
 			)
 			.andExpect(status().isOk())
@@ -122,8 +122,8 @@ class UserControllerV1Test {
 
 		// when & then
 		mvc.perform(
-				get("/api/v1/users/email")
-					.header(API_MINOR_VERSION_HEADER_NAME, 1)
+				get("/api/users/email")
+					.header(API_VERSION_HEADER_NAME, 1)
 					.queryParam("phone", phone)
 			)
 			.andExpect(status().isOk())
@@ -139,8 +139,8 @@ class UserControllerV1Test {
 
 		// when & then
 		mvc.perform(
-				get("/api/v1/users/email")
-					.header(API_MINOR_VERSION_HEADER_NAME, 1)
+				get("/api/users/email")
+					.header(API_VERSION_HEADER_NAME, 1)
 					.queryParam("phone", phone)
 			)
 			.andExpect(status().isUnprocessableEntity());
@@ -157,8 +157,8 @@ class UserControllerV1Test {
 
 		// when & then
 		mvc.perform(
-				post("/api/v1/users")
-					.header(API_MINOR_VERSION_HEADER_NAME, 1)
+				post("/api/users")
+					.header(API_VERSION_HEADER_NAME, 1)
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(objectMapper.writeValueAsString(signUpRequest))
 			)
@@ -183,8 +183,8 @@ class UserControllerV1Test {
 
 		// when & then
 		mvc.perform(
-				post("/api/v1/users")
-					.header(API_MINOR_VERSION_HEADER_NAME, 1)
+				post("/api/users")
+					.header(API_VERSION_HEADER_NAME, 1)
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(objectMapper.writeValueAsString(signUpRequest))
 			)
@@ -203,8 +203,8 @@ class UserControllerV1Test {
 
 		// when & then
 		mvc.perform(
-				post("/api/v1/users")
-					.header(API_MINOR_VERSION_HEADER_NAME, 1)
+				post("/api/users")
+					.header(API_VERSION_HEADER_NAME, 1)
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(objectMapper.writeValueAsString(signUpRequest))
 			)
