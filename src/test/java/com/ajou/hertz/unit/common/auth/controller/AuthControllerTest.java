@@ -17,7 +17,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import com.ajou.hertz.common.auth.controller.AuthControllerV1;
+import com.ajou.hertz.common.auth.controller.AuthController;
 import com.ajou.hertz.common.auth.dto.JwtTokenInfoDto;
 import com.ajou.hertz.common.auth.dto.request.KakaoLoginRequest;
 import com.ajou.hertz.common.auth.dto.request.LoginRequest;
@@ -26,10 +26,10 @@ import com.ajou.hertz.common.kakao.service.KakaoService;
 import com.ajou.hertz.config.ControllerTestConfig;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-@DisplayName("[Unit] Controller - Auth(V1)")
+@DisplayName("[Unit] Controller - Auth")
 @Import(ControllerTestConfig.class)
-@WebMvcTest(controllers = AuthControllerV1.class)
-class AuthControllerV1Test {
+@WebMvcTest(controllers = AuthController.class)
+class AuthControllerTest {
 
 	@MockBean
 	private AuthService authService;
@@ -42,7 +42,7 @@ class AuthControllerV1Test {
 	private final ObjectMapper objectMapper;
 
 	@Autowired
-	public AuthControllerV1Test(MockMvc mvc, ObjectMapper objectMapper) {
+	public AuthControllerTest(MockMvc mvc, ObjectMapper objectMapper) {
 		this.mvc = mvc;
 		this.objectMapper = objectMapper;
 	}
@@ -56,8 +56,8 @@ class AuthControllerV1Test {
 
 		// when & then
 		mvc.perform(
-				post("/api/v1/auth/login")
-					.header(API_MINOR_VERSION_HEADER_NAME, 1)
+				post("/api/auth/login")
+					.header(API_VERSION_HEADER_NAME, 1)
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(objectMapper.writeValueAsString(loginRequest))
 			)
@@ -76,8 +76,8 @@ class AuthControllerV1Test {
 
 		// when & then
 		mvc.perform(
-				post("/api/v1/auth/kakao/login")
-					.header(API_MINOR_VERSION_HEADER_NAME, 1)
+				post("/api/auth/kakao/login")
+					.header(API_VERSION_HEADER_NAME, 1)
 					.contentType(MediaType.APPLICATION_JSON)
 					.content(objectMapper.writeValueAsString(kakaoLoginRequest))
 			)

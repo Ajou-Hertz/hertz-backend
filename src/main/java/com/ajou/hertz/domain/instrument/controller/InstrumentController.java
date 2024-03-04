@@ -50,9 +50,9 @@ import lombok.RequiredArgsConstructor;
 
 @Tag(name = "중고 악기 관련 API")
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/instruments")
+@RequestMapping("/api/instruments")
 @RestController
-public class InstrumentControllerV1 {
+public class InstrumentController {
 
 	private final InstrumentCommandService instrumentCommandService;
 	private final InstrumentQueryService instrumentQueryService;
@@ -61,7 +61,7 @@ public class InstrumentControllerV1 {
 		summary = "전체 악기 매물 목록 조회",
 		description = "악기 종류와 상관 없이 전체 매물 목록을 조회합니다."
 	)
-	@GetMapping(headers = API_MINOR_VERSION_HEADER_NAME + "=" + 1)
+	@GetMapping(headers = API_VERSION_HEADER_NAME + "=" + 1)
 	public Page<InstrumentSummaryResponse> findInstruments(
 		@Parameter(
 			description = "페이지 번호. 0부터 시작합니다.",
@@ -90,10 +90,10 @@ public class InstrumentControllerV1 {
 	)
 	@PostMapping(
 		value = "/electric-guitars",
-		headers = API_MINOR_VERSION_HEADER_NAME + "=" + 1,
+		headers = API_VERSION_HEADER_NAME + "=" + 1,
 		consumes = MediaType.MULTIPART_FORM_DATA_VALUE
 	)
-	public ResponseEntity<ElectricGuitarResponse> createNewElectricGuitarV1_1(
+	public ResponseEntity<ElectricGuitarResponse> createNewElectricGuitarV1(
 		@AuthenticationPrincipal UserPrincipal userPrincipal,
 		@ParameterObject @ModelAttribute @Valid CreateNewElectricGuitarRequest createNewElectricGuitarRequest
 	) {
@@ -116,10 +116,10 @@ public class InstrumentControllerV1 {
 	)
 	@PostMapping(
 		value = "/bass-guitars",
-		headers = API_MINOR_VERSION_HEADER_NAME + "=" + 1,
+		headers = API_VERSION_HEADER_NAME + "=" + 1,
 		consumes = MediaType.MULTIPART_FORM_DATA_VALUE
 	)
-	public ResponseEntity<BassGuitarResponse> createNewBassGuitarV1_1(
+	public ResponseEntity<BassGuitarResponse> createNewBassGuitarV1(
 		@AuthenticationPrincipal UserPrincipal userPrincipal,
 		@ParameterObject @ModelAttribute @Valid CreateNewBassGuitarRequest createNewBassGuitarRequest
 	) {
@@ -142,10 +142,10 @@ public class InstrumentControllerV1 {
 	)
 	@PostMapping(
 		value = "/acoustic-and-classic-guitars",
-		headers = API_MINOR_VERSION_HEADER_NAME + "=" + 1,
+		headers = API_VERSION_HEADER_NAME + "=" + 1,
 		consumes = MediaType.MULTIPART_FORM_DATA_VALUE
 	)
-	public ResponseEntity<AcousticAndClassicGuitarResponse> createNewAcousticAndClassicGuitarV1_1(
+	public ResponseEntity<AcousticAndClassicGuitarResponse> createNewAcousticAndClassicGuitarV1(
 		@AuthenticationPrincipal UserPrincipal userPrincipal,
 		@ParameterObject @ModelAttribute @Valid CreateNewAcousticAndClassicGuitarRequest acousticAndClassicGuitarRequest
 	) {
@@ -169,10 +169,10 @@ public class InstrumentControllerV1 {
 	)
 	@PostMapping(
 		value = "/effectors",
-		headers = API_MINOR_VERSION_HEADER_NAME + "=" + 1,
+		headers = API_VERSION_HEADER_NAME + "=" + 1,
 		consumes = MediaType.MULTIPART_FORM_DATA_VALUE
 	)
-	public ResponseEntity<EffectorResponse> createNewEffectorV1_1(
+	public ResponseEntity<EffectorResponse> createNewEffectorV1(
 		@AuthenticationPrincipal UserPrincipal userPrincipal,
 		@ParameterObject @ModelAttribute @Valid CreateNewEffectorRequest createNewEffectorRequest
 	) {
@@ -195,10 +195,10 @@ public class InstrumentControllerV1 {
 	)
 	@PostMapping(
 		value = "/amplifiers",
-		headers = API_MINOR_VERSION_HEADER_NAME + "=" + 1,
+		headers = API_VERSION_HEADER_NAME + "=" + 1,
 		consumes = MediaType.MULTIPART_FORM_DATA_VALUE
 	)
-	public ResponseEntity<AmplifierResponse> createNewAmplifierV1_1(
+	public ResponseEntity<AmplifierResponse> createNewAmplifierV1(
 		@AuthenticationPrincipal UserPrincipal userPrincipal,
 		@ParameterObject @ModelAttribute @Valid CreateNewAmplifierRequest createNewAmplifierRequest
 	) {
@@ -221,10 +221,10 @@ public class InstrumentControllerV1 {
 	)
 	@PostMapping(
 		value = "/audio-equipments",
-		headers = API_MINOR_VERSION_HEADER_NAME + "=" + 1,
+		headers = API_VERSION_HEADER_NAME + "=" + 1,
 		consumes = MediaType.MULTIPART_FORM_DATA_VALUE
 	)
-	public ResponseEntity<AudioEquipmentResponse> createNewAudioEquipmentV1_1(
+	public ResponseEntity<AudioEquipmentResponse> createNewAudioEquipmentV1(
 		@AuthenticationPrincipal UserPrincipal userPrincipal,
 		@ParameterObject @ModelAttribute @Valid CreateNewAudioEquipmentRequest createNewAudioEquipmentRequest
 	) {

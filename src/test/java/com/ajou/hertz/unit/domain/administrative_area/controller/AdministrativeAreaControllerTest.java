@@ -18,7 +18,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.ajou.hertz.config.ControllerTestConfig;
-import com.ajou.hertz.domain.administrative_area.controller.AdministrativeAreaControllerV1;
+import com.ajou.hertz.domain.administrative_area.controller.AdministrativeAreaController;
 import com.ajou.hertz.domain.administrative_area.entity.AdministrativeAreaEmd;
 import com.ajou.hertz.domain.administrative_area.entity.AdministrativeAreaSgg;
 import com.ajou.hertz.domain.administrative_area.entity.AdministrativeAreaSido;
@@ -26,10 +26,10 @@ import com.ajou.hertz.domain.administrative_area.repository.AdministrativeEmdRep
 import com.ajou.hertz.domain.administrative_area.repository.AdministrativeSggRepository;
 import com.ajou.hertz.domain.administrative_area.repository.AdministrativeSidoRepository;
 
-@DisplayName("[Unit] Controller - AdministrativeArea(V1)")
+@DisplayName("[Unit] Controller - AdministrativeArea")
 @Import(ControllerTestConfig.class)
-@WebMvcTest(controllers = AdministrativeAreaControllerV1.class)
-public class AdministrativeAreaControllerV1Test {
+@WebMvcTest(controllers = AdministrativeAreaController.class)
+public class AdministrativeAreaControllerTest {
 
 	@Autowired
 	private MockMvc mvc;
@@ -51,8 +51,8 @@ public class AdministrativeAreaControllerV1Test {
 
 		// when & then
 		mvc.perform(
-				get("/api/v1/administrative-areas/sido")
-					.header(API_MINOR_VERSION_HEADER_NAME, 1)
+				get("/api/administrative-areas/sido")
+					.header(API_VERSION_HEADER_NAME, 1)
 			)
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.content").isArray())
@@ -75,8 +75,8 @@ public class AdministrativeAreaControllerV1Test {
 
 		// when & then
 		mvc.perform(
-				get("/api/v1/administrative-areas/sgg")
-					.header(API_MINOR_VERSION_HEADER_NAME, 1)
+				get("/api/administrative-areas/sgg")
+					.header(API_VERSION_HEADER_NAME, 1)
 					.param("sidoId", String.valueOf(sido.getId()))
 			)
 			.andExpect(status().isOk())
@@ -103,8 +103,8 @@ public class AdministrativeAreaControllerV1Test {
 
 		// when & then
 		mvc.perform(
-				get("/api/v1/administrative-areas/emd")
-					.header(API_MINOR_VERSION_HEADER_NAME, 1)
+				get("/api/administrative-areas/emd")
+					.header(API_VERSION_HEADER_NAME, 1)
 					.param("sggId", String.valueOf(sgg.getId()))
 			)
 			.andExpect(status().isOk())
