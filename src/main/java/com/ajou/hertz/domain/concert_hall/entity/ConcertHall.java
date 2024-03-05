@@ -1,7 +1,8 @@
 package com.ajou.hertz.domain.concert_hall.entity;
 
+import com.ajou.hertz.common.entity.FullAddress;
 import com.ajou.hertz.common.entity.TimeTrackedBaseEntity;
-import com.ajou.hertz.domain.instrument.constant.InstrumentProgressStatus;
+import com.ajou.hertz.domain.concert_hall.constant.ConcertHallProgressStatus;
 import com.ajou.hertz.domain.user.entity.User;
 
 import jakarta.persistence.Column;
@@ -41,13 +42,19 @@ public class ConcertHall extends TimeTrackedBaseEntity {
 
 	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
-	private InstrumentProgressStatus progressStatus;
+	private ConcertHallProgressStatus progressStatus;
 
 	@Column(nullable = false)
-	private String address;
+	private FullAddress fullAddress;
 
 	@Column(nullable = false)
 	private String detailAddress;
+
+	@Column(nullable = false)
+	private String sido;
+
+	@Column(nullable = false)
+	private String sgg;
 
 	@Column(nullable = false)
 	private Boolean hasSoundEquipment;
@@ -70,6 +77,9 @@ public class ConcertHall extends TimeTrackedBaseEntity {
 	@Column(nullable = false)
 	private String size;
 
+	@Column(nullable = false)
+	private Boolean hasParkingLot;
+
 	@Column(length = 1000, nullable = false)
 	private String description;
 
@@ -79,12 +89,12 @@ public class ConcertHall extends TimeTrackedBaseEntity {
 	@Embedded
 	private ConcertHallHashtags hashtags = new ConcertHallHashtags();
 
-	protected ConcertHall(
+	private ConcertHall(
 		Long id,
 		User seller,
 		String title,
-		InstrumentProgressStatus progressStatus,
-		String address,
+		ConcertHallProgressStatus progressStatus,
+		FullAddress fullAddress,
 		String detailAddress,
 		Boolean hasSoundEquipment,
 		Boolean hasStaff,
@@ -93,14 +103,17 @@ public class ConcertHall extends TimeTrackedBaseEntity {
 		Integer pricePerHour,
 		Integer capacity,
 		String size,
+		Boolean hasParkingLot,
 		String description
 	) {
 		this.id = id;
 		this.seller = seller;
 		this.title = title;
 		this.progressStatus = progressStatus;
-		this.address = address;
+		this.fullAddress = fullAddress;
 		this.detailAddress = detailAddress;
+		this.sido = fullAddress.getSido();
+		this.sgg = fullAddress.getSgg();
 		this.hasSoundEquipment = hasSoundEquipment;
 		this.hasStaff = hasStaff;
 		this.hasAdditionalSpace = hasAdditionalSpace;
@@ -108,6 +121,7 @@ public class ConcertHall extends TimeTrackedBaseEntity {
 		this.pricePerHour = pricePerHour;
 		this.capacity = capacity;
 		this.size = size;
+		this.hasParkingLot = hasParkingLot;
 		this.description = description;
 	}
 }

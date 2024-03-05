@@ -17,13 +17,4 @@ public class ConcertHallHashtags {
 	@OneToMany(mappedBy = "concertHall")
 	private List<ConcertHallHashtag> content = new LinkedList<>();
 
-	public void addAll(List<ConcertHallHashtag> hashtags) {
-		content.addAll(hashtags);
-	}
-
-	public List<String> toStrings() {
-		return content.stream()
-			.map(ConcertHallHashtag::getContent)
-			.toList();
-	}
 }
