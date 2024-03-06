@@ -21,7 +21,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@AllArgsConstructor
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Entity
@@ -80,35 +80,4 @@ public class ConcertHall extends TimeTrackedBaseEntity {
 	@Embedded
 	private ConcertHallHashtags hashtags = new ConcertHallHashtags();
 
-	private ConcertHall(
-		Long id,
-		User seller,
-		String title,
-		ConcertHallProgressStatus progressStatus,
-		FullAddress fullAddress,
-		Boolean hasSoundEquipment,
-		Boolean hasStaff,
-		Boolean hasAdditionalSpace,
-		Integer pricePerDay,
-		Integer pricePerHour,
-		Integer capacity,
-		String size,
-		Boolean hasParkingLot,
-		String description
-	) {
-		this.id = id;
-		this.seller = seller;
-		this.title = title;
-		this.progressStatus = progressStatus;
-		this.fullAddress = fullAddress;
-		this.hasSoundEquipment = hasSoundEquipment;
-		this.hasStaff = hasStaff;
-		this.hasAdditionalSpace = hasAdditionalSpace;
-		this.pricePerDay = pricePerDay;
-		this.pricePerHour = pricePerHour;
-		this.capacity = capacity;
-		this.size = size;
-		this.hasParkingLot = hasParkingLot;
-		this.description = description;
-	}
 }
