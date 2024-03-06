@@ -14,17 +14,16 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.Inheritance;
-import jakarta.persistence.InheritanceType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-@Inheritance(strategy = InheritanceType.JOINED)
 @Entity
 public class ConcertHall extends TimeTrackedBaseEntity {
 
@@ -47,9 +46,6 @@ public class ConcertHall extends TimeTrackedBaseEntity {
 	@Column(nullable = false)
 	@Embedded
 	private FullAddress fullAddress;
-
-	@Column(nullable = false)
-	private String detailAddress;
 
 	@Column(nullable = false)
 	private Boolean hasSoundEquipment;
@@ -90,7 +86,6 @@ public class ConcertHall extends TimeTrackedBaseEntity {
 		String title,
 		ConcertHallProgressStatus progressStatus,
 		FullAddress fullAddress,
-		String detailAddress,
 		Boolean hasSoundEquipment,
 		Boolean hasStaff,
 		Boolean hasAdditionalSpace,
@@ -106,7 +101,6 @@ public class ConcertHall extends TimeTrackedBaseEntity {
 		this.title = title;
 		this.progressStatus = progressStatus;
 		this.fullAddress = fullAddress;
-		this.detailAddress = detailAddress;
 		this.hasSoundEquipment = hasSoundEquipment;
 		this.hasStaff = hasStaff;
 		this.hasAdditionalSpace = hasAdditionalSpace;
