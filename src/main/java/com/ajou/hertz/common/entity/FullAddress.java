@@ -1,5 +1,7 @@
 package com.ajou.hertz.common.entity;
 
+import java.util.Arrays;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import lombok.AccessLevel;
@@ -35,8 +37,27 @@ public class FullAddress {
 		}
 
 		String sido = parsedAddress[0];
-		String sgg = parsedAddress[1];
+		StringBuilder sggBuilder = new StringBuilder();
+		String lotNumberAddress = null;
+		String roadAddress = null;
 
-		return new FullAddress(sido, sgg, null, null, detailAddress);
+		int i;
+		for (i = 1; i < parsedAddress.length; i++) {
+			if (parsedAddress[i].matches(".*[동면읍소로길]$")) {
+				break;
+			}
+			sggBuilder.append(parsedAddress[i]).append(" ");
+		}
+
+		String sgg = sggBuilder.toString().trim();
+
+		if (fulladdress.matches(".+[로길].+")) {
+			roadAddress = String.join(" ", Arrays.copyOfRange(parsedAddress, i, parsedAddress.length));
+		} else {
+			lotNumberAddress = String.join(" ", Arrays.copyOfRange(parsedAddress, i, parsedAddress.length));
+		}
+
+		return new FullAddress(sido, sgg, lotNumberAddress, roadAddress, detailAddress);
 	}
+
 }

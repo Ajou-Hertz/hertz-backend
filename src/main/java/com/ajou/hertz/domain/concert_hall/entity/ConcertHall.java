@@ -45,16 +45,11 @@ public class ConcertHall extends TimeTrackedBaseEntity {
 	private ConcertHallProgressStatus progressStatus;
 
 	@Column(nullable = false)
+	@Embedded
 	private FullAddress fullAddress;
 
 	@Column(nullable = false)
 	private String detailAddress;
-
-	@Column(nullable = false)
-	private String sido;
-
-	@Column(nullable = false)
-	private String sgg;
 
 	@Column(nullable = false)
 	private Boolean hasSoundEquipment;
@@ -112,8 +107,6 @@ public class ConcertHall extends TimeTrackedBaseEntity {
 		this.progressStatus = progressStatus;
 		this.fullAddress = fullAddress;
 		this.detailAddress = detailAddress;
-		this.sido = fullAddress.getSido();
-		this.sgg = fullAddress.getSgg();
 		this.hasSoundEquipment = hasSoundEquipment;
 		this.hasStaff = hasStaff;
 		this.hasAdditionalSpace = hasAdditionalSpace;
