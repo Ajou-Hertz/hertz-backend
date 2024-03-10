@@ -21,7 +21,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -100,7 +99,7 @@ class InstrumentControllerTest {
 			createBassGuitarDto(3L, userId),
 			createBassGuitarDto(4L, userId)
 		));
-		given(instrumentQueryService.findInstruments(any(Pageable.class))).willReturn(expectedResult);
+		given(instrumentQueryService.findInstruments(pageNumber, pageSize, sortOption)).willReturn(expectedResult);
 
 		// when & then
 		mvc.perform(
@@ -114,7 +113,7 @@ class InstrumentControllerTest {
 			.andExpect(jsonPath("$.numberOfElements").value(expectedResult.getNumberOfElements()))
 			.andExpect(jsonPath("$.content").isArray())
 			.andExpect(jsonPath("$.content", hasSize(expectedResult.getNumberOfElements())));
-		then(instrumentQueryService).should().findInstruments(any(Pageable.class));
+		then(instrumentQueryService).should().findInstruments(pageNumber, pageSize, sortOption);
 		verifyEveryMocksShouldHaveNoMoreInteractions();
 	}
 
@@ -130,7 +129,7 @@ class InstrumentControllerTest {
 			createElectricGuitarDto(3L, userId),
 			createElectricGuitarDto(4L, userId)
 		));
-		given(instrumentQueryService.findElectricGuitars(any(Pageable.class))).willReturn(expectedResult);
+		given(instrumentQueryService.findElectricGuitars(pageNumber, pageSize, sortOption)).willReturn(expectedResult);
 
 		// when & then
 		mvc.perform(
@@ -144,7 +143,37 @@ class InstrumentControllerTest {
 			.andExpect(jsonPath("$.numberOfElements").value(expectedResult.getNumberOfElements()))
 			.andExpect(jsonPath("$.content").isArray())
 			.andExpect(jsonPath("$.content", hasSize(expectedResult.getNumberOfElements())));
-		then(instrumentQueryService).should().findElectricGuitars(any(Pageable.class));
+		then(instrumentQueryService).should().findElectricGuitars(pageNumber, pageSize, sortOption);
+		verifyEveryMocksShouldHaveNoMoreInteractions();
+	}
+
+	@Test
+	void 베이스_기타_매물_목록을_조회한다() throws Exception {
+		// given
+		long userId = 1L;
+		int page = 0;
+		int pageSize = 10;
+		InstrumentSortOption sortOption = InstrumentSortOption.CREATED_BY_DESC;
+		Page<BassGuitarDto> expectedResult = new PageImpl<>(List.of(
+			createBassGuitarDto(2L, userId),
+			createBassGuitarDto(3L, userId),
+			createBassGuitarDto(4L, userId)
+		));
+		given(instrumentQueryService.findBassGuitars(page, pageSize, sortOption)).willReturn(expectedResult);
+
+		// when & then
+		mvc.perform(
+				get("/api/instruments/bass-guitars")
+					.header(API_VERSION_HEADER_NAME, 1)
+					.param("page", String.valueOf(page))
+					.param("size", String.valueOf(pageSize))
+					.param("sort", sortOption.name())
+			)
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.numberOfElements").value(expectedResult.getNumberOfElements()))
+			.andExpect(jsonPath("$.content").isArray())
+			.andExpect(jsonPath("$.content", hasSize(expectedResult.getNumberOfElements())));
+		then(instrumentQueryService).should().findBassGuitars(page, pageSize, sortOption);
 		verifyEveryMocksShouldHaveNoMoreInteractions();
 	}
 

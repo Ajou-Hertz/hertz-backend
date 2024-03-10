@@ -27,6 +27,8 @@ import com.ajou.hertz.domain.instrument.constant.ElectricGuitarBrand;
 import com.ajou.hertz.domain.instrument.constant.ElectricGuitarModel;
 import com.ajou.hertz.domain.instrument.constant.GuitarColor;
 import com.ajou.hertz.domain.instrument.constant.InstrumentProgressStatus;
+import com.ajou.hertz.domain.instrument.constant.InstrumentSortOption;
+import com.ajou.hertz.domain.instrument.dto.BassGuitarDto;
 import com.ajou.hertz.domain.instrument.dto.ElectricGuitarDto;
 import com.ajou.hertz.domain.instrument.dto.InstrumentDto;
 import com.ajou.hertz.domain.instrument.entity.BassGuitar;
@@ -51,6 +53,9 @@ class InstrumentQueryServiceTest {
 	@Test
 	void 종류_상관_없이_전체_악기_목록을_조회한다() throws Exception {
 		// given
+		int page = 0;
+		int pageSize = 10;
+		InstrumentSortOption sort = InstrumentSortOption.CREATED_BY_DESC;
 		User user = createUser();
 		Page<Instrument> expectedResult = new PageImpl<>(List.of(
 			createInstrument(1L, user),
@@ -60,7 +65,7 @@ class InstrumentQueryServiceTest {
 		given(instrumentRepository.findAll(any(Pageable.class))).willReturn(expectedResult);
 
 		// when
-		Page<InstrumentDto> actualResult = sut.findInstruments(Pageable.ofSize(10));
+		Page<InstrumentDto> actualResult = sut.findInstruments(page, pageSize, sort);
 
 		// then
 		then(instrumentRepository).should().findAll(any(Pageable.class));
@@ -75,24 +80,54 @@ class InstrumentQueryServiceTest {
 	@Test
 	void 일렉_기타_목록을_조회한다() throws Exception {
 		// given
+		int page = 0;
+		int pageSize = 10;
+		InstrumentSortOption sort = InstrumentSortOption.CREATED_BY_DESC;
 		User user = createUser();
 		Page<ElectricGuitar> expectedResult = new PageImpl<>(List.of(
 			createElectricGuitar(1L, user),
 			createElectricGuitar(2L, user),
 			createElectricGuitar(3L, user)
 		));
-		given(instrumentRepository.findElectricGuitars(any(Pageable.class))).willReturn(expectedResult);
+		given(instrumentRepository.findElectricGuitars(page, pageSize, sort)).willReturn(expectedResult);
 
 		// when
-		Page<ElectricGuitarDto> actualResult = sut.findElectricGuitars(Pageable.ofSize(10));
+		Page<ElectricGuitarDto> actualResult = sut.findElectricGuitars(page, pageSize, sort);
 
 		// then
-		then(instrumentRepository).should().findElectricGuitars(any(Pageable.class));
+		then(instrumentRepository).should().findElectricGuitars(page, pageSize, sort);
 		verifyEveryMocksShouldHaveNoMoreInteractions();
 		assertThat(actualResult.getNumberOfElements()).isEqualTo(actualResult.getNumberOfElements());
 		assertIterableEquals(
 			expectedResult.getContent().stream().map(ElectricGuitar::getId).toList(),
 			actualResult.getContent().stream().map(ElectricGuitarDto::getId).toList()
+		);
+	}
+
+	@Test
+	void 베이스_기타_목록을_조회한다() throws Exception {
+		// given
+		int page = 0;
+		int pageSize = 10;
+		InstrumentSortOption sort = InstrumentSortOption.CREATED_BY_DESC;
+		User user = createUser();
+		Page<BassGuitar> expectedResult = new PageImpl<>(List.of(
+			createBassGuitar(1L, user),
+			createBassGuitar(2L, user),
+			createBassGuitar(3L, user)
+		));
+		given(instrumentRepository.findBassGuitars(page, pageSize, sort)).willReturn(expectedResult);
+
+		// when
+		Page<BassGuitarDto> actualResult = sut.findBassGuitars(page, pageSize, sort);
+
+		// then
+		then(instrumentRepository).should().findBassGuitars(page, pageSize, sort);
+		verifyEveryMocksShouldHaveNoMoreInteractions();
+		assertThat(actualResult.getNumberOfElements()).isEqualTo(actualResult.getNumberOfElements());
+		assertIterableEquals(
+			expectedResult.getContent().stream().map(BassGuitar::getId).toList(),
+			actualResult.getContent().stream().map(BassGuitarDto::getId).toList()
 		);
 	}
 
@@ -148,6 +183,30 @@ class InstrumentQueryServiceTest {
 			ElectricGuitarBrand.FENDER_USA,
 			ElectricGuitarModel.TELECASTER,
 			(short)2014,
+			GuitarColor.RED
+		);
+	}
+
+	private BassGuitar createBassGuitar(long id, User seller) throws Exception {
+		Constructor<BassGuitar> bassGuitarConstructor = BassGuitar.class.getDeclaredConstructor(
+			Long.class, User.class, String.class, InstrumentProgressStatus.class, Address.class,
+			Short.class, Integer.class, Boolean.class, String.class,
+			BassGuitarBrand.class, BassGuitarPickUp.class, BassGuitarPreAmplifier.class, GuitarColor.class
+		);
+		bassGuitarConstructor.setAccessible(true);
+		return bassGuitarConstructor.newInstance(
+			id,
+			seller,
+			"Test electric guitar",
+			InstrumentProgressStatus.SELLING,
+			createAddress(),
+			(short)3,
+			550000,
+			true,
+			"description",
+			BassGuitarBrand.FENDER,
+			BassGuitarPickUp.JAZZ,
+			BassGuitarPreAmplifier.ACTIVE,
 			GuitarColor.RED
 		);
 	}
