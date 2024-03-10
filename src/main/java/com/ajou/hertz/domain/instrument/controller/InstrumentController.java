@@ -126,6 +126,29 @@ public class InstrumentController {
 	}
 
 	@Operation(
+		summary = "어쿠스틱&클래식 기타 매물 목록 조회",
+		description = "어쿠스틱&클래식 기타 매물 목록을 조회합니다."
+	)
+	@GetMapping(value = "/acoustic-and-classic-guitars", headers = API_VERSION_HEADER_NAME + "=" + 1)
+	public Page<AcousticAndClassicGuitarResponse> findAcousticAndClassicGuitarsV1(
+		@Parameter(
+			description = "페이지 번호. 0부터 시작합니다.",
+			example = "0"
+		) @RequestParam int page,
+		@Parameter(
+			description = "페이지 크기. 한 페이지에 포함될 데이터의 개수를 의미합니다.",
+			example = "10"
+		) @RequestParam int size,
+		@Parameter(
+			description = "정렬 기준"
+		) @RequestParam InstrumentSortOption sort
+	) {
+		return instrumentQueryService
+			.findAcousticAndClassicGuitars(page, size, sort)
+			.map(AcousticAndClassicGuitarResponse::from);
+	}
+
+	@Operation(
 		summary = "일렉기타 매물 등록",
 		description = """
 			<p>일렉기타 매물을 등록합니다.

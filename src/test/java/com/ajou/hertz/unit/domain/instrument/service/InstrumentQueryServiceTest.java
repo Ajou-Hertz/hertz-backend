@@ -20,6 +20,10 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
 import com.ajou.hertz.common.entity.Address;
+import com.ajou.hertz.domain.instrument.constant.AcousticAndClassicGuitarBrand;
+import com.ajou.hertz.domain.instrument.constant.AcousticAndClassicGuitarModel;
+import com.ajou.hertz.domain.instrument.constant.AcousticAndClassicGuitarPickUp;
+import com.ajou.hertz.domain.instrument.constant.AcousticAndClassicGuitarWood;
 import com.ajou.hertz.domain.instrument.constant.BassGuitarBrand;
 import com.ajou.hertz.domain.instrument.constant.BassGuitarPickUp;
 import com.ajou.hertz.domain.instrument.constant.BassGuitarPreAmplifier;
@@ -28,9 +32,11 @@ import com.ajou.hertz.domain.instrument.constant.ElectricGuitarModel;
 import com.ajou.hertz.domain.instrument.constant.GuitarColor;
 import com.ajou.hertz.domain.instrument.constant.InstrumentProgressStatus;
 import com.ajou.hertz.domain.instrument.constant.InstrumentSortOption;
+import com.ajou.hertz.domain.instrument.dto.AcousticAndClassicGuitarDto;
 import com.ajou.hertz.domain.instrument.dto.BassGuitarDto;
 import com.ajou.hertz.domain.instrument.dto.ElectricGuitarDto;
 import com.ajou.hertz.domain.instrument.dto.InstrumentDto;
+import com.ajou.hertz.domain.instrument.entity.AcousticAndClassicGuitar;
 import com.ajou.hertz.domain.instrument.entity.BassGuitar;
 import com.ajou.hertz.domain.instrument.entity.ElectricGuitar;
 import com.ajou.hertz.domain.instrument.entity.Instrument;
@@ -131,6 +137,33 @@ class InstrumentQueryServiceTest {
 		);
 	}
 
+	@Test
+	void 어쿠스틱_클래식_기타_목록을_조회한다() throws Exception {
+		// given
+		int page = 0;
+		int pageSize = 10;
+		InstrumentSortOption sort = InstrumentSortOption.CREATED_BY_DESC;
+		User user = createUser();
+		Page<AcousticAndClassicGuitar> expectedResult = new PageImpl<>(List.of(
+			createAcousticAndClassicGuitar(1L, user),
+			createAcousticAndClassicGuitar(2L, user),
+			createAcousticAndClassicGuitar(3L, user)
+		));
+		given(instrumentRepository.findAcousticAndClassicGuitars(page, pageSize, sort)).willReturn(expectedResult);
+
+		// when
+		Page<AcousticAndClassicGuitarDto> actualResult = sut.findAcousticAndClassicGuitars(page, pageSize, sort);
+
+		// then
+		then(instrumentRepository).should().findAcousticAndClassicGuitars(page, pageSize, sort);
+		verifyEveryMocksShouldHaveNoMoreInteractions();
+		assertThat(actualResult.getNumberOfElements()).isEqualTo(actualResult.getNumberOfElements());
+		assertIterableEquals(
+			expectedResult.getContent().stream().map(AcousticAndClassicGuitar::getId).toList(),
+			actualResult.getContent().stream().map(AcousticAndClassicGuitarDto::getId).toList()
+		);
+	}
+
 	private void verifyEveryMocksShouldHaveNoMoreInteractions() {
 		then(instrumentRepository).shouldHaveNoMoreInteractions();
 	}
@@ -228,6 +261,32 @@ class InstrumentQueryServiceTest {
 			Gender.ETC,
 			"01012345678",
 			null
+		);
+	}
+
+	private AcousticAndClassicGuitar createAcousticAndClassicGuitar(long id, User seller) throws Exception {
+		Constructor<AcousticAndClassicGuitar> acousticAndClassicGuitarConstructor =
+			AcousticAndClassicGuitar.class.getDeclaredConstructor(
+				Long.class, User.class, String.class, InstrumentProgressStatus.class, Address.class,
+				Short.class, Integer.class, Boolean.class, String.class,
+				AcousticAndClassicGuitarBrand.class, AcousticAndClassicGuitarModel.class,
+				AcousticAndClassicGuitarWood.class, AcousticAndClassicGuitarPickUp.class
+			);
+		acousticAndClassicGuitarConstructor.setAccessible(true);
+		return acousticAndClassicGuitarConstructor.newInstance(
+			id,
+			seller,
+			"Test electric guitar",
+			InstrumentProgressStatus.SELLING,
+			createAddress(),
+			(short)3,
+			550000,
+			true,
+			"description",
+			AcousticAndClassicGuitarBrand.HEX,
+			AcousticAndClassicGuitarModel.JUMBO_BODY,
+			AcousticAndClassicGuitarWood.PLYWOOD,
+			AcousticAndClassicGuitarPickUp.MICROPHONE
 		);
 	}
 

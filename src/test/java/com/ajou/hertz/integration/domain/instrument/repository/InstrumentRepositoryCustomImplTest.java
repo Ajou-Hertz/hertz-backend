@@ -18,6 +18,10 @@ import org.springframework.test.context.ActiveProfiles;
 import com.ajou.hertz.common.config.JpaConfig;
 import com.ajou.hertz.common.config.QuerydslConfig;
 import com.ajou.hertz.common.entity.Address;
+import com.ajou.hertz.domain.instrument.constant.AcousticAndClassicGuitarBrand;
+import com.ajou.hertz.domain.instrument.constant.AcousticAndClassicGuitarModel;
+import com.ajou.hertz.domain.instrument.constant.AcousticAndClassicGuitarPickUp;
+import com.ajou.hertz.domain.instrument.constant.AcousticAndClassicGuitarWood;
 import com.ajou.hertz.domain.instrument.constant.BassGuitarBrand;
 import com.ajou.hertz.domain.instrument.constant.BassGuitarPickUp;
 import com.ajou.hertz.domain.instrument.constant.BassGuitarPreAmplifier;
@@ -26,6 +30,7 @@ import com.ajou.hertz.domain.instrument.constant.ElectricGuitarModel;
 import com.ajou.hertz.domain.instrument.constant.GuitarColor;
 import com.ajou.hertz.domain.instrument.constant.InstrumentProgressStatus;
 import com.ajou.hertz.domain.instrument.constant.InstrumentSortOption;
+import com.ajou.hertz.domain.instrument.entity.AcousticAndClassicGuitar;
 import com.ajou.hertz.domain.instrument.entity.BassGuitar;
 import com.ajou.hertz.domain.instrument.entity.ElectricGuitar;
 import com.ajou.hertz.domain.instrument.entity.Instrument;
@@ -82,6 +87,25 @@ class InstrumentRepositoryCustomImplTest {
 
 		// when
 		Page<BassGuitar> result = sut.findBassGuitars(0, 10, InstrumentSortOption.CREATED_BY_ASC);
+
+		// then
+		assertThat(result.getNumberOfElements()).isEqualTo(savedInstruments.size() - 1);
+	}
+
+	@Test
+	void 어쿠스틱_클래식_기타_목록을_조회한다() throws Exception {
+		// given
+		User user = userRepository.save(createUser());
+		List<Instrument> savedInstruments = sut.saveAll(List.of(
+			createElectricGuitar(user),
+			createAcousticAndClassicGuitar(user),
+			createAcousticAndClassicGuitar(user)
+		));
+
+		// when
+		Page<AcousticAndClassicGuitar> result = sut.findAcousticAndClassicGuitars(
+			0, 10, InstrumentSortOption.CREATED_BY_ASC
+		);
 
 		// then
 		assertThat(result.getNumberOfElements()).isEqualTo(savedInstruments.size() - 1);
@@ -156,6 +180,32 @@ class InstrumentRepositoryCustomImplTest {
 			BassGuitarPickUp.JAZZ,
 			BassGuitarPreAmplifier.ACTIVE,
 			GuitarColor.RED
+		);
+	}
+
+	private AcousticAndClassicGuitar createAcousticAndClassicGuitar(User seller) throws Exception {
+		Constructor<AcousticAndClassicGuitar> acousticAndClassicGuitarConstructor =
+			AcousticAndClassicGuitar.class.getDeclaredConstructor(
+				Long.class, User.class, String.class, InstrumentProgressStatus.class, Address.class,
+				Short.class, Integer.class, Boolean.class, String.class,
+				AcousticAndClassicGuitarBrand.class, AcousticAndClassicGuitarModel.class,
+				AcousticAndClassicGuitarWood.class, AcousticAndClassicGuitarPickUp.class
+			);
+		acousticAndClassicGuitarConstructor.setAccessible(true);
+		return acousticAndClassicGuitarConstructor.newInstance(
+			null,
+			seller,
+			"Test electric guitar",
+			InstrumentProgressStatus.SELLING,
+			createAddress(),
+			(short)3,
+			550000,
+			true,
+			"description",
+			AcousticAndClassicGuitarBrand.HEX,
+			AcousticAndClassicGuitarModel.JUMBO_BODY,
+			AcousticAndClassicGuitarWood.PLYWOOD,
+			AcousticAndClassicGuitarPickUp.MICROPHONE
 		);
 	}
 }

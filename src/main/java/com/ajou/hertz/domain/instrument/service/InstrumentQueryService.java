@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ajou.hertz.domain.instrument.constant.InstrumentSortOption;
+import com.ajou.hertz.domain.instrument.dto.AcousticAndClassicGuitarDto;
 import com.ajou.hertz.domain.instrument.dto.BassGuitarDto;
 import com.ajou.hertz.domain.instrument.dto.ElectricGuitarDto;
 import com.ajou.hertz.domain.instrument.dto.InstrumentDto;
@@ -36,5 +37,13 @@ public class InstrumentQueryService {
 		return instrumentRepository
 			.findBassGuitars(page, pageSize, sort)
 			.map(BassGuitarDto::from);
+	}
+
+	public Page<AcousticAndClassicGuitarDto> findAcousticAndClassicGuitars(
+		int page, int pageSize, InstrumentSortOption sort
+	) {
+		return instrumentRepository
+			.findAcousticAndClassicGuitars(page, pageSize, sort)
+			.map(AcousticAndClassicGuitarDto::from);
 	}
 }
