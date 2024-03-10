@@ -119,6 +119,36 @@ class InstrumentControllerTest {
 	}
 
 	@Test
+	void 일렉_기타_매물_목록을_조회한다() throws Exception {
+		// given
+		long userId = 1L;
+		int pageNumber = 0;
+		int pageSize = 10;
+		InstrumentSortOption sortOption = InstrumentSortOption.CREATED_BY_DESC;
+		Page<ElectricGuitarDto> expectedResult = new PageImpl<>(List.of(
+			createElectricGuitarDto(2L, userId),
+			createElectricGuitarDto(3L, userId),
+			createElectricGuitarDto(4L, userId)
+		));
+		given(instrumentQueryService.findElectricGuitars(any(Pageable.class))).willReturn(expectedResult);
+
+		// when & then
+		mvc.perform(
+				get("/api/instruments/electric-guitars")
+					.header(API_VERSION_HEADER_NAME, 1)
+					.param("page", String.valueOf(pageNumber))
+					.param("size", String.valueOf(pageSize))
+					.param("sort", sortOption.name())
+			)
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.numberOfElements").value(expectedResult.getNumberOfElements()))
+			.andExpect(jsonPath("$.content").isArray())
+			.andExpect(jsonPath("$.content", hasSize(expectedResult.getNumberOfElements())));
+		then(instrumentQueryService).should().findElectricGuitars(any(Pageable.class));
+		verifyEveryMocksShouldHaveNoMoreInteractions();
+	}
+
+	@Test
 	void 새로_등록할_일렉기타의_정보가_주어지면_일렉기타_매물을_등록한다() throws Exception {
 		// given
 		long sellerId = 1L;

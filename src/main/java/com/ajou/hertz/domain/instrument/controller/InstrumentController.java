@@ -62,7 +62,31 @@ public class InstrumentController {
 		description = "악기 종류와 상관 없이 전체 매물 목록을 조회합니다."
 	)
 	@GetMapping(headers = API_VERSION_HEADER_NAME + "=" + 1)
-	public Page<InstrumentSummaryResponse> findInstruments(
+	public Page<InstrumentSummaryResponse> findInstrumentsV1(
+		@Parameter(
+			description = "페이지 번호. 0부터 시작합니다.",
+			example = "0"
+		) @RequestParam int page,
+		@Parameter(
+			description = "페이지 크기. 한 페이지에 포함될 데이터의 개수를 의미합니다.",
+			example = "10"
+		) @RequestParam int size,
+		@Parameter(
+			description = "정렬 기준"
+		) @RequestParam InstrumentSortOption sort
+	) {
+		PageRequest pageRequest = PageRequest.of(page, size, sort.toSort());
+		return instrumentQueryService
+			.findInstruments(pageRequest)
+			.map(InstrumentSummaryResponse::from);
+	}
+
+	@Operation(
+		summary = "일렉 기타 매물 목록 조회",
+		description = "일렉 기타 매물 목록을 조회합니다."
+	)
+	@GetMapping(value = "/electric-guitars", headers = API_VERSION_HEADER_NAME + "=" + 1)
+	public Page<ElectricGuitarResponse> findElectricGuitarsV1(
 		@Parameter(
 			description = "페이지 번호. 0부터 시작합니다.",
 			example = "0"
@@ -76,8 +100,8 @@ public class InstrumentController {
 		) @RequestParam InstrumentSortOption sort
 	) {
 		return instrumentQueryService
-			.findInstruments(PageRequest.of(page, size, sort.toSort()))
-			.map(InstrumentSummaryResponse::from);
+			.findElectricGuitars(PageRequest.of(page, size, sort.toSort()))
+			.map(ElectricGuitarResponse::from);
 	}
 
 	@Operation(

@@ -5,6 +5,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.ajou.hertz.domain.instrument.dto.ElectricGuitarDto;
 import com.ajou.hertz.domain.instrument.dto.InstrumentDto;
 import com.ajou.hertz.domain.instrument.repository.InstrumentRepository;
 
@@ -21,5 +22,11 @@ public class InstrumentQueryService {
 		return instrumentRepository
 			.findAll(pageable)
 			.map(InstrumentDto::from);
+	}
+
+	public Page<ElectricGuitarDto> findElectricGuitars(Pageable pageable) {
+		return instrumentRepository
+			.findElectricGuitars(pageable)
+			.map(ElectricGuitarDto::from);
 	}
 }

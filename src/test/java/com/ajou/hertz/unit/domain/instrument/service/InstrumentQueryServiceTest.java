@@ -23,10 +23,14 @@ import com.ajou.hertz.common.entity.Address;
 import com.ajou.hertz.domain.instrument.constant.BassGuitarBrand;
 import com.ajou.hertz.domain.instrument.constant.BassGuitarPickUp;
 import com.ajou.hertz.domain.instrument.constant.BassGuitarPreAmplifier;
+import com.ajou.hertz.domain.instrument.constant.ElectricGuitarBrand;
+import com.ajou.hertz.domain.instrument.constant.ElectricGuitarModel;
 import com.ajou.hertz.domain.instrument.constant.GuitarColor;
 import com.ajou.hertz.domain.instrument.constant.InstrumentProgressStatus;
+import com.ajou.hertz.domain.instrument.dto.ElectricGuitarDto;
 import com.ajou.hertz.domain.instrument.dto.InstrumentDto;
 import com.ajou.hertz.domain.instrument.entity.BassGuitar;
+import com.ajou.hertz.domain.instrument.entity.ElectricGuitar;
 import com.ajou.hertz.domain.instrument.entity.Instrument;
 import com.ajou.hertz.domain.instrument.repository.InstrumentRepository;
 import com.ajou.hertz.domain.instrument.service.InstrumentQueryService;
@@ -68,6 +72,30 @@ class InstrumentQueryServiceTest {
 		);
 	}
 
+	@Test
+	void 일렉_기타_목록을_조회한다() throws Exception {
+		// given
+		User user = createUser();
+		Page<ElectricGuitar> expectedResult = new PageImpl<>(List.of(
+			createElectricGuitar(1L, user),
+			createElectricGuitar(2L, user),
+			createElectricGuitar(3L, user)
+		));
+		given(instrumentRepository.findElectricGuitars(any(Pageable.class))).willReturn(expectedResult);
+
+		// when
+		Page<ElectricGuitarDto> actualResult = sut.findElectricGuitars(Pageable.ofSize(10));
+
+		// then
+		then(instrumentRepository).should().findElectricGuitars(any(Pageable.class));
+		verifyEveryMocksShouldHaveNoMoreInteractions();
+		assertThat(actualResult.getNumberOfElements()).isEqualTo(actualResult.getNumberOfElements());
+		assertIterableEquals(
+			expectedResult.getContent().stream().map(ElectricGuitar::getId).toList(),
+			actualResult.getContent().stream().map(ElectricGuitarDto::getId).toList()
+		);
+	}
+
 	private void verifyEveryMocksShouldHaveNoMoreInteractions() {
 		then(instrumentRepository).shouldHaveNoMoreInteractions();
 	}
@@ -96,6 +124,30 @@ class InstrumentQueryServiceTest {
 			BassGuitarBrand.FENDER,
 			BassGuitarPickUp.JAZZ,
 			BassGuitarPreAmplifier.ACTIVE,
+			GuitarColor.RED
+		);
+	}
+
+	private ElectricGuitar createElectricGuitar(long id, User seller) throws Exception {
+		Constructor<ElectricGuitar> electricGuitarConstructor = ElectricGuitar.class.getDeclaredConstructor(
+			Long.class, User.class, String.class, InstrumentProgressStatus.class, Address.class, Short.class,
+			Integer.class, Boolean.class, String.class, ElectricGuitarBrand.class, ElectricGuitarModel.class,
+			Short.class, GuitarColor.class
+		);
+		electricGuitarConstructor.setAccessible(true);
+		return electricGuitarConstructor.newInstance(
+			id,
+			seller,
+			"Test electric guitar",
+			InstrumentProgressStatus.SELLING,
+			createAddress(),
+			(short)3,
+			550000,
+			true,
+			"description",
+			ElectricGuitarBrand.FENDER_USA,
+			ElectricGuitarModel.TELECASTER,
+			(short)2014,
 			GuitarColor.RED
 		);
 	}
