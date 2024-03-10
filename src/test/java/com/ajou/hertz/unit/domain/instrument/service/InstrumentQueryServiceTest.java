@@ -27,6 +27,8 @@ import com.ajou.hertz.domain.instrument.constant.AcousticAndClassicGuitarWood;
 import com.ajou.hertz.domain.instrument.constant.BassGuitarBrand;
 import com.ajou.hertz.domain.instrument.constant.BassGuitarPickUp;
 import com.ajou.hertz.domain.instrument.constant.BassGuitarPreAmplifier;
+import com.ajou.hertz.domain.instrument.constant.EffectorFeature;
+import com.ajou.hertz.domain.instrument.constant.EffectorType;
 import com.ajou.hertz.domain.instrument.constant.ElectricGuitarBrand;
 import com.ajou.hertz.domain.instrument.constant.ElectricGuitarModel;
 import com.ajou.hertz.domain.instrument.constant.GuitarColor;
@@ -34,10 +36,12 @@ import com.ajou.hertz.domain.instrument.constant.InstrumentProgressStatus;
 import com.ajou.hertz.domain.instrument.constant.InstrumentSortOption;
 import com.ajou.hertz.domain.instrument.dto.AcousticAndClassicGuitarDto;
 import com.ajou.hertz.domain.instrument.dto.BassGuitarDto;
+import com.ajou.hertz.domain.instrument.dto.EffectorDto;
 import com.ajou.hertz.domain.instrument.dto.ElectricGuitarDto;
 import com.ajou.hertz.domain.instrument.dto.InstrumentDto;
 import com.ajou.hertz.domain.instrument.entity.AcousticAndClassicGuitar;
 import com.ajou.hertz.domain.instrument.entity.BassGuitar;
+import com.ajou.hertz.domain.instrument.entity.Effector;
 import com.ajou.hertz.domain.instrument.entity.ElectricGuitar;
 import com.ajou.hertz.domain.instrument.entity.Instrument;
 import com.ajou.hertz.domain.instrument.repository.InstrumentRepository;
@@ -164,6 +168,33 @@ class InstrumentQueryServiceTest {
 		);
 	}
 
+	@Test
+	void 이펙터_목록을_조회한다() throws Exception {
+		// given
+		int page = 0;
+		int pageSize = 10;
+		InstrumentSortOption sort = InstrumentSortOption.CREATED_BY_DESC;
+		User user = createUser();
+		Page<Effector> expectedResult = new PageImpl<>(List.of(
+			createEffector(1L, user),
+			createEffector(2L, user),
+			createEffector(3L, user)
+		));
+		given(instrumentRepository.findEffectors(page, pageSize, sort)).willReturn(expectedResult);
+
+		// when
+		Page<EffectorDto> actualResult = sut.findEffectors(page, pageSize, sort);
+
+		// then
+		then(instrumentRepository).should().findEffectors(page, pageSize, sort);
+		verifyEveryMocksShouldHaveNoMoreInteractions();
+		assertThat(actualResult.getNumberOfElements()).isEqualTo(actualResult.getNumberOfElements());
+		assertIterableEquals(
+			expectedResult.getContent().stream().map(Effector::getId).toList(),
+			actualResult.getContent().stream().map(EffectorDto::getId).toList()
+		);
+	}
+
 	private void verifyEveryMocksShouldHaveNoMoreInteractions() {
 		then(instrumentRepository).shouldHaveNoMoreInteractions();
 	}
@@ -287,6 +318,28 @@ class InstrumentQueryServiceTest {
 			AcousticAndClassicGuitarModel.JUMBO_BODY,
 			AcousticAndClassicGuitarWood.PLYWOOD,
 			AcousticAndClassicGuitarPickUp.MICROPHONE
+		);
+	}
+
+	private Effector createEffector(long id, User seller) throws Exception {
+		Constructor<Effector> effectorConstructor = Effector.class.getDeclaredConstructor(
+			Long.class, User.class, String.class, InstrumentProgressStatus.class, Address.class,
+			Short.class, Integer.class, Boolean.class, String.class,
+			EffectorType.class, EffectorFeature.class
+		);
+		effectorConstructor.setAccessible(true);
+		return effectorConstructor.newInstance(
+			id,
+			seller,
+			"Title",
+			InstrumentProgressStatus.SELLING,
+			createAddress(),
+			(short)3,
+			550000,
+			true,
+			"description",
+			EffectorType.GUITAR,
+			EffectorFeature.ETC
 		);
 	}
 

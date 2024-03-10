@@ -149,6 +149,29 @@ public class InstrumentController {
 	}
 
 	@Operation(
+		summary = "이펙터 매물 목록 조회",
+		description = "이펙터 매물 목록을 조회합니다."
+	)
+	@GetMapping(value = "/effectors", headers = API_VERSION_HEADER_NAME + "=" + 1)
+	public Page<EffectorResponse> findEffectorsV1(
+		@Parameter(
+			description = "페이지 번호. 0부터 시작합니다.",
+			example = "0"
+		) @RequestParam int page,
+		@Parameter(
+			description = "페이지 크기. 한 페이지에 포함될 데이터의 개수를 의미합니다.",
+			example = "10"
+		) @RequestParam int size,
+		@Parameter(
+			description = "정렬 기준"
+		) @RequestParam InstrumentSortOption sort
+	) {
+		return instrumentQueryService
+			.findEffectors(page, size, sort)
+			.map(EffectorResponse::from);
+	}
+
+	@Operation(
 		summary = "일렉기타 매물 등록",
 		description = """
 			<p>일렉기타 매물을 등록합니다.

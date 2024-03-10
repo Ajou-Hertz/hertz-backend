@@ -55,6 +55,7 @@ public class SecurityConfig {
 		AUTH_WHITE_LIST.put("/api/instruments/electric-guitars", GET);
 		AUTH_WHITE_LIST.put("/api/instruments/bass-guitars", GET);
 		AUTH_WHITE_LIST.put("/api/instruments/acoustic-and-classic-guitars", GET);
+		AUTH_WHITE_LIST.put("/api/instruments/effectors", GET);
 	}
 
 	@Bean

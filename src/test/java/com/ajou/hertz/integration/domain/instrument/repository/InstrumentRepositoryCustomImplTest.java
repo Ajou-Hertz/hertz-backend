@@ -25,6 +25,8 @@ import com.ajou.hertz.domain.instrument.constant.AcousticAndClassicGuitarWood;
 import com.ajou.hertz.domain.instrument.constant.BassGuitarBrand;
 import com.ajou.hertz.domain.instrument.constant.BassGuitarPickUp;
 import com.ajou.hertz.domain.instrument.constant.BassGuitarPreAmplifier;
+import com.ajou.hertz.domain.instrument.constant.EffectorFeature;
+import com.ajou.hertz.domain.instrument.constant.EffectorType;
 import com.ajou.hertz.domain.instrument.constant.ElectricGuitarBrand;
 import com.ajou.hertz.domain.instrument.constant.ElectricGuitarModel;
 import com.ajou.hertz.domain.instrument.constant.GuitarColor;
@@ -32,6 +34,7 @@ import com.ajou.hertz.domain.instrument.constant.InstrumentProgressStatus;
 import com.ajou.hertz.domain.instrument.constant.InstrumentSortOption;
 import com.ajou.hertz.domain.instrument.entity.AcousticAndClassicGuitar;
 import com.ajou.hertz.domain.instrument.entity.BassGuitar;
+import com.ajou.hertz.domain.instrument.entity.Effector;
 import com.ajou.hertz.domain.instrument.entity.ElectricGuitar;
 import com.ajou.hertz.domain.instrument.entity.Instrument;
 import com.ajou.hertz.domain.instrument.repository.InstrumentRepository;
@@ -106,6 +109,23 @@ class InstrumentRepositoryCustomImplTest {
 		Page<AcousticAndClassicGuitar> result = sut.findAcousticAndClassicGuitars(
 			0, 10, InstrumentSortOption.CREATED_BY_ASC
 		);
+
+		// then
+		assertThat(result.getNumberOfElements()).isEqualTo(savedInstruments.size() - 1);
+	}
+
+	@Test
+	void 이펙터_목록을_조회한다() throws Exception {
+		// given
+		User user = userRepository.save(createUser());
+		List<Instrument> savedInstruments = sut.saveAll(List.of(
+			createElectricGuitar(user),
+			createEffector(user),
+			createEffector(user)
+		));
+
+		// when
+		Page<Effector> result = sut.findEffectors(0, 10, InstrumentSortOption.CREATED_BY_ASC);
 
 		// then
 		assertThat(result.getNumberOfElements()).isEqualTo(savedInstruments.size() - 1);
@@ -206,6 +226,28 @@ class InstrumentRepositoryCustomImplTest {
 			AcousticAndClassicGuitarModel.JUMBO_BODY,
 			AcousticAndClassicGuitarWood.PLYWOOD,
 			AcousticAndClassicGuitarPickUp.MICROPHONE
+		);
+	}
+
+	private Effector createEffector(User seller) throws Exception {
+		Constructor<Effector> effectorConstructor = Effector.class.getDeclaredConstructor(
+			Long.class, User.class, String.class, InstrumentProgressStatus.class, Address.class,
+			Short.class, Integer.class, Boolean.class, String.class,
+			EffectorType.class, EffectorFeature.class
+		);
+		effectorConstructor.setAccessible(true);
+		return effectorConstructor.newInstance(
+			null,
+			seller,
+			"Title",
+			InstrumentProgressStatus.SELLING,
+			createAddress(),
+			(short)3,
+			550000,
+			true,
+			"description",
+			EffectorType.GUITAR,
+			EffectorFeature.ETC
 		);
 	}
 }

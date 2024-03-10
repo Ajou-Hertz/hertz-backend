@@ -209,6 +209,36 @@ class InstrumentControllerTest {
 	}
 
 	@Test
+	void 이펙터_매물_목록을_조회한다() throws Exception {
+		// given
+		long userId = 1L;
+		int page = 0;
+		int pageSize = 10;
+		InstrumentSortOption sortOption = InstrumentSortOption.CREATED_BY_DESC;
+		Page<EffectorDto> expectedResult = new PageImpl<>(List.of(
+			createEffectorDto(2L, userId),
+			createEffectorDto(3L, userId),
+			createEffectorDto(4L, userId)
+		));
+		given(instrumentQueryService.findEffectors(page, pageSize, sortOption)).willReturn(expectedResult);
+
+		// when & then
+		mvc.perform(
+				get("/api/instruments/effectors")
+					.header(API_VERSION_HEADER_NAME, 1)
+					.param("page", String.valueOf(page))
+					.param("size", String.valueOf(pageSize))
+					.param("sort", sortOption.name())
+			)
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.numberOfElements").value(expectedResult.getNumberOfElements()))
+			.andExpect(jsonPath("$.content").isArray())
+			.andExpect(jsonPath("$.content", hasSize(expectedResult.getNumberOfElements())));
+		then(instrumentQueryService).should().findEffectors(page, pageSize, sortOption);
+		verifyEveryMocksShouldHaveNoMoreInteractions();
+	}
+
+	@Test
 	void 새로_등록할_일렉기타의_정보가_주어지면_일렉기타_매물을_등록한다() throws Exception {
 		// given
 		long sellerId = 1L;
