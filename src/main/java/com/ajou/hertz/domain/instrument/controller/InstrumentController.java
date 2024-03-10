@@ -6,7 +6,6 @@ import java.net.URI;
 
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -31,6 +30,7 @@ import com.ajou.hertz.domain.instrument.dto.request.CreateNewAudioEquipmentReque
 import com.ajou.hertz.domain.instrument.dto.request.CreateNewBassGuitarRequest;
 import com.ajou.hertz.domain.instrument.dto.request.CreateNewEffectorRequest;
 import com.ajou.hertz.domain.instrument.dto.request.CreateNewElectricGuitarRequest;
+import com.ajou.hertz.domain.instrument.dto.request.InstrumentFilterConditions;
 import com.ajou.hertz.domain.instrument.dto.response.AcousticAndClassicGuitarResponse;
 import com.ajou.hertz.domain.instrument.dto.response.AmplifierResponse;
 import com.ajou.hertz.domain.instrument.dto.response.AudioEquipmentResponse;
@@ -62,7 +62,7 @@ public class InstrumentController {
 		description = "악기 종류와 상관 없이 전체 매물 목록을 조회합니다."
 	)
 	@GetMapping(headers = API_VERSION_HEADER_NAME + "=" + 1)
-	public Page<InstrumentSummaryResponse> findInstruments(
+	public Page<InstrumentSummaryResponse> findInstrumentsV1(
 		@Parameter(
 			description = "페이지 번호. 0부터 시작합니다.",
 			example = "0"
@@ -76,8 +76,152 @@ public class InstrumentController {
 		) @RequestParam InstrumentSortOption sort
 	) {
 		return instrumentQueryService
-			.findInstruments(PageRequest.of(page, size, sort.toSort()))
+			.findInstruments(page, size, sort)
 			.map(InstrumentSummaryResponse::from);
+	}
+
+	@Operation(
+		summary = "일렉 기타 매물 목록 조회",
+		description = "일렉 기타 매물 목록을 조회합니다."
+	)
+	@GetMapping(value = "/electric-guitars", headers = API_VERSION_HEADER_NAME + "=" + 1)
+	public Page<ElectricGuitarResponse> findElectricGuitarsV1(
+		@Parameter(
+			description = "페이지 번호. 0부터 시작합니다.",
+			example = "0"
+		) @RequestParam int page,
+		@Parameter(
+			description = "페이지 크기. 한 페이지에 포함될 데이터의 개수를 의미합니다.",
+			example = "10"
+		) @RequestParam int size,
+		@Parameter(
+			description = "정렬 기준"
+		) @RequestParam InstrumentSortOption sort,
+		@ParameterObject @Valid @ModelAttribute InstrumentFilterConditions filterConditions
+	) {
+		return instrumentQueryService
+			.findElectricGuitars(page, size, sort, filterConditions)
+			.map(ElectricGuitarResponse::from);
+	}
+
+	@Operation(
+		summary = "베이스 기타 매물 목록 조회",
+		description = "베이스 기타 매물 목록을 조회합니다."
+	)
+	@GetMapping(value = "/bass-guitars", headers = API_VERSION_HEADER_NAME + "=" + 1)
+	public Page<BassGuitarResponse> findBassGuitarsV1(
+		@Parameter(
+			description = "페이지 번호. 0부터 시작합니다.",
+			example = "0"
+		) @RequestParam int page,
+		@Parameter(
+			description = "페이지 크기. 한 페이지에 포함될 데이터의 개수를 의미합니다.",
+			example = "10"
+		) @RequestParam int size,
+		@Parameter(
+			description = "정렬 기준"
+		) @RequestParam InstrumentSortOption sort,
+		@ParameterObject @Valid @ModelAttribute InstrumentFilterConditions filterConditions
+	) {
+		return instrumentQueryService
+			.findBassGuitars(page, size, sort, filterConditions)
+			.map(BassGuitarResponse::from);
+	}
+
+	@Operation(
+		summary = "어쿠스틱&클래식 기타 매물 목록 조회",
+		description = "어쿠스틱&클래식 기타 매물 목록을 조회합니다."
+	)
+	@GetMapping(value = "/acoustic-and-classic-guitars", headers = API_VERSION_HEADER_NAME + "=" + 1)
+	public Page<AcousticAndClassicGuitarResponse> findAcousticAndClassicGuitarsV1(
+		@Parameter(
+			description = "페이지 번호. 0부터 시작합니다.",
+			example = "0"
+		) @RequestParam int page,
+		@Parameter(
+			description = "페이지 크기. 한 페이지에 포함될 데이터의 개수를 의미합니다.",
+			example = "10"
+		) @RequestParam int size,
+		@Parameter(
+			description = "정렬 기준"
+		) @RequestParam InstrumentSortOption sort,
+		@ParameterObject @Valid @ModelAttribute InstrumentFilterConditions filterConditions
+	) {
+		return instrumentQueryService
+			.findAcousticAndClassicGuitars(page, size, sort, filterConditions)
+			.map(AcousticAndClassicGuitarResponse::from);
+	}
+
+	@Operation(
+		summary = "이펙터 매물 목록 조회",
+		description = "이펙터 매물 목록을 조회합니다."
+	)
+	@GetMapping(value = "/effectors", headers = API_VERSION_HEADER_NAME + "=" + 1)
+	public Page<EffectorResponse> findEffectorsV1(
+		@Parameter(
+			description = "페이지 번호. 0부터 시작합니다.",
+			example = "0"
+		) @RequestParam int page,
+		@Parameter(
+			description = "페이지 크기. 한 페이지에 포함될 데이터의 개수를 의미합니다.",
+			example = "10"
+		) @RequestParam int size,
+		@Parameter(
+			description = "정렬 기준"
+		) @RequestParam InstrumentSortOption sort,
+		@ParameterObject @Valid @ModelAttribute InstrumentFilterConditions filterConditions
+	) {
+		return instrumentQueryService
+			.findEffectors(page, size, sort, filterConditions)
+			.map(EffectorResponse::from);
+	}
+
+	@Operation(
+		summary = "앰프 매물 목록 조회",
+		description = "앰프 매물 목록을 조회합니다."
+	)
+	@GetMapping(value = "/amplifiers", headers = API_VERSION_HEADER_NAME + "=" + 1)
+	public Page<AmplifierResponse> findAmplifiersV1(
+		@Parameter(
+			description = "페이지 번호. 0부터 시작합니다.",
+			example = "0"
+		) @RequestParam int page,
+		@Parameter(
+			description = "페이지 크기. 한 페이지에 포함될 데이터의 개수를 의미합니다.",
+			example = "10"
+		) @RequestParam int size,
+		@Parameter(
+			description = "정렬 기준"
+		) @RequestParam InstrumentSortOption sort,
+		@ParameterObject @Valid @ModelAttribute InstrumentFilterConditions filterConditions
+	) {
+		return instrumentQueryService
+			.findAmplifiers(page, size, sort, filterConditions)
+			.map(AmplifierResponse::from);
+	}
+
+	@Operation(
+		summary = "음향 장비 매물 목록 조회",
+		description = "음향 장비 매물 목록을 조회합니다."
+	)
+	@GetMapping(value = "/audio-equipments", headers = API_VERSION_HEADER_NAME + "=" + 1)
+	public Page<AudioEquipmentResponse> findAudioEquipmentsV1(
+		@Parameter(
+			description = "페이지 번호. 0부터 시작합니다.",
+			example = "0"
+		) @RequestParam int page,
+		@Parameter(
+			description = "페이지 크기. 한 페이지에 포함될 데이터의 개수를 의미합니다.",
+			example = "10"
+		) @RequestParam int size,
+		@Parameter(
+			description = "정렬 기준"
+		) @RequestParam InstrumentSortOption sort,
+		@ParameterObject @Valid @ModelAttribute InstrumentFilterConditions filterConditions
+	) {
+		return instrumentQueryService
+			.findAudioEquipments(page, size, sort, filterConditions)
+			.map(AudioEquipmentResponse::from);
 	}
 
 	@Operation(

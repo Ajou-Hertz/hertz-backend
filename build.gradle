@@ -50,6 +50,12 @@ dependencies {
     // Spring Data JPA
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 
+    // Querydsl
+    implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
+    annotationProcessor 'com.querydsl:querydsl-apt:5.0.0:jakarta'
+    annotationProcessor 'jakarta.annotation:jakarta.annotation-api'
+    annotationProcessor 'jakarta.persistence:jakarta.persistence-api'
+
     // Spring Validation
     implementation 'org.springframework.boot:spring-boot-starter-validation'
 
@@ -87,6 +93,7 @@ tasks.named('test') {
     useJUnitPlatform()
 }
 
+// Jacoco
 test {
     finalizedBy jacocoTestReport
 }
@@ -109,7 +116,8 @@ jacocoTestReport {
                         excludes: [] + Qdomains,
                         includes: [
                                 '**/service/**',
-                                '**/controller/**'
+                                '**/controller/**',
+                                '**/repository/**'
                         ])
             }))
         }
@@ -138,8 +146,20 @@ jacocoTestCoverageVerification {
 
             includes = [
                     '*service.*Service*',
-                    '*controller.*Controller*'
+                    '*controller.*Controller*',
+                    '*repository.*Repository*'
             ]
         }
     }
+}
+
+// Querydsl
+def querydslGeneratedLocation = 'build/generated'
+
+tasks.withType(JavaCompile).configureEach {
+    options.getGeneratedSourceOutputDirectory().set(file(querydslGeneratedLocation))
+}
+
+clean {
+    delete file(querydslGeneratedLocation)
 }

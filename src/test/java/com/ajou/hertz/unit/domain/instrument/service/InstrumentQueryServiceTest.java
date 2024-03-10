@@ -20,13 +20,38 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
 import com.ajou.hertz.common.entity.Address;
+import com.ajou.hertz.domain.instrument.constant.AcousticAndClassicGuitarBrand;
+import com.ajou.hertz.domain.instrument.constant.AcousticAndClassicGuitarModel;
+import com.ajou.hertz.domain.instrument.constant.AcousticAndClassicGuitarPickUp;
+import com.ajou.hertz.domain.instrument.constant.AcousticAndClassicGuitarWood;
+import com.ajou.hertz.domain.instrument.constant.AmplifierBrand;
+import com.ajou.hertz.domain.instrument.constant.AmplifierType;
+import com.ajou.hertz.domain.instrument.constant.AmplifierUsage;
+import com.ajou.hertz.domain.instrument.constant.AudioEquipmentType;
 import com.ajou.hertz.domain.instrument.constant.BassGuitarBrand;
 import com.ajou.hertz.domain.instrument.constant.BassGuitarPickUp;
 import com.ajou.hertz.domain.instrument.constant.BassGuitarPreAmplifier;
+import com.ajou.hertz.domain.instrument.constant.EffectorFeature;
+import com.ajou.hertz.domain.instrument.constant.EffectorType;
+import com.ajou.hertz.domain.instrument.constant.ElectricGuitarBrand;
+import com.ajou.hertz.domain.instrument.constant.ElectricGuitarModel;
 import com.ajou.hertz.domain.instrument.constant.GuitarColor;
 import com.ajou.hertz.domain.instrument.constant.InstrumentProgressStatus;
+import com.ajou.hertz.domain.instrument.constant.InstrumentSortOption;
+import com.ajou.hertz.domain.instrument.dto.AcousticAndClassicGuitarDto;
+import com.ajou.hertz.domain.instrument.dto.AmplifierDto;
+import com.ajou.hertz.domain.instrument.dto.AudioEquipmentDto;
+import com.ajou.hertz.domain.instrument.dto.BassGuitarDto;
+import com.ajou.hertz.domain.instrument.dto.EffectorDto;
+import com.ajou.hertz.domain.instrument.dto.ElectricGuitarDto;
 import com.ajou.hertz.domain.instrument.dto.InstrumentDto;
+import com.ajou.hertz.domain.instrument.dto.request.InstrumentFilterConditions;
+import com.ajou.hertz.domain.instrument.entity.AcousticAndClassicGuitar;
+import com.ajou.hertz.domain.instrument.entity.Amplifier;
+import com.ajou.hertz.domain.instrument.entity.AudioEquipment;
 import com.ajou.hertz.domain.instrument.entity.BassGuitar;
+import com.ajou.hertz.domain.instrument.entity.Effector;
+import com.ajou.hertz.domain.instrument.entity.ElectricGuitar;
 import com.ajou.hertz.domain.instrument.entity.Instrument;
 import com.ajou.hertz.domain.instrument.repository.InstrumentRepository;
 import com.ajou.hertz.domain.instrument.service.InstrumentQueryService;
@@ -47,6 +72,9 @@ class InstrumentQueryServiceTest {
 	@Test
 	void 종류_상관_없이_전체_악기_목록을_조회한다() throws Exception {
 		// given
+		int page = 0;
+		int pageSize = 10;
+		InstrumentSortOption sort = InstrumentSortOption.CREATED_BY_DESC;
 		User user = createUser();
 		Page<Instrument> expectedResult = new PageImpl<>(List.of(
 			createInstrument(1L, user),
@@ -56,7 +84,7 @@ class InstrumentQueryServiceTest {
 		given(instrumentRepository.findAll(any(Pageable.class))).willReturn(expectedResult);
 
 		// when
-		Page<InstrumentDto> actualResult = sut.findInstruments(Pageable.ofSize(10));
+		Page<InstrumentDto> actualResult = sut.findInstruments(page, pageSize, sort);
 
 		// then
 		then(instrumentRepository).should().findAll(any(Pageable.class));
@@ -65,6 +93,178 @@ class InstrumentQueryServiceTest {
 		assertIterableEquals(
 			expectedResult.getContent().stream().map(Instrument::getId).toList(),
 			actualResult.getContent().stream().map(InstrumentDto::getId).toList()
+		);
+	}
+
+	@Test
+	void 일렉_기타_목록을_조회한다() throws Exception {
+		// given
+		int page = 0;
+		int pageSize = 10;
+		InstrumentFilterConditions filterConditions = createInstrumentFilterConditions();
+		InstrumentSortOption sort = InstrumentSortOption.CREATED_BY_DESC;
+		User user = createUser();
+		Page<ElectricGuitar> expectedResult = new PageImpl<>(List.of(
+			createElectricGuitar(1L, user),
+			createElectricGuitar(2L, user),
+			createElectricGuitar(3L, user)
+		));
+		given(instrumentRepository.findElectricGuitars(page, pageSize, sort, filterConditions))
+			.willReturn(expectedResult);
+
+		// when
+		Page<ElectricGuitarDto> actualResult = sut.findElectricGuitars(page, pageSize, sort, filterConditions);
+
+		// then
+		then(instrumentRepository).should().findElectricGuitars(page, pageSize, sort, filterConditions);
+		verifyEveryMocksShouldHaveNoMoreInteractions();
+		assertThat(actualResult.getNumberOfElements()).isEqualTo(actualResult.getNumberOfElements());
+		assertIterableEquals(
+			expectedResult.getContent().stream().map(ElectricGuitar::getId).toList(),
+			actualResult.getContent().stream().map(ElectricGuitarDto::getId).toList()
+		);
+	}
+
+	@Test
+	void 베이스_기타_목록을_조회한다() throws Exception {
+		// given
+		int page = 0;
+		int pageSize = 10;
+		InstrumentFilterConditions filterConditions = createInstrumentFilterConditions();
+		InstrumentSortOption sort = InstrumentSortOption.CREATED_BY_DESC;
+		User user = createUser();
+		Page<BassGuitar> expectedResult = new PageImpl<>(List.of(
+			createBassGuitar(1L, user),
+			createBassGuitar(2L, user),
+			createBassGuitar(3L, user)
+		));
+		given(instrumentRepository.findBassGuitars(page, pageSize, sort, filterConditions)).willReturn(expectedResult);
+
+		// when
+		Page<BassGuitarDto> actualResult = sut.findBassGuitars(page, pageSize, sort, filterConditions);
+
+		// then
+		then(instrumentRepository).should().findBassGuitars(page, pageSize, sort, filterConditions);
+		verifyEveryMocksShouldHaveNoMoreInteractions();
+		assertThat(actualResult.getNumberOfElements()).isEqualTo(actualResult.getNumberOfElements());
+		assertIterableEquals(
+			expectedResult.getContent().stream().map(BassGuitar::getId).toList(),
+			actualResult.getContent().stream().map(BassGuitarDto::getId).toList()
+		);
+	}
+
+	@Test
+	void 어쿠스틱_클래식_기타_목록을_조회한다() throws Exception {
+		// given
+		int page = 0;
+		int pageSize = 10;
+		InstrumentFilterConditions filterConditions = createInstrumentFilterConditions();
+		InstrumentSortOption sort = InstrumentSortOption.CREATED_BY_DESC;
+		User user = createUser();
+		Page<AcousticAndClassicGuitar> expectedResult = new PageImpl<>(List.of(
+			createAcousticAndClassicGuitar(1L, user),
+			createAcousticAndClassicGuitar(2L, user),
+			createAcousticAndClassicGuitar(3L, user)
+		));
+		given(instrumentRepository.findAcousticAndClassicGuitars(page, pageSize, sort, filterConditions))
+			.willReturn(expectedResult);
+
+		// when
+		Page<AcousticAndClassicGuitarDto> actualResult =
+			sut.findAcousticAndClassicGuitars(page, pageSize, sort, filterConditions);
+
+		// then
+		then(instrumentRepository).should().findAcousticAndClassicGuitars(page, pageSize, sort, filterConditions);
+		verifyEveryMocksShouldHaveNoMoreInteractions();
+		assertThat(actualResult.getNumberOfElements()).isEqualTo(actualResult.getNumberOfElements());
+		assertIterableEquals(
+			expectedResult.getContent().stream().map(AcousticAndClassicGuitar::getId).toList(),
+			actualResult.getContent().stream().map(AcousticAndClassicGuitarDto::getId).toList()
+		);
+	}
+
+	@Test
+	void 이펙터_목록을_조회한다() throws Exception {
+		// given
+		int page = 0;
+		int pageSize = 10;
+		InstrumentFilterConditions filterConditions = createInstrumentFilterConditions();
+		InstrumentSortOption sort = InstrumentSortOption.CREATED_BY_DESC;
+		User user = createUser();
+		Page<Effector> expectedResult = new PageImpl<>(List.of(
+			createEffector(1L, user),
+			createEffector(2L, user),
+			createEffector(3L, user)
+		));
+		given(instrumentRepository.findEffectors(page, pageSize, sort, filterConditions)).willReturn(expectedResult);
+
+		// when
+		Page<EffectorDto> actualResult = sut.findEffectors(page, pageSize, sort, filterConditions);
+
+		// then
+		then(instrumentRepository).should().findEffectors(page, pageSize, sort, filterConditions);
+		verifyEveryMocksShouldHaveNoMoreInteractions();
+		assertThat(actualResult.getNumberOfElements()).isEqualTo(actualResult.getNumberOfElements());
+		assertIterableEquals(
+			expectedResult.getContent().stream().map(Effector::getId).toList(),
+			actualResult.getContent().stream().map(EffectorDto::getId).toList()
+		);
+	}
+
+	@Test
+	void 앰프_목록을_조회한다() throws Exception {
+		// given
+		int page = 0;
+		int pageSize = 10;
+		InstrumentFilterConditions filterConditions = createInstrumentFilterConditions();
+		InstrumentSortOption sort = InstrumentSortOption.CREATED_BY_DESC;
+		User user = createUser();
+		Page<Amplifier> expectedResult = new PageImpl<>(List.of(
+			createAmplifier(1L, user),
+			createAmplifier(2L, user),
+			createAmplifier(3L, user)
+		));
+		given(instrumentRepository.findAmplifiers(page, pageSize, sort, filterConditions)).willReturn(expectedResult);
+
+		// when
+		Page<AmplifierDto> actualResult = sut.findAmplifiers(page, pageSize, sort, filterConditions);
+
+		// then
+		then(instrumentRepository).should().findAmplifiers(page, pageSize, sort, filterConditions);
+		verifyEveryMocksShouldHaveNoMoreInteractions();
+		assertThat(actualResult.getNumberOfElements()).isEqualTo(actualResult.getNumberOfElements());
+		assertIterableEquals(
+			expectedResult.getContent().stream().map(Amplifier::getId).toList(),
+			actualResult.getContent().stream().map(AmplifierDto::getId).toList()
+		);
+	}
+
+	@Test
+	void 음향_장비_목록을_조회한다() throws Exception {
+		// given
+		int page = 0;
+		int pageSize = 10;
+		InstrumentFilterConditions filterConditions = createInstrumentFilterConditions();
+		InstrumentSortOption sort = InstrumentSortOption.CREATED_BY_DESC;
+		User user = createUser();
+		Page<AudioEquipment> expectedResult = new PageImpl<>(List.of(
+			createAudioEquipment(1L, user),
+			createAudioEquipment(2L, user),
+			createAudioEquipment(3L, user)
+		));
+		given(instrumentRepository.findAudioEquipments(page, pageSize, sort, filterConditions))
+			.willReturn(expectedResult);
+
+		// when
+		Page<AudioEquipmentDto> actualResult = sut.findAudioEquipments(page, pageSize, sort, filterConditions);
+
+		// then
+		then(instrumentRepository).should().findAudioEquipments(page, pageSize, sort, filterConditions);
+		verifyEveryMocksShouldHaveNoMoreInteractions();
+		assertThat(actualResult.getNumberOfElements()).isEqualTo(actualResult.getNumberOfElements());
+		assertIterableEquals(
+			expectedResult.getContent().stream().map(AudioEquipment::getId).toList(),
+			actualResult.getContent().stream().map(AudioEquipmentDto::getId).toList()
 		);
 	}
 
@@ -100,6 +300,54 @@ class InstrumentQueryServiceTest {
 		);
 	}
 
+	private ElectricGuitar createElectricGuitar(long id, User seller) throws Exception {
+		Constructor<ElectricGuitar> electricGuitarConstructor = ElectricGuitar.class.getDeclaredConstructor(
+			Long.class, User.class, String.class, InstrumentProgressStatus.class, Address.class, Short.class,
+			Integer.class, Boolean.class, String.class, ElectricGuitarBrand.class, ElectricGuitarModel.class,
+			Short.class, GuitarColor.class
+		);
+		electricGuitarConstructor.setAccessible(true);
+		return electricGuitarConstructor.newInstance(
+			id,
+			seller,
+			"Test electric guitar",
+			InstrumentProgressStatus.SELLING,
+			createAddress(),
+			(short)3,
+			550000,
+			true,
+			"description",
+			ElectricGuitarBrand.FENDER_USA,
+			ElectricGuitarModel.TELECASTER,
+			(short)2014,
+			GuitarColor.RED
+		);
+	}
+
+	private BassGuitar createBassGuitar(long id, User seller) throws Exception {
+		Constructor<BassGuitar> bassGuitarConstructor = BassGuitar.class.getDeclaredConstructor(
+			Long.class, User.class, String.class, InstrumentProgressStatus.class, Address.class,
+			Short.class, Integer.class, Boolean.class, String.class,
+			BassGuitarBrand.class, BassGuitarPickUp.class, BassGuitarPreAmplifier.class, GuitarColor.class
+		);
+		bassGuitarConstructor.setAccessible(true);
+		return bassGuitarConstructor.newInstance(
+			id,
+			seller,
+			"Test electric guitar",
+			InstrumentProgressStatus.SELLING,
+			createAddress(),
+			(short)3,
+			550000,
+			true,
+			"description",
+			BassGuitarBrand.FENDER,
+			BassGuitarPickUp.JAZZ,
+			BassGuitarPreAmplifier.ACTIVE,
+			GuitarColor.RED
+		);
+	}
+
 	private User createUser(long id) throws Exception {
 		Constructor<User> userConstructor = User.class.getDeclaredConstructor(
 			Long.class, Set.class, String.class, String.class, String.class,
@@ -120,7 +368,106 @@ class InstrumentQueryServiceTest {
 		);
 	}
 
+	private AcousticAndClassicGuitar createAcousticAndClassicGuitar(long id, User seller) throws Exception {
+		Constructor<AcousticAndClassicGuitar> acousticAndClassicGuitarConstructor =
+			AcousticAndClassicGuitar.class.getDeclaredConstructor(
+				Long.class, User.class, String.class, InstrumentProgressStatus.class, Address.class,
+				Short.class, Integer.class, Boolean.class, String.class,
+				AcousticAndClassicGuitarBrand.class, AcousticAndClassicGuitarModel.class,
+				AcousticAndClassicGuitarWood.class, AcousticAndClassicGuitarPickUp.class
+			);
+		acousticAndClassicGuitarConstructor.setAccessible(true);
+		return acousticAndClassicGuitarConstructor.newInstance(
+			id,
+			seller,
+			"Test electric guitar",
+			InstrumentProgressStatus.SELLING,
+			createAddress(),
+			(short)3,
+			550000,
+			true,
+			"description",
+			AcousticAndClassicGuitarBrand.HEX,
+			AcousticAndClassicGuitarModel.JUMBO_BODY,
+			AcousticAndClassicGuitarWood.PLYWOOD,
+			AcousticAndClassicGuitarPickUp.MICROPHONE
+		);
+	}
+
+	private Effector createEffector(long id, User seller) throws Exception {
+		Constructor<Effector> effectorConstructor = Effector.class.getDeclaredConstructor(
+			Long.class, User.class, String.class, InstrumentProgressStatus.class, Address.class,
+			Short.class, Integer.class, Boolean.class, String.class,
+			EffectorType.class, EffectorFeature.class
+		);
+		effectorConstructor.setAccessible(true);
+		return effectorConstructor.newInstance(
+			id,
+			seller,
+			"Title",
+			InstrumentProgressStatus.SELLING,
+			createAddress(),
+			(short)3,
+			550000,
+			true,
+			"description",
+			EffectorType.GUITAR,
+			EffectorFeature.ETC
+		);
+	}
+
+	private Amplifier createAmplifier(long id, User seller) throws Exception {
+		Constructor<Amplifier> amplifierConstructor = Amplifier.class.getDeclaredConstructor(
+			Long.class, User.class, String.class, InstrumentProgressStatus.class, Address.class,
+			Short.class, Integer.class, Boolean.class, String.class,
+			AmplifierType.class, AmplifierBrand.class, AmplifierUsage.class
+		);
+		amplifierConstructor.setAccessible(true);
+		return amplifierConstructor.newInstance(
+			id,
+			seller,
+			"Title",
+			InstrumentProgressStatus.SELLING,
+			createAddress(),
+			(short)3,
+			550000,
+			true,
+			"description",
+			AmplifierType.GUITAR,
+			AmplifierBrand.FENDER,
+			AmplifierUsage.HOME
+		);
+	}
+
+	private AudioEquipment createAudioEquipment(long id, User seller) throws Exception {
+		Constructor<AudioEquipment> audioEquipmentConstructor = AudioEquipment.class.getDeclaredConstructor(
+			Long.class, User.class, String.class, InstrumentProgressStatus.class, Address.class,
+			Short.class, Integer.class, Boolean.class, String.class,
+			AudioEquipmentType.class
+		);
+		audioEquipmentConstructor.setAccessible(true);
+		return audioEquipmentConstructor.newInstance(
+			id,
+			seller,
+			"Title",
+			InstrumentProgressStatus.SELLING,
+			createAddress(),
+			(short)3,
+			550000,
+			true,
+			"description",
+			AudioEquipmentType.AUDIO_EQUIPMENT
+		);
+	}
+
 	private User createUser() throws Exception {
 		return createUser(1L);
+	}
+
+	private InstrumentFilterConditions createInstrumentFilterConditions() throws Exception {
+		Constructor<InstrumentFilterConditions> instrumentFilterConditionsConstructor =
+			InstrumentFilterConditions.class.getDeclaredConstructor();
+		instrumentFilterConditionsConstructor.setAccessible(true);
+		return instrumentFilterConditionsConstructor.newInstance();
 	}
 }
