@@ -24,6 +24,9 @@ import com.ajou.hertz.domain.instrument.constant.AcousticAndClassicGuitarBrand;
 import com.ajou.hertz.domain.instrument.constant.AcousticAndClassicGuitarModel;
 import com.ajou.hertz.domain.instrument.constant.AcousticAndClassicGuitarPickUp;
 import com.ajou.hertz.domain.instrument.constant.AcousticAndClassicGuitarWood;
+import com.ajou.hertz.domain.instrument.constant.AmplifierBrand;
+import com.ajou.hertz.domain.instrument.constant.AmplifierType;
+import com.ajou.hertz.domain.instrument.constant.AmplifierUsage;
 import com.ajou.hertz.domain.instrument.constant.BassGuitarBrand;
 import com.ajou.hertz.domain.instrument.constant.BassGuitarPickUp;
 import com.ajou.hertz.domain.instrument.constant.BassGuitarPreAmplifier;
@@ -35,11 +38,13 @@ import com.ajou.hertz.domain.instrument.constant.GuitarColor;
 import com.ajou.hertz.domain.instrument.constant.InstrumentProgressStatus;
 import com.ajou.hertz.domain.instrument.constant.InstrumentSortOption;
 import com.ajou.hertz.domain.instrument.dto.AcousticAndClassicGuitarDto;
+import com.ajou.hertz.domain.instrument.dto.AmplifierDto;
 import com.ajou.hertz.domain.instrument.dto.BassGuitarDto;
 import com.ajou.hertz.domain.instrument.dto.EffectorDto;
 import com.ajou.hertz.domain.instrument.dto.ElectricGuitarDto;
 import com.ajou.hertz.domain.instrument.dto.InstrumentDto;
 import com.ajou.hertz.domain.instrument.entity.AcousticAndClassicGuitar;
+import com.ajou.hertz.domain.instrument.entity.Amplifier;
 import com.ajou.hertz.domain.instrument.entity.BassGuitar;
 import com.ajou.hertz.domain.instrument.entity.Effector;
 import com.ajou.hertz.domain.instrument.entity.ElectricGuitar;
@@ -195,6 +200,33 @@ class InstrumentQueryServiceTest {
 		);
 	}
 
+	@Test
+	void 앰프_목록을_조회한다() throws Exception {
+		// given
+		int page = 0;
+		int pageSize = 10;
+		InstrumentSortOption sort = InstrumentSortOption.CREATED_BY_DESC;
+		User user = createUser();
+		Page<Amplifier> expectedResult = new PageImpl<>(List.of(
+			createAmplifier(1L, user),
+			createAmplifier(2L, user),
+			createAmplifier(3L, user)
+		));
+		given(instrumentRepository.findAmplifiers(page, pageSize, sort)).willReturn(expectedResult);
+
+		// when
+		Page<AmplifierDto> actualResult = sut.findAmplifiers(page, pageSize, sort);
+
+		// then
+		then(instrumentRepository).should().findAmplifiers(page, pageSize, sort);
+		verifyEveryMocksShouldHaveNoMoreInteractions();
+		assertThat(actualResult.getNumberOfElements()).isEqualTo(actualResult.getNumberOfElements());
+		assertIterableEquals(
+			expectedResult.getContent().stream().map(Amplifier::getId).toList(),
+			actualResult.getContent().stream().map(AmplifierDto::getId).toList()
+		);
+	}
+
 	private void verifyEveryMocksShouldHaveNoMoreInteractions() {
 		then(instrumentRepository).shouldHaveNoMoreInteractions();
 	}
@@ -340,6 +372,29 @@ class InstrumentQueryServiceTest {
 			"description",
 			EffectorType.GUITAR,
 			EffectorFeature.ETC
+		);
+	}
+
+	private Amplifier createAmplifier(long id, User seller) throws Exception {
+		Constructor<Amplifier> amplifierConstructor = Amplifier.class.getDeclaredConstructor(
+			Long.class, User.class, String.class, InstrumentProgressStatus.class, Address.class,
+			Short.class, Integer.class, Boolean.class, String.class,
+			AmplifierType.class, AmplifierBrand.class, AmplifierUsage.class
+		);
+		amplifierConstructor.setAccessible(true);
+		return amplifierConstructor.newInstance(
+			id,
+			seller,
+			"Title",
+			InstrumentProgressStatus.SELLING,
+			createAddress(),
+			(short)3,
+			550000,
+			true,
+			"description",
+			AmplifierType.GUITAR,
+			AmplifierBrand.FENDER,
+			AmplifierUsage.HOME
 		);
 	}
 

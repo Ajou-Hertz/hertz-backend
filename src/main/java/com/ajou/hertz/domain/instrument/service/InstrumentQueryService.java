@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.ajou.hertz.domain.instrument.constant.InstrumentSortOption;
 import com.ajou.hertz.domain.instrument.dto.AcousticAndClassicGuitarDto;
+import com.ajou.hertz.domain.instrument.dto.AmplifierDto;
 import com.ajou.hertz.domain.instrument.dto.BassGuitarDto;
 import com.ajou.hertz.domain.instrument.dto.EffectorDto;
 import com.ajou.hertz.domain.instrument.dto.ElectricGuitarDto;
@@ -52,5 +53,11 @@ public class InstrumentQueryService {
 		return instrumentRepository
 			.findEffectors(page, pageSize, sort)
 			.map(EffectorDto::from);
+	}
+
+	public Page<AmplifierDto> findAmplifiers(int page, int pageSize, InstrumentSortOption sort) {
+		return instrumentRepository
+			.findAmplifiers(page, pageSize, sort)
+			.map(AmplifierDto::from);
 	}
 }

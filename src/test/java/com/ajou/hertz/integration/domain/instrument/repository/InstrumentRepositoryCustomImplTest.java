@@ -22,6 +22,9 @@ import com.ajou.hertz.domain.instrument.constant.AcousticAndClassicGuitarBrand;
 import com.ajou.hertz.domain.instrument.constant.AcousticAndClassicGuitarModel;
 import com.ajou.hertz.domain.instrument.constant.AcousticAndClassicGuitarPickUp;
 import com.ajou.hertz.domain.instrument.constant.AcousticAndClassicGuitarWood;
+import com.ajou.hertz.domain.instrument.constant.AmplifierBrand;
+import com.ajou.hertz.domain.instrument.constant.AmplifierType;
+import com.ajou.hertz.domain.instrument.constant.AmplifierUsage;
 import com.ajou.hertz.domain.instrument.constant.BassGuitarBrand;
 import com.ajou.hertz.domain.instrument.constant.BassGuitarPickUp;
 import com.ajou.hertz.domain.instrument.constant.BassGuitarPreAmplifier;
@@ -33,6 +36,7 @@ import com.ajou.hertz.domain.instrument.constant.GuitarColor;
 import com.ajou.hertz.domain.instrument.constant.InstrumentProgressStatus;
 import com.ajou.hertz.domain.instrument.constant.InstrumentSortOption;
 import com.ajou.hertz.domain.instrument.entity.AcousticAndClassicGuitar;
+import com.ajou.hertz.domain.instrument.entity.Amplifier;
 import com.ajou.hertz.domain.instrument.entity.BassGuitar;
 import com.ajou.hertz.domain.instrument.entity.Effector;
 import com.ajou.hertz.domain.instrument.entity.ElectricGuitar;
@@ -126,6 +130,23 @@ class InstrumentRepositoryCustomImplTest {
 
 		// when
 		Page<Effector> result = sut.findEffectors(0, 10, InstrumentSortOption.CREATED_BY_ASC);
+
+		// then
+		assertThat(result.getNumberOfElements()).isEqualTo(savedInstruments.size() - 1);
+	}
+
+	@Test
+	void 앰프_목록을_조회한다() throws Exception {
+		// given
+		User user = userRepository.save(createUser());
+		List<Instrument> savedInstruments = sut.saveAll(List.of(
+			createElectricGuitar(user),
+			createAmplifier(user),
+			createAmplifier(user)
+		));
+
+		// when
+		Page<Amplifier> result = sut.findAmplifiers(0, 10, InstrumentSortOption.CREATED_BY_ASC);
 
 		// then
 		assertThat(result.getNumberOfElements()).isEqualTo(savedInstruments.size() - 1);
@@ -248,6 +269,29 @@ class InstrumentRepositoryCustomImplTest {
 			"description",
 			EffectorType.GUITAR,
 			EffectorFeature.ETC
+		);
+	}
+
+	private Amplifier createAmplifier(User seller) throws Exception {
+		Constructor<Amplifier> amplifierConstructor = Amplifier.class.getDeclaredConstructor(
+			Long.class, User.class, String.class, InstrumentProgressStatus.class, Address.class,
+			Short.class, Integer.class, Boolean.class, String.class,
+			AmplifierType.class, AmplifierBrand.class, AmplifierUsage.class
+		);
+		amplifierConstructor.setAccessible(true);
+		return amplifierConstructor.newInstance(
+			null,
+			seller,
+			"Title",
+			InstrumentProgressStatus.SELLING,
+			createAddress(),
+			(short)3,
+			550000,
+			true,
+			"description",
+			AmplifierType.GUITAR,
+			AmplifierBrand.FENDER,
+			AmplifierUsage.HOME
 		);
 	}
 }
