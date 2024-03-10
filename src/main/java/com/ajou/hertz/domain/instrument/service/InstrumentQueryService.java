@@ -13,6 +13,7 @@ import com.ajou.hertz.domain.instrument.dto.BassGuitarDto;
 import com.ajou.hertz.domain.instrument.dto.EffectorDto;
 import com.ajou.hertz.domain.instrument.dto.ElectricGuitarDto;
 import com.ajou.hertz.domain.instrument.dto.InstrumentDto;
+import com.ajou.hertz.domain.instrument.dto.request.InstrumentFilterConditions;
 import com.ajou.hertz.domain.instrument.repository.InstrumentRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -30,41 +31,69 @@ public class InstrumentQueryService {
 			.map(InstrumentDto::from);
 	}
 
-	public Page<ElectricGuitarDto> findElectricGuitars(int page, int pageSize, InstrumentSortOption sort) {
+	public Page<ElectricGuitarDto> findElectricGuitars(
+		int page,
+		int pageSize,
+		InstrumentSortOption sort,
+		InstrumentFilterConditions filterConditions
+	) {
 		return instrumentRepository
-			.findElectricGuitars(page, pageSize, sort)
+			.findElectricGuitars(page, pageSize, sort, filterConditions)
 			.map(ElectricGuitarDto::from);
 	}
 
-	public Page<BassGuitarDto> findBassGuitars(int page, int pageSize, InstrumentSortOption sort) {
+	public Page<BassGuitarDto> findBassGuitars(
+		int page,
+		int pageSize,
+		InstrumentSortOption sort,
+		InstrumentFilterConditions filterConditions
+	) {
 		return instrumentRepository
-			.findBassGuitars(page, pageSize, sort)
+			.findBassGuitars(page, pageSize, sort, filterConditions)
 			.map(BassGuitarDto::from);
 	}
 
 	public Page<AcousticAndClassicGuitarDto> findAcousticAndClassicGuitars(
-		int page, int pageSize, InstrumentSortOption sort
+		int page,
+		int pageSize,
+		InstrumentSortOption sort,
+		InstrumentFilterConditions filterConditions
 	) {
 		return instrumentRepository
-			.findAcousticAndClassicGuitars(page, pageSize, sort)
+			.findAcousticAndClassicGuitars(page, pageSize, sort, filterConditions)
 			.map(AcousticAndClassicGuitarDto::from);
 	}
 
-	public Page<EffectorDto> findEffectors(int page, int pageSize, InstrumentSortOption sort) {
+	public Page<EffectorDto> findEffectors(
+		int page,
+		int pageSize,
+		InstrumentSortOption sort,
+		InstrumentFilterConditions filterConditions
+	) {
 		return instrumentRepository
-			.findEffectors(page, pageSize, sort)
+			.findEffectors(page, pageSize, sort, filterConditions)
 			.map(EffectorDto::from);
 	}
 
-	public Page<AmplifierDto> findAmplifiers(int page, int pageSize, InstrumentSortOption sort) {
+	public Page<AmplifierDto> findAmplifiers(
+		int page,
+		int pageSize,
+		InstrumentSortOption sort,
+		InstrumentFilterConditions filterConditions
+	) {
 		return instrumentRepository
-			.findAmplifiers(page, pageSize, sort)
+			.findAmplifiers(page, pageSize, sort, filterConditions)
 			.map(AmplifierDto::from);
 	}
 
-	public Page<AudioEquipmentDto> findAudioEquipments(int page, int pageSize, InstrumentSortOption sort) {
+	public Page<AudioEquipmentDto> findAudioEquipments(
+		int page,
+		int pageSize,
+		InstrumentSortOption sort,
+		InstrumentFilterConditions filterConditions
+	) {
 		return instrumentRepository
-			.findAudioEquipments(page, pageSize, sort)
+			.findAudioEquipments(page, pageSize, sort, filterConditions)
 			.map(AudioEquipmentDto::from);
 	}
 }

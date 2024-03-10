@@ -45,6 +45,7 @@ import com.ajou.hertz.domain.instrument.dto.BassGuitarDto;
 import com.ajou.hertz.domain.instrument.dto.EffectorDto;
 import com.ajou.hertz.domain.instrument.dto.ElectricGuitarDto;
 import com.ajou.hertz.domain.instrument.dto.InstrumentDto;
+import com.ajou.hertz.domain.instrument.dto.request.InstrumentFilterConditions;
 import com.ajou.hertz.domain.instrument.entity.AcousticAndClassicGuitar;
 import com.ajou.hertz.domain.instrument.entity.Amplifier;
 import com.ajou.hertz.domain.instrument.entity.AudioEquipment;
@@ -100,6 +101,7 @@ class InstrumentQueryServiceTest {
 		// given
 		int page = 0;
 		int pageSize = 10;
+		InstrumentFilterConditions filterConditions = createInstrumentFilterConditions();
 		InstrumentSortOption sort = InstrumentSortOption.CREATED_BY_DESC;
 		User user = createUser();
 		Page<ElectricGuitar> expectedResult = new PageImpl<>(List.of(
@@ -107,13 +109,14 @@ class InstrumentQueryServiceTest {
 			createElectricGuitar(2L, user),
 			createElectricGuitar(3L, user)
 		));
-		given(instrumentRepository.findElectricGuitars(page, pageSize, sort)).willReturn(expectedResult);
+		given(instrumentRepository.findElectricGuitars(page, pageSize, sort, filterConditions))
+			.willReturn(expectedResult);
 
 		// when
-		Page<ElectricGuitarDto> actualResult = sut.findElectricGuitars(page, pageSize, sort);
+		Page<ElectricGuitarDto> actualResult = sut.findElectricGuitars(page, pageSize, sort, filterConditions);
 
 		// then
-		then(instrumentRepository).should().findElectricGuitars(page, pageSize, sort);
+		then(instrumentRepository).should().findElectricGuitars(page, pageSize, sort, filterConditions);
 		verifyEveryMocksShouldHaveNoMoreInteractions();
 		assertThat(actualResult.getNumberOfElements()).isEqualTo(actualResult.getNumberOfElements());
 		assertIterableEquals(
@@ -127,6 +130,7 @@ class InstrumentQueryServiceTest {
 		// given
 		int page = 0;
 		int pageSize = 10;
+		InstrumentFilterConditions filterConditions = createInstrumentFilterConditions();
 		InstrumentSortOption sort = InstrumentSortOption.CREATED_BY_DESC;
 		User user = createUser();
 		Page<BassGuitar> expectedResult = new PageImpl<>(List.of(
@@ -134,13 +138,13 @@ class InstrumentQueryServiceTest {
 			createBassGuitar(2L, user),
 			createBassGuitar(3L, user)
 		));
-		given(instrumentRepository.findBassGuitars(page, pageSize, sort)).willReturn(expectedResult);
+		given(instrumentRepository.findBassGuitars(page, pageSize, sort, filterConditions)).willReturn(expectedResult);
 
 		// when
-		Page<BassGuitarDto> actualResult = sut.findBassGuitars(page, pageSize, sort);
+		Page<BassGuitarDto> actualResult = sut.findBassGuitars(page, pageSize, sort, filterConditions);
 
 		// then
-		then(instrumentRepository).should().findBassGuitars(page, pageSize, sort);
+		then(instrumentRepository).should().findBassGuitars(page, pageSize, sort, filterConditions);
 		verifyEveryMocksShouldHaveNoMoreInteractions();
 		assertThat(actualResult.getNumberOfElements()).isEqualTo(actualResult.getNumberOfElements());
 		assertIterableEquals(
@@ -154,6 +158,7 @@ class InstrumentQueryServiceTest {
 		// given
 		int page = 0;
 		int pageSize = 10;
+		InstrumentFilterConditions filterConditions = createInstrumentFilterConditions();
 		InstrumentSortOption sort = InstrumentSortOption.CREATED_BY_DESC;
 		User user = createUser();
 		Page<AcousticAndClassicGuitar> expectedResult = new PageImpl<>(List.of(
@@ -161,13 +166,15 @@ class InstrumentQueryServiceTest {
 			createAcousticAndClassicGuitar(2L, user),
 			createAcousticAndClassicGuitar(3L, user)
 		));
-		given(instrumentRepository.findAcousticAndClassicGuitars(page, pageSize, sort)).willReturn(expectedResult);
+		given(instrumentRepository.findAcousticAndClassicGuitars(page, pageSize, sort, filterConditions))
+			.willReturn(expectedResult);
 
 		// when
-		Page<AcousticAndClassicGuitarDto> actualResult = sut.findAcousticAndClassicGuitars(page, pageSize, sort);
+		Page<AcousticAndClassicGuitarDto> actualResult =
+			sut.findAcousticAndClassicGuitars(page, pageSize, sort, filterConditions);
 
 		// then
-		then(instrumentRepository).should().findAcousticAndClassicGuitars(page, pageSize, sort);
+		then(instrumentRepository).should().findAcousticAndClassicGuitars(page, pageSize, sort, filterConditions);
 		verifyEveryMocksShouldHaveNoMoreInteractions();
 		assertThat(actualResult.getNumberOfElements()).isEqualTo(actualResult.getNumberOfElements());
 		assertIterableEquals(
@@ -181,6 +188,7 @@ class InstrumentQueryServiceTest {
 		// given
 		int page = 0;
 		int pageSize = 10;
+		InstrumentFilterConditions filterConditions = createInstrumentFilterConditions();
 		InstrumentSortOption sort = InstrumentSortOption.CREATED_BY_DESC;
 		User user = createUser();
 		Page<Effector> expectedResult = new PageImpl<>(List.of(
@@ -188,13 +196,13 @@ class InstrumentQueryServiceTest {
 			createEffector(2L, user),
 			createEffector(3L, user)
 		));
-		given(instrumentRepository.findEffectors(page, pageSize, sort)).willReturn(expectedResult);
+		given(instrumentRepository.findEffectors(page, pageSize, sort, filterConditions)).willReturn(expectedResult);
 
 		// when
-		Page<EffectorDto> actualResult = sut.findEffectors(page, pageSize, sort);
+		Page<EffectorDto> actualResult = sut.findEffectors(page, pageSize, sort, filterConditions);
 
 		// then
-		then(instrumentRepository).should().findEffectors(page, pageSize, sort);
+		then(instrumentRepository).should().findEffectors(page, pageSize, sort, filterConditions);
 		verifyEveryMocksShouldHaveNoMoreInteractions();
 		assertThat(actualResult.getNumberOfElements()).isEqualTo(actualResult.getNumberOfElements());
 		assertIterableEquals(
@@ -208,6 +216,7 @@ class InstrumentQueryServiceTest {
 		// given
 		int page = 0;
 		int pageSize = 10;
+		InstrumentFilterConditions filterConditions = createInstrumentFilterConditions();
 		InstrumentSortOption sort = InstrumentSortOption.CREATED_BY_DESC;
 		User user = createUser();
 		Page<Amplifier> expectedResult = new PageImpl<>(List.of(
@@ -215,13 +224,13 @@ class InstrumentQueryServiceTest {
 			createAmplifier(2L, user),
 			createAmplifier(3L, user)
 		));
-		given(instrumentRepository.findAmplifiers(page, pageSize, sort)).willReturn(expectedResult);
+		given(instrumentRepository.findAmplifiers(page, pageSize, sort, filterConditions)).willReturn(expectedResult);
 
 		// when
-		Page<AmplifierDto> actualResult = sut.findAmplifiers(page, pageSize, sort);
+		Page<AmplifierDto> actualResult = sut.findAmplifiers(page, pageSize, sort, filterConditions);
 
 		// then
-		then(instrumentRepository).should().findAmplifiers(page, pageSize, sort);
+		then(instrumentRepository).should().findAmplifiers(page, pageSize, sort, filterConditions);
 		verifyEveryMocksShouldHaveNoMoreInteractions();
 		assertThat(actualResult.getNumberOfElements()).isEqualTo(actualResult.getNumberOfElements());
 		assertIterableEquals(
@@ -235,6 +244,7 @@ class InstrumentQueryServiceTest {
 		// given
 		int page = 0;
 		int pageSize = 10;
+		InstrumentFilterConditions filterConditions = createInstrumentFilterConditions();
 		InstrumentSortOption sort = InstrumentSortOption.CREATED_BY_DESC;
 		User user = createUser();
 		Page<AudioEquipment> expectedResult = new PageImpl<>(List.of(
@@ -242,13 +252,14 @@ class InstrumentQueryServiceTest {
 			createAudioEquipment(2L, user),
 			createAudioEquipment(3L, user)
 		));
-		given(instrumentRepository.findAudioEquipments(page, pageSize, sort)).willReturn(expectedResult);
+		given(instrumentRepository.findAudioEquipments(page, pageSize, sort, filterConditions))
+			.willReturn(expectedResult);
 
 		// when
-		Page<AudioEquipmentDto> actualResult = sut.findAudioEquipments(page, pageSize, sort);
+		Page<AudioEquipmentDto> actualResult = sut.findAudioEquipments(page, pageSize, sort, filterConditions);
 
 		// then
-		then(instrumentRepository).should().findAudioEquipments(page, pageSize, sort);
+		then(instrumentRepository).should().findAudioEquipments(page, pageSize, sort, filterConditions);
 		verifyEveryMocksShouldHaveNoMoreInteractions();
 		assertThat(actualResult.getNumberOfElements()).isEqualTo(actualResult.getNumberOfElements());
 		assertIterableEquals(
@@ -451,5 +462,12 @@ class InstrumentQueryServiceTest {
 
 	private User createUser() throws Exception {
 		return createUser(1L);
+	}
+
+	private InstrumentFilterConditions createInstrumentFilterConditions() throws Exception {
+		Constructor<InstrumentFilterConditions> instrumentFilterConditionsConstructor =
+			InstrumentFilterConditions.class.getDeclaredConstructor();
+		instrumentFilterConditionsConstructor.setAccessible(true);
+		return instrumentFilterConditionsConstructor.newInstance();
 	}
 }

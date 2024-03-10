@@ -36,6 +36,7 @@ import com.ajou.hertz.domain.instrument.constant.ElectricGuitarModel;
 import com.ajou.hertz.domain.instrument.constant.GuitarColor;
 import com.ajou.hertz.domain.instrument.constant.InstrumentProgressStatus;
 import com.ajou.hertz.domain.instrument.constant.InstrumentSortOption;
+import com.ajou.hertz.domain.instrument.dto.request.InstrumentFilterConditions;
 import com.ajou.hertz.domain.instrument.entity.AcousticAndClassicGuitar;
 import com.ajou.hertz.domain.instrument.entity.Amplifier;
 import com.ajou.hertz.domain.instrument.entity.AudioEquipment;
@@ -53,13 +54,13 @@ import com.ajou.hertz.domain.user.repository.UserRepository;
 @ActiveProfiles("test")
 @Import({QuerydslConfig.class, JpaConfig.class})
 @DataJpaTest
-class InstrumentRepositoryCustomImplTest {
+class InstrumentRepositoryTest {
 
 	private final InstrumentRepository sut;
 	private final UserRepository userRepository;
 
 	@Autowired
-	public InstrumentRepositoryCustomImplTest(
+	public InstrumentRepositoryTest(
 		InstrumentRepository instrumentRepository,
 		UserRepository userRepository
 	) {
@@ -70,6 +71,9 @@ class InstrumentRepositoryCustomImplTest {
 	@Test
 	void 일렉_기타_목록을_조회한다() throws Exception {
 		// given
+		InstrumentSortOption sortOption = InstrumentSortOption.CREATED_BY_DESC;
+		InstrumentFilterConditions filterConditions =
+			createInstrumentFilterConditions(InstrumentProgressStatus.SELLING);
 		User user = userRepository.save(createUser());
 		List<Instrument> savedInstruments = sut.saveAll(List.of(
 			createBassGuitar(user),
@@ -78,7 +82,7 @@ class InstrumentRepositoryCustomImplTest {
 		));
 
 		// when
-		Page<ElectricGuitar> result = sut.findElectricGuitars(0, 10, InstrumentSortOption.CREATED_BY_DESC);
+		Page<ElectricGuitar> result = sut.findElectricGuitars(0, 10, sortOption, filterConditions);
 
 		// then
 		assertThat(result.getNumberOfElements()).isEqualTo(savedInstruments.size() - 1);
@@ -87,6 +91,8 @@ class InstrumentRepositoryCustomImplTest {
 	@Test
 	void 베이스_기타_목록을_조회한다() throws Exception {
 		// given
+		InstrumentSortOption sortOption = InstrumentSortOption.CREATED_BY_DESC;
+		InstrumentFilterConditions filterConditions = createInstrumentFilterConditions();
 		User user = userRepository.save(createUser());
 		List<Instrument> savedInstruments = sut.saveAll(List.of(
 			createElectricGuitar(user),
@@ -95,7 +101,7 @@ class InstrumentRepositoryCustomImplTest {
 		));
 
 		// when
-		Page<BassGuitar> result = sut.findBassGuitars(0, 10, InstrumentSortOption.CREATED_BY_ASC);
+		Page<BassGuitar> result = sut.findBassGuitars(0, 10, sortOption, filterConditions);
 
 		// then
 		assertThat(result.getNumberOfElements()).isEqualTo(savedInstruments.size() - 1);
@@ -104,6 +110,8 @@ class InstrumentRepositoryCustomImplTest {
 	@Test
 	void 어쿠스틱_클래식_기타_목록을_조회한다() throws Exception {
 		// given
+		InstrumentSortOption sortOption = InstrumentSortOption.CREATED_BY_DESC;
+		InstrumentFilterConditions filterConditions = createInstrumentFilterConditions();
 		User user = userRepository.save(createUser());
 		List<Instrument> savedInstruments = sut.saveAll(List.of(
 			createElectricGuitar(user),
@@ -113,7 +121,7 @@ class InstrumentRepositoryCustomImplTest {
 
 		// when
 		Page<AcousticAndClassicGuitar> result = sut.findAcousticAndClassicGuitars(
-			0, 10, InstrumentSortOption.CREATED_BY_ASC
+			0, 10, sortOption, filterConditions
 		);
 
 		// then
@@ -123,6 +131,8 @@ class InstrumentRepositoryCustomImplTest {
 	@Test
 	void 이펙터_목록을_조회한다() throws Exception {
 		// given
+		InstrumentSortOption sortOption = InstrumentSortOption.CREATED_BY_DESC;
+		InstrumentFilterConditions filterConditions = createInstrumentFilterConditions();
 		User user = userRepository.save(createUser());
 		List<Instrument> savedInstruments = sut.saveAll(List.of(
 			createElectricGuitar(user),
@@ -131,7 +141,7 @@ class InstrumentRepositoryCustomImplTest {
 		));
 
 		// when
-		Page<Effector> result = sut.findEffectors(0, 10, InstrumentSortOption.CREATED_BY_ASC);
+		Page<Effector> result = sut.findEffectors(0, 10, sortOption, filterConditions);
 
 		// then
 		assertThat(result.getNumberOfElements()).isEqualTo(savedInstruments.size() - 1);
@@ -140,6 +150,8 @@ class InstrumentRepositoryCustomImplTest {
 	@Test
 	void 앰프_목록을_조회한다() throws Exception {
 		// given
+		InstrumentSortOption sortOption = InstrumentSortOption.CREATED_BY_DESC;
+		InstrumentFilterConditions filterConditions = createInstrumentFilterConditions();
 		User user = userRepository.save(createUser());
 		List<Instrument> savedInstruments = sut.saveAll(List.of(
 			createElectricGuitar(user),
@@ -148,7 +160,7 @@ class InstrumentRepositoryCustomImplTest {
 		));
 
 		// when
-		Page<Amplifier> result = sut.findAmplifiers(0, 10, InstrumentSortOption.CREATED_BY_ASC);
+		Page<Amplifier> result = sut.findAmplifiers(0, 10, sortOption, filterConditions);
 
 		// then
 		assertThat(result.getNumberOfElements()).isEqualTo(savedInstruments.size() - 1);
@@ -157,6 +169,8 @@ class InstrumentRepositoryCustomImplTest {
 	@Test
 	void 음향_장비_목록을_조회한다() throws Exception {
 		// given
+		InstrumentSortOption sortOption = InstrumentSortOption.CREATED_BY_ASC;
+		InstrumentFilterConditions filterConditions = createInstrumentFilterConditions();
 		User user = userRepository.save(createUser());
 		List<Instrument> savedInstruments = sut.saveAll(List.of(
 			createElectricGuitar(user),
@@ -165,7 +179,7 @@ class InstrumentRepositoryCustomImplTest {
 		));
 
 		// when
-		Page<AudioEquipment> result = sut.findAudioEquipments(0, 10, InstrumentSortOption.CREATED_BY_ASC);
+		Page<AudioEquipment> result = sut.findAudioEquipments(0, 10, sortOption, filterConditions);
 
 		// then
 		assertThat(result.getNumberOfElements()).isEqualTo(savedInstruments.size() - 1);
@@ -333,5 +347,20 @@ class InstrumentRepositoryCustomImplTest {
 			"description",
 			AudioEquipmentType.AUDIO_EQUIPMENT
 		);
+	}
+
+	private InstrumentFilterConditions createInstrumentFilterConditions() throws Exception {
+		Constructor<InstrumentFilterConditions> instrumentFilterConditionsConstructor =
+			InstrumentFilterConditions.class.getDeclaredConstructor();
+		instrumentFilterConditionsConstructor.setAccessible(true);
+		return instrumentFilterConditionsConstructor.newInstance();
+	}
+
+	private InstrumentFilterConditions createInstrumentFilterConditions(InstrumentProgressStatus progressStatus) throws
+		Exception {
+		Constructor<InstrumentFilterConditions> instrumentFilterConditionsConstructor =
+			InstrumentFilterConditions.class.getDeclaredConstructor(InstrumentProgressStatus.class);
+		instrumentFilterConditionsConstructor.setAccessible(true);
+		return instrumentFilterConditionsConstructor.newInstance(progressStatus);
 	}
 }
