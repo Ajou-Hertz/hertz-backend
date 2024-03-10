@@ -25,6 +25,7 @@ import com.ajou.hertz.domain.instrument.constant.AcousticAndClassicGuitarWood;
 import com.ajou.hertz.domain.instrument.constant.AmplifierBrand;
 import com.ajou.hertz.domain.instrument.constant.AmplifierType;
 import com.ajou.hertz.domain.instrument.constant.AmplifierUsage;
+import com.ajou.hertz.domain.instrument.constant.AudioEquipmentType;
 import com.ajou.hertz.domain.instrument.constant.BassGuitarBrand;
 import com.ajou.hertz.domain.instrument.constant.BassGuitarPickUp;
 import com.ajou.hertz.domain.instrument.constant.BassGuitarPreAmplifier;
@@ -37,6 +38,7 @@ import com.ajou.hertz.domain.instrument.constant.InstrumentProgressStatus;
 import com.ajou.hertz.domain.instrument.constant.InstrumentSortOption;
 import com.ajou.hertz.domain.instrument.entity.AcousticAndClassicGuitar;
 import com.ajou.hertz.domain.instrument.entity.Amplifier;
+import com.ajou.hertz.domain.instrument.entity.AudioEquipment;
 import com.ajou.hertz.domain.instrument.entity.BassGuitar;
 import com.ajou.hertz.domain.instrument.entity.Effector;
 import com.ajou.hertz.domain.instrument.entity.ElectricGuitar;
@@ -147,6 +149,23 @@ class InstrumentRepositoryCustomImplTest {
 
 		// when
 		Page<Amplifier> result = sut.findAmplifiers(0, 10, InstrumentSortOption.CREATED_BY_ASC);
+
+		// then
+		assertThat(result.getNumberOfElements()).isEqualTo(savedInstruments.size() - 1);
+	}
+
+	@Test
+	void 음향_장비_목록을_조회한다() throws Exception {
+		// given
+		User user = userRepository.save(createUser());
+		List<Instrument> savedInstruments = sut.saveAll(List.of(
+			createElectricGuitar(user),
+			createAudioEquipment(user),
+			createAudioEquipment(user)
+		));
+
+		// when
+		Page<AudioEquipment> result = sut.findAudioEquipments(0, 10, InstrumentSortOption.CREATED_BY_ASC);
 
 		// then
 		assertThat(result.getNumberOfElements()).isEqualTo(savedInstruments.size() - 1);
@@ -292,6 +311,27 @@ class InstrumentRepositoryCustomImplTest {
 			AmplifierType.GUITAR,
 			AmplifierBrand.FENDER,
 			AmplifierUsage.HOME
+		);
+	}
+
+	private AudioEquipment createAudioEquipment(User seller) throws Exception {
+		Constructor<AudioEquipment> audioEquipmentConstructor = AudioEquipment.class.getDeclaredConstructor(
+			Long.class, User.class, String.class, InstrumentProgressStatus.class, Address.class,
+			Short.class, Integer.class, Boolean.class, String.class,
+			AudioEquipmentType.class
+		);
+		audioEquipmentConstructor.setAccessible(true);
+		return audioEquipmentConstructor.newInstance(
+			null,
+			seller,
+			"Title",
+			InstrumentProgressStatus.SELLING,
+			createAddress(),
+			(short)3,
+			550000,
+			true,
+			"description",
+			AudioEquipmentType.AUDIO_EQUIPMENT
 		);
 	}
 }

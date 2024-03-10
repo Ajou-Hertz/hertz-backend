@@ -175,6 +175,29 @@ public class InstrumentController {
 		summary = "앰프 매물 목록 조회",
 		description = "앰프 매물 목록을 조회합니다."
 	)
+	@GetMapping(value = "/audio-equipments", headers = API_VERSION_HEADER_NAME + "=" + 1)
+	public Page<AudioEquipmentResponse> findAudioEquipmentsV1(
+		@Parameter(
+			description = "페이지 번호. 0부터 시작합니다.",
+			example = "0"
+		) @RequestParam int page,
+		@Parameter(
+			description = "페이지 크기. 한 페이지에 포함될 데이터의 개수를 의미합니다.",
+			example = "10"
+		) @RequestParam int size,
+		@Parameter(
+			description = "정렬 기준"
+		) @RequestParam InstrumentSortOption sort
+	) {
+		return instrumentQueryService
+			.findAudioEquipments(page, size, sort)
+			.map(AudioEquipmentResponse::from);
+	}
+
+	@Operation(
+		summary = "음향 장비 매물 목록 조회",
+		description = "음향 장비 매물 목록을 조회합니다."
+	)
 	@GetMapping(value = "/amplifiers", headers = API_VERSION_HEADER_NAME + "=" + 1)
 	public Page<AmplifierResponse> findAmplifiersV1(
 		@Parameter(

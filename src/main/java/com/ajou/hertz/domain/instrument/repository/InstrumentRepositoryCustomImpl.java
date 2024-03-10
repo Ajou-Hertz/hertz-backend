@@ -14,6 +14,7 @@ import org.springframework.data.domain.Sort;
 import com.ajou.hertz.domain.instrument.constant.InstrumentSortOption;
 import com.ajou.hertz.domain.instrument.entity.AcousticAndClassicGuitar;
 import com.ajou.hertz.domain.instrument.entity.Amplifier;
+import com.ajou.hertz.domain.instrument.entity.AudioEquipment;
 import com.ajou.hertz.domain.instrument.entity.BassGuitar;
 import com.ajou.hertz.domain.instrument.entity.Effector;
 import com.ajou.hertz.domain.instrument.entity.ElectricGuitar;
@@ -56,6 +57,11 @@ public class InstrumentRepositoryCustomImpl implements InstrumentRepositoryCusto
 	@Override
 	public Page<Amplifier> findAmplifiers(int page, int pageSize, InstrumentSortOption sort) {
 		return findInstrumentsByClassType(Amplifier.class, page, pageSize, sort);
+	}
+
+	@Override
+	public Page<AudioEquipment> findAudioEquipments(int page, int pageSize, InstrumentSortOption sort) {
+		return findInstrumentsByClassType(AudioEquipment.class, page, pageSize, sort);
 	}
 
 	private <T extends Instrument> Page<T> findInstrumentsByClassType(
