@@ -14,13 +14,13 @@ import lombok.NoArgsConstructor;
 public class Coordinate {
 
 	@Column(nullable = false)
-	private String latitude;
+	private String lat;
 
 	@Column(nullable = false)
-	private String longitude;
+	private String lng;
 
-	public static Coordinate of(String latitude, String longitude) {
-		return new Coordinate(latitude, longitude);
+	public static Coordinate of(String lat, String lng) {
+		return new Coordinate(lat, lng);
 	}
 
 }
