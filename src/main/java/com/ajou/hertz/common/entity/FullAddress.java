@@ -54,10 +54,12 @@ public class FullAddress {
 
 		String sgg = sggBuilder.toString().trim();
 
-		if (fullAddress.matches(".+[로길].+")) {
-			roadAddress = String.join(" ", Arrays.copyOfRange(parsedAddress, num, parsedAddress.length));
-		} else {
-			lotNumberAddress = String.join(" ", Arrays.copyOfRange(parsedAddress, num, parsedAddress.length));
+		if (parsedAddress.length > num) {
+			if (fullAddress.matches(".+[로길].+")) {
+				roadAddress = String.join(" ", Arrays.copyOfRange(parsedAddress, num, parsedAddress.length));
+			} else {
+				lotNumberAddress = String.join(" ", Arrays.copyOfRange(parsedAddress, num, parsedAddress.length));
+			}
 		}
 
 		return new FullAddress(sido, sgg, lotNumberAddress, roadAddress, detailAddress);
