@@ -63,6 +63,7 @@ import com.ajou.hertz.domain.instrument.dto.request.CreateNewAudioEquipmentReque
 import com.ajou.hertz.domain.instrument.dto.request.CreateNewBassGuitarRequest;
 import com.ajou.hertz.domain.instrument.dto.request.CreateNewEffectorRequest;
 import com.ajou.hertz.domain.instrument.dto.request.CreateNewElectricGuitarRequest;
+import com.ajou.hertz.domain.instrument.dto.request.ElectricGuitarFilterConditions;
 import com.ajou.hertz.domain.instrument.dto.request.InstrumentFilterConditions;
 import com.ajou.hertz.domain.instrument.service.InstrumentCommandService;
 import com.ajou.hertz.domain.instrument.service.InstrumentQueryService;
@@ -134,7 +135,7 @@ class InstrumentControllerTest {
 			createElectricGuitarDto(4L, userId)
 		));
 		given(instrumentQueryService.findElectricGuitars(
-			eq(page), eq(pageSize), eq(sortOption), any(InstrumentFilterConditions.class)
+			eq(page), eq(pageSize), eq(sortOption), any(ElectricGuitarFilterConditions.class)
 		)).willReturn(expectedResult);
 
 		// when & then
@@ -152,7 +153,7 @@ class InstrumentControllerTest {
 			.andExpect(jsonPath("$.content", hasSize(expectedResult.getNumberOfElements())));
 		then(instrumentQueryService)
 			.should()
-			.findElectricGuitars(eq(page), eq(pageSize), eq(sortOption), any(InstrumentFilterConditions.class));
+			.findElectricGuitars(eq(page), eq(pageSize), eq(sortOption), any(ElectricGuitarFilterConditions.class));
 		verifyEveryMocksShouldHaveNoMoreInteractions();
 	}
 
@@ -1000,11 +1001,14 @@ class InstrumentControllerTest {
 	}
 
 	private InstrumentFilterConditions createInstrumentFilterConditions() throws Exception {
-		Constructor<InstrumentFilterConditions> instrumentFilterConditionsConstructor =
-			InstrumentFilterConditions.class.getDeclaredConstructor(InstrumentProgressStatus.class);
-		instrumentFilterConditionsConstructor.setAccessible(true);
-		return instrumentFilterConditionsConstructor.newInstance(
-			InstrumentProgressStatus.SELLING
+		Constructor<InstrumentFilterConditions> constructor = InstrumentFilterConditions.class.getDeclaredConstructor(
+			InstrumentProgressStatus.class, String.class, String.class
+		);
+		constructor.setAccessible(true);
+		return constructor.newInstance(
+			InstrumentProgressStatus.SELLING,
+			"서울특별시",
+			"마포구"
 		);
 	}
 }

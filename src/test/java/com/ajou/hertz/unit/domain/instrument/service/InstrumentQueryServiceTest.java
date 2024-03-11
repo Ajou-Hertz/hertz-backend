@@ -45,6 +45,7 @@ import com.ajou.hertz.domain.instrument.dto.BassGuitarDto;
 import com.ajou.hertz.domain.instrument.dto.EffectorDto;
 import com.ajou.hertz.domain.instrument.dto.ElectricGuitarDto;
 import com.ajou.hertz.domain.instrument.dto.InstrumentDto;
+import com.ajou.hertz.domain.instrument.dto.request.ElectricGuitarFilterConditions;
 import com.ajou.hertz.domain.instrument.dto.request.InstrumentFilterConditions;
 import com.ajou.hertz.domain.instrument.entity.AcousticAndClassicGuitar;
 import com.ajou.hertz.domain.instrument.entity.Amplifier;
@@ -101,7 +102,7 @@ class InstrumentQueryServiceTest {
 		// given
 		int page = 0;
 		int pageSize = 10;
-		InstrumentFilterConditions filterConditions = createInstrumentFilterConditions();
+		ElectricGuitarFilterConditions filterConditions = createElectricGuitarFilterConditions();
 		InstrumentSortOption sort = InstrumentSortOption.CREATED_BY_DESC;
 		User user = createUser();
 		Page<ElectricGuitar> expectedResult = new PageImpl<>(List.of(
@@ -469,5 +470,21 @@ class InstrumentQueryServiceTest {
 			InstrumentFilterConditions.class.getDeclaredConstructor();
 		instrumentFilterConditionsConstructor.setAccessible(true);
 		return instrumentFilterConditionsConstructor.newInstance();
+	}
+
+	private ElectricGuitarFilterConditions createElectricGuitarFilterConditions() throws Exception {
+		Constructor<ElectricGuitarFilterConditions> constructor = ElectricGuitarFilterConditions.class.getDeclaredConstructor(
+			InstrumentProgressStatus.class, String.class, String.class,
+			ElectricGuitarBrand.class, ElectricGuitarModel.class, GuitarColor.class
+		);
+		constructor.setAccessible(true);
+		return constructor.newInstance(
+			InstrumentProgressStatus.SELLING,
+			"서울특별시",
+			"종로구",
+			ElectricGuitarBrand.FENDER_USA,
+			ElectricGuitarModel.TELECASTER,
+			GuitarColor.RED
+		);
 	}
 }

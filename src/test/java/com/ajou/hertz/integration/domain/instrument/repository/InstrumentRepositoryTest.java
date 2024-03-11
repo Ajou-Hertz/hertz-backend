@@ -36,6 +36,7 @@ import com.ajou.hertz.domain.instrument.constant.ElectricGuitarModel;
 import com.ajou.hertz.domain.instrument.constant.GuitarColor;
 import com.ajou.hertz.domain.instrument.constant.InstrumentProgressStatus;
 import com.ajou.hertz.domain.instrument.constant.InstrumentSortOption;
+import com.ajou.hertz.domain.instrument.dto.request.ElectricGuitarFilterConditions;
 import com.ajou.hertz.domain.instrument.dto.request.InstrumentFilterConditions;
 import com.ajou.hertz.domain.instrument.entity.AcousticAndClassicGuitar;
 import com.ajou.hertz.domain.instrument.entity.Amplifier;
@@ -72,8 +73,7 @@ class InstrumentRepositoryTest {
 	void 일렉_기타_목록을_조회한다() throws Exception {
 		// given
 		InstrumentSortOption sortOption = InstrumentSortOption.CREATED_BY_DESC;
-		InstrumentFilterConditions filterConditions =
-			createInstrumentFilterConditions(InstrumentProgressStatus.SELLING);
+		ElectricGuitarFilterConditions filterConditions = createElectricGuitarFilterConditions();
 		User user = userRepository.save(createUser());
 		List<Instrument> savedInstruments = sut.saveAll(List.of(
 			createBassGuitar(user),
@@ -356,11 +356,19 @@ class InstrumentRepositoryTest {
 		return instrumentFilterConditionsConstructor.newInstance();
 	}
 
-	private InstrumentFilterConditions createInstrumentFilterConditions(InstrumentProgressStatus progressStatus) throws
-		Exception {
-		Constructor<InstrumentFilterConditions> instrumentFilterConditionsConstructor =
-			InstrumentFilterConditions.class.getDeclaredConstructor(InstrumentProgressStatus.class);
-		instrumentFilterConditionsConstructor.setAccessible(true);
-		return instrumentFilterConditionsConstructor.newInstance(progressStatus);
+	private ElectricGuitarFilterConditions createElectricGuitarFilterConditions() throws Exception {
+		Constructor<ElectricGuitarFilterConditions> constructor = ElectricGuitarFilterConditions.class.getDeclaredConstructor(
+			InstrumentProgressStatus.class, String.class, String.class,
+			ElectricGuitarBrand.class, ElectricGuitarModel.class, GuitarColor.class
+		);
+		constructor.setAccessible(true);
+		return constructor.newInstance(
+			InstrumentProgressStatus.SELLING,
+			"서울특별시",
+			null,
+			ElectricGuitarBrand.FENDER_USA,
+			ElectricGuitarModel.TELECASTER,
+			GuitarColor.RED
+		);
 	}
 }

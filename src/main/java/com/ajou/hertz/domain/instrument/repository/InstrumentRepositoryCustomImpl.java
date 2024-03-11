@@ -1,5 +1,6 @@
 package com.ajou.hertz.domain.instrument.repository;
 
+import static com.ajou.hertz.domain.instrument.entity.QElectricGuitar.*;
 import static com.ajou.hertz.domain.instrument.entity.QInstrument.*;
 import static com.ajou.hertz.domain.user.entity.QUser.*;
 
@@ -12,8 +13,12 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 
+import com.ajou.hertz.domain.instrument.constant.ElectricGuitarBrand;
+import com.ajou.hertz.domain.instrument.constant.ElectricGuitarModel;
+import com.ajou.hertz.domain.instrument.constant.GuitarColor;
 import com.ajou.hertz.domain.instrument.constant.InstrumentProgressStatus;
 import com.ajou.hertz.domain.instrument.constant.InstrumentSortOption;
+import com.ajou.hertz.domain.instrument.dto.request.ElectricGuitarFilterConditions;
 import com.ajou.hertz.domain.instrument.dto.request.InstrumentFilterConditions;
 import com.ajou.hertz.domain.instrument.entity.AcousticAndClassicGuitar;
 import com.ajou.hertz.domain.instrument.entity.Amplifier;
@@ -26,7 +31,11 @@ import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.ComparableExpression;
+import com.querydsl.core.types.dsl.EntityPathBase;
+import com.querydsl.core.types.dsl.EnumPath;
 import com.querydsl.core.types.dsl.PathBuilder;
+import com.querydsl.core.types.dsl.StringPath;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import lombok.RequiredArgsConstructor;
@@ -42,9 +51,31 @@ public class InstrumentRepositoryCustomImpl implements InstrumentRepositoryCusto
 		int page,
 		int pageSize,
 		InstrumentSortOption sort,
-		InstrumentFilterConditions filterConditions
+		ElectricGuitarFilterConditions filterConditions
 	) {
-		return findInstrumentsByClassType(ElectricGuitar.class, page, pageSize, sort, filterConditions);
+		PageRequest pageable = PageRequest.of(page, pageSize, sort.toSort());
+
+		List<Predicate> conditions =
+			new ArrayList<>(convertElectricGuitarFilterConditionsToPredicates(filterConditions));
+
+		List<ElectricGuitar> content = queryFactory
+			.selectFrom(electricGuitar)
+			.join(electricGuitar.seller, user).fetchJoin()
+			.where(conditions.toArray(Predicate[]::new))
+			.offset(pageable.getOffset())
+			.limit(pageable.getPageSize())
+			.orderBy(convertSortToOrderSpecifiers(pageable.getSort(), createPathBuilder(electricGuitar)))
+			.fetch();
+
+		long totalCount = Optional.ofNullable(
+			queryFactory.select(electricGuitar.count())
+				.from(electricGuitar)
+				.join(electricGuitar.seller, user)
+				.where(conditions.toArray(Predicate[]::new))
+				.fetchOne()
+		).orElse(0L);
+
+		return new PageImpl<>(content, pageable, totalCount);
 	}
 
 	@Override
@@ -108,7 +139,6 @@ public class InstrumentRepositoryCustomImpl implements InstrumentRepositoryCusto
 
 		List<Predicate> conditions = new ArrayList<>();
 		conditions.add(instrument.instanceOf(classType));
-		conditions.addAll(convertFilterConditions(filterConditions));
 
 		List<T> content = queryFactory
 			.selectFrom(instrument)
@@ -116,7 +146,7 @@ public class InstrumentRepositoryCustomImpl implements InstrumentRepositoryCusto
 			.where(conditions.toArray(Predicate[]::new))
 			.offset(pageable.getOffset())
 			.limit(pageable.getPageSize())
-			.orderBy(convertSortToOrderSpecifiers(pageable.getSort()))
+			.orderBy(convertSortToOrderSpecifiers(pageable.getSort(), createPathBuilder(instrument)))
 			.fetch()
 			.stream()
 			.map(classType::cast)
@@ -133,21 +163,60 @@ public class InstrumentRepositoryCustomImpl implements InstrumentRepositoryCusto
 		return new PageImpl<>(content, pageable, totalCount);
 	}
 
-	private OrderSpecifier<?>[] convertSortToOrderSpecifiers(Sort sort) {
+	private <T extends Instrument, Q extends EntityPathBase<T>> PathBuilder<T> createPathBuilder(Q qClass) {
+		return new PathBuilder<>(qClass.getType(), qClass.getMetadata());
+	}
+
+	private <T extends Instrument> OrderSpecifier<?>[] convertSortToOrderSpecifiers(
+		Sort sort, PathBuilder<T> pathBuilder
+	) {
 		return sort.stream()
 			.map(order -> new OrderSpecifier<>(
 				order.getDirection().isAscending() ? Order.ASC : Order.DESC,
-				INSTRUMENT_PATH.getString(order.getProperty())
+				pathBuilder.getString(order.getProperty())
 			)).toArray(OrderSpecifier[]::new);
 	}
 
-	private List<Predicate> convertFilterConditions(InstrumentFilterConditions filterConditions) {
+	private List<Predicate> convertElectricGuitarFilterConditionsToPredicates(
+		ElectricGuitarFilterConditions filterConditions) {
 		List<Predicate> res = new ArrayList<>();
-		res.add(progressStatusFilterCondition(filterConditions.getProgress()));
+		res.add(applyProgressStatusCondition(filterConditions.getProgress(), electricGuitar.progressStatus));
+		res.add(applyTradeAddressSidoCondition(filterConditions.getSido(), electricGuitar.tradeAddress.sido));
+		res.add(applyTradeAddressSggCondition(filterConditions.getSgg(), electricGuitar.tradeAddress.sgg));
+		res.add(applyElectricGuitarBrandCondition(filterConditions.getBrand()));
+		res.add(applyElectricGuitarModelCondition(filterConditions.getModel()));
+		res.add(applyGuitarColorCondition(filterConditions.getColor()));
 		return res;
 	}
 
-	private BooleanExpression progressStatusFilterCondition(InstrumentProgressStatus progressStatus) {
-		return progressStatus != null ? instrument.progressStatus.eq(progressStatus) : null;
+	private BooleanExpression applyProgressStatusCondition(
+		InstrumentProgressStatus progressStatus,
+		EnumPath<InstrumentProgressStatus> progressStatusExpression
+	) {
+		return createCondition(progressStatus, progressStatusExpression);
+	}
+
+	private BooleanExpression applyTradeAddressSidoCondition(String sido, StringPath tradeAddressSidoExpression) {
+		return createCondition(sido, tradeAddressSidoExpression);
+	}
+
+	private BooleanExpression applyTradeAddressSggCondition(String sgg, StringPath tradeAddressSggExpression) {
+		return createCondition(sgg, tradeAddressSggExpression);
+	}
+
+	private BooleanExpression applyElectricGuitarBrandCondition(ElectricGuitarBrand brand) {
+		return createCondition(brand, electricGuitar.brand);
+	}
+
+	private BooleanExpression applyElectricGuitarModelCondition(ElectricGuitarModel model) {
+		return createCondition(model, electricGuitar.model);
+	}
+
+	private BooleanExpression applyGuitarColorCondition(GuitarColor color) {
+		return createCondition(color, electricGuitar.color);
+	}
+
+	private <T extends Comparable<T>> BooleanExpression createCondition(T value, ComparableExpression<T> path) {
+		return value != null ? path.eq(value) : null;
 	}
 }

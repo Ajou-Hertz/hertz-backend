@@ -13,6 +13,7 @@ import com.ajou.hertz.domain.instrument.dto.BassGuitarDto;
 import com.ajou.hertz.domain.instrument.dto.EffectorDto;
 import com.ajou.hertz.domain.instrument.dto.ElectricGuitarDto;
 import com.ajou.hertz.domain.instrument.dto.InstrumentDto;
+import com.ajou.hertz.domain.instrument.dto.request.ElectricGuitarFilterConditions;
 import com.ajou.hertz.domain.instrument.dto.request.InstrumentFilterConditions;
 import com.ajou.hertz.domain.instrument.repository.InstrumentRepository;
 
@@ -35,7 +36,7 @@ public class InstrumentQueryService {
 		int page,
 		int pageSize,
 		InstrumentSortOption sort,
-		InstrumentFilterConditions filterConditions
+		ElectricGuitarFilterConditions filterConditions
 	) {
 		return instrumentRepository
 			.findElectricGuitars(page, pageSize, sort, filterConditions)
