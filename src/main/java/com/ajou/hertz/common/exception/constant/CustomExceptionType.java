@@ -11,6 +11,7 @@ import lombok.Getter;
  *     <li>1001 ~ 1999: 일반 예외. 아래 항목에 해당하지 않는 대부분의 예외가 여기에 해당한다.</li>
  *     <li>2000 ~ 2199: 인증 관련 예외</li>
  *     <li>2200 ~ 2399: 유저 관련 예외</li>
+ *     <li>2400 ~ 2599: 주소 관련 예외</li>
  * </ul>
  */
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
@@ -40,6 +41,11 @@ public enum CustomExceptionType {
 	USER_NOT_FOUND_BY_PHONE(2206, "일치하는 회원을 찾을 수 없습니다."),
 
 	KAKAO_CLIENT(10000, "카카오 서버와의 통신 중 오류가 발생했습니다."),
+
+	/**
+	 * 주소 관련 예외
+	 */
+	INVALID_ADDRESS_FORMAT(2400, "주소 형식이 올바르지 않습니다."),
 	;
 
 	private final Integer code;

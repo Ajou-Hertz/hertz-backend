@@ -62,8 +62,8 @@ public class ConcertHall extends TimeTrackedBaseEntity {
 	@Column(nullable = false)
 	private Integer pricePerHour;
 
-	@Column(columnDefinition = "smallint", nullable = false)
-	private Integer capacity;
+	@Column(nullable = false)
+	private Short capacity;
 
 	@Column(nullable = false)
 	private String size;
