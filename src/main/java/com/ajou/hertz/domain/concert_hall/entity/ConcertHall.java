@@ -1,5 +1,6 @@
 package com.ajou.hertz.domain.concert_hall.entity;
 
+import com.ajou.hertz.common.entity.Coordinate;
 import com.ajou.hertz.common.entity.FullAddress;
 import com.ajou.hertz.common.entity.TimeTrackedBaseEntity;
 import com.ajou.hertz.domain.concert_hall.constant.ConcertHallProgressStatus;
@@ -73,6 +74,10 @@ public class ConcertHall extends TimeTrackedBaseEntity {
 
 	@Column(length = 1000, nullable = false)
 	private String description;
+
+	@Column(nullable = false)
+	@Embedded
+	private Coordinate coordinate;
 
 	@Embedded
 	private ConcertHallImages images = new ConcertHallImages();
