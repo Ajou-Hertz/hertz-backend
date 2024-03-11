@@ -19,8 +19,4 @@ public class Coordinate {
 	@Column(nullable = false)
 	private String lng;
 
-	public static Coordinate of(String lat, String lng) {
-		return new Coordinate(lat, lng);
-	}
-
 }
