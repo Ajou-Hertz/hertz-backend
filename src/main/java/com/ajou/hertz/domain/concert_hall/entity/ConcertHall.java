@@ -74,8 +74,7 @@ public class ConcertHall extends TimeTrackedBaseEntity {
 
 	@Column(length = 1000, nullable = false)
 	private String description;
-
-	@Column(nullable = false)
+	
 	@Embedded
 	private Coordinate coordinate;
 

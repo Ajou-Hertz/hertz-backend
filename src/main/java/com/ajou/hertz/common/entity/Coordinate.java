@@ -7,19 +7,19 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PUBLIC)
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @Getter
 @Embeddable
 public class Coordinate {
 
 	@Column(nullable = false)
-	private Double latitude;
+	private String latitude;
 
 	@Column(nullable = false)
-	private Double longitude;
+	private String longitude;
 
-	public static Coordinate of(double latitude, double longitude) {
+	public static Coordinate of(String latitude, String longitude) {
 		return new Coordinate(latitude, longitude);
 	}
 
