@@ -112,18 +112,14 @@ jacocoTestReport {
 
         afterEvaluate {
             classDirectories.setFrom(files(classDirectories.files.collect {
-                fileTree(
-                        dir: it,
+                fileTree(dir: it,
                         excludes: [] + Qdomains,
                         includes: [
                                 '**/service/**',
                                 '**/controller/**',
-                                '**/common/entity/FullAddress*'
-                        ]
-                )
+                                '**/common/entity/FullAddress*',
                                 '**/repository/**'
                         ])
-
             }))
         }
     }
@@ -152,7 +148,7 @@ jacocoTestCoverageVerification {
             includes = [
                     '*service.*Service*',
                     '*controller.*Controller*',
-                    '*common.entity.FullAddress*'
+                    '*common.entity.FullAddress*',
                     '*repository.*Repository*'
             ]
         }
