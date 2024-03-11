@@ -2,8 +2,7 @@ package com.ajou.hertz.common.entity;
 
 import java.util.Arrays;
 
-import com.ajou.hertz.common.exception.constant.CustomExceptionType;
-import com.ajou.hertz.common.exception.full_address.InvalidAddressFormatException;
+import com.ajou.hertz.common.exception.InvalidAddressFormatException;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
@@ -31,12 +30,13 @@ public class FullAddress {
 	@Column(nullable = false)
 	private String detailAddress;
 
-	public static FullAddress of(String fullAddress, String detailAddress) throws InvalidAddressFormatException {
+	public static FullAddress of(String fullAddress, String detailAddress) {
 
 		String[] parsedAddress = fullAddress.split(" ");
 
 		if (parsedAddress.length < 2) {
-			throw new InvalidAddressFormatException(CustomExceptionType.INVALID_ADDRESS_FORMAT);
+			throw new InvalidAddressFormatException(fullAddress);
+
 		}
 
 		String sido = parsedAddress[0];
@@ -44,18 +44,20 @@ public class FullAddress {
 		String lotNumberAddress = null;
 		String roadAddress = null;
 
-		int i = Arrays.stream(parsedAddress)
-			.skip(1)
-			.takeWhile(part -> !part.matches(".*[동면읍소로길]$"))
-			.peek(part -> sggBuilder.append(part).append(" "))
-			.toArray().length + 1;
+		int num;
+		for (num = 1; num < parsedAddress.length; num++) {
+			if (parsedAddress[num].matches(".*[동면읍소로길]$")) {
+				break;
+			}
+			sggBuilder.append(parsedAddress[num]).append(" ");
+		}
 
 		String sgg = sggBuilder.toString().trim();
 
 		if (fullAddress.matches(".+[로길].+")) {
-			roadAddress = String.join(" ", Arrays.copyOfRange(parsedAddress, i, parsedAddress.length));
+			roadAddress = String.join(" ", Arrays.copyOfRange(parsedAddress, num, parsedAddress.length));
 		} else {
-			lotNumberAddress = String.join(" ", Arrays.copyOfRange(parsedAddress, i, parsedAddress.length));
+			lotNumberAddress = String.join(" ", Arrays.copyOfRange(parsedAddress, num, parsedAddress.length));
 		}
 
 		return new FullAddress(sido, sgg, lotNumberAddress, roadAddress, detailAddress);

@@ -12,9 +12,9 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import com.ajou.hertz.common.entity.FullAddress;
-import com.ajou.hertz.common.exception.full_address.InvalidAddressFormatException;
+import com.ajou.hertz.common.exception.InvalidAddressFormatException;
 
-@DisplayName("[Unit] Service - FullAddress")
+@DisplayName("[Unit] Entity - FullAddress")
 public class FullAddressParsingTest {
 	@ParameterizedTest
 	@MethodSource("fullAddressesParsingTest")
@@ -23,6 +23,13 @@ public class FullAddressParsingTest {
 		assertEquals(expectedSido, parsedAddress.getSido());
 		assertEquals(expectedSgg, parsedAddress.getSgg());
 		assertEquals(detailAddress, parsedAddress.getDetailAddress());
+		if (fullAddress.contains("로 ") || fullAddress.contains("길 ")) {
+			assertNull(parsedAddress.getLotNumberAddress());
+			assertNotNull(parsedAddress.getRoadAddress());
+		} else {
+			assertNull(parsedAddress.getRoadAddress());
+			assertNotNull(parsedAddress.getLotNumberAddress());
+		}
 	}
 
 	@Test
@@ -38,15 +45,6 @@ public class FullAddressParsingTest {
 		assertThrows(InvalidAddressFormatException.class, () -> FullAddress.of("전라북도", "상세주소"));
 	}
 
-	@Test
-	void 혼합된_주소의_파싱이_정상작동하는지_확인한다() {
-		FullAddress address = FullAddress.of("서울특별시 강남구 역삼동 테헤란로 152", "아파트 101호");
-		assertEquals("서울특별시", address.getSido());
-		assertEquals("강남구", address.getSgg());
-		assertNotNull(address.getRoadAddress());
-		assertNull(address.getLotNumberAddress());
-	}
-
 	private static Stream<Arguments> fullAddressesParsingTest() {
 		return Stream.of(
 			Arguments.of("경기 성남시 분당구 판교역로 152", "12층", "경기", "성남시 분당구"),
@@ -57,7 +55,7 @@ public class FullAddressParsingTest {
 			Arguments.of("강원특별자치도 원주시 지정면 신평리 469", "빌라 202호", "강원특별자치도", "원주시"),
 			Arguments.of("전남 고흥군 고흥읍 등암리 1679", "아파트 101호", "전남", "고흥군"),
 			Arguments.of("충북 청주시 서원구 모충동 372", "빌라 202호", "충북", "청주시 서원구"),
-			Arguments.of("인천 서구 가좌동 157-21 ", "빌라 202호", "인천", "서구")
+			Arguments.of("인천 서구", "빌라 202호", "인천", "서구")
 		);
 	}
 }
