@@ -36,6 +36,7 @@ import com.ajou.hertz.domain.instrument.constant.ElectricGuitarModel;
 import com.ajou.hertz.domain.instrument.constant.GuitarColor;
 import com.ajou.hertz.domain.instrument.constant.InstrumentProgressStatus;
 import com.ajou.hertz.domain.instrument.constant.InstrumentSortOption;
+import com.ajou.hertz.domain.instrument.dto.request.BassGuitarFilterConditions;
 import com.ajou.hertz.domain.instrument.dto.request.ElectricGuitarFilterConditions;
 import com.ajou.hertz.domain.instrument.dto.request.InstrumentFilterConditions;
 import com.ajou.hertz.domain.instrument.entity.AcousticAndClassicGuitar;
@@ -92,7 +93,7 @@ class InstrumentRepositoryTest {
 	void 베이스_기타_목록을_조회한다() throws Exception {
 		// given
 		InstrumentSortOption sortOption = InstrumentSortOption.CREATED_BY_DESC;
-		InstrumentFilterConditions filterConditions = createInstrumentFilterConditions();
+		BassGuitarFilterConditions filterConditions = createEmptyBassGuitarFilterConditions();
 		User user = userRepository.save(createUser());
 		List<Instrument> savedInstruments = sut.saveAll(List.of(
 			createElectricGuitar(user),
@@ -111,7 +112,7 @@ class InstrumentRepositoryTest {
 	void 어쿠스틱_클래식_기타_목록을_조회한다() throws Exception {
 		// given
 		InstrumentSortOption sortOption = InstrumentSortOption.CREATED_BY_DESC;
-		InstrumentFilterConditions filterConditions = createInstrumentFilterConditions();
+		InstrumentFilterConditions filterConditions = createEmptyInstrumentFilterConditions();
 		User user = userRepository.save(createUser());
 		List<Instrument> savedInstruments = sut.saveAll(List.of(
 			createElectricGuitar(user),
@@ -132,7 +133,7 @@ class InstrumentRepositoryTest {
 	void 이펙터_목록을_조회한다() throws Exception {
 		// given
 		InstrumentSortOption sortOption = InstrumentSortOption.CREATED_BY_DESC;
-		InstrumentFilterConditions filterConditions = createInstrumentFilterConditions();
+		InstrumentFilterConditions filterConditions = createEmptyInstrumentFilterConditions();
 		User user = userRepository.save(createUser());
 		List<Instrument> savedInstruments = sut.saveAll(List.of(
 			createElectricGuitar(user),
@@ -151,7 +152,7 @@ class InstrumentRepositoryTest {
 	void 앰프_목록을_조회한다() throws Exception {
 		// given
 		InstrumentSortOption sortOption = InstrumentSortOption.CREATED_BY_DESC;
-		InstrumentFilterConditions filterConditions = createInstrumentFilterConditions();
+		InstrumentFilterConditions filterConditions = createEmptyInstrumentFilterConditions();
 		User user = userRepository.save(createUser());
 		List<Instrument> savedInstruments = sut.saveAll(List.of(
 			createElectricGuitar(user),
@@ -170,7 +171,7 @@ class InstrumentRepositoryTest {
 	void 음향_장비_목록을_조회한다() throws Exception {
 		// given
 		InstrumentSortOption sortOption = InstrumentSortOption.CREATED_BY_ASC;
-		InstrumentFilterConditions filterConditions = createInstrumentFilterConditions();
+		InstrumentFilterConditions filterConditions = createEmptyInstrumentFilterConditions();
 		User user = userRepository.save(createUser());
 		List<Instrument> savedInstruments = sut.saveAll(List.of(
 			createElectricGuitar(user),
@@ -349,7 +350,7 @@ class InstrumentRepositoryTest {
 		);
 	}
 
-	private InstrumentFilterConditions createInstrumentFilterConditions() throws Exception {
+	private InstrumentFilterConditions createEmptyInstrumentFilterConditions() throws Exception {
 		Constructor<InstrumentFilterConditions> instrumentFilterConditionsConstructor =
 			InstrumentFilterConditions.class.getDeclaredConstructor();
 		instrumentFilterConditionsConstructor.setAccessible(true);
@@ -370,5 +371,11 @@ class InstrumentRepositoryTest {
 			ElectricGuitarModel.TELECASTER,
 			GuitarColor.RED
 		);
+	}
+
+	private BassGuitarFilterConditions createEmptyBassGuitarFilterConditions() throws Exception {
+		Constructor<BassGuitarFilterConditions> constructor = BassGuitarFilterConditions.class.getDeclaredConstructor();
+		constructor.setAccessible(true);
+		return constructor.newInstance();
 	}
 }
