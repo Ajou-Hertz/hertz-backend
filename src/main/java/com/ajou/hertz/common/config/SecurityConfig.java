@@ -2,6 +2,7 @@ package com.ajou.hertz.common.config;
 
 import static org.springframework.http.HttpMethod.*;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
@@ -39,16 +40,25 @@ public class SecurityConfig {
 		"/v3/api-docs/**"
 	};
 
-	private static final Map<String, HttpMethod> AUTH_WHITE_LIST = Map.of(
-		"/api/v*/auth/login", POST,
-		"/api/v*/auth/kakao/login", POST,
-		"/api/v*/users", POST,
-		"/api/v*/users/existence", GET,
-		"/api/v*/users/email", GET,
-		"/api/v*/administrative-areas/sido", GET,
-		"/api/v*/administrative-areas/sgg", GET,
-		"/api/v*/administrative-areas/emd", GET
-	);
+	private static final Map<String, HttpMethod> AUTH_WHITE_LIST = new HashMap<>();
+
+	static {
+		AUTH_WHITE_LIST.put("/api/auth/login", POST);
+		AUTH_WHITE_LIST.put("/api/auth/kakao/login", POST);
+		AUTH_WHITE_LIST.put("/api/users", POST);
+		AUTH_WHITE_LIST.put("/api/users/existence", GET);
+		AUTH_WHITE_LIST.put("/api/users/email", GET);
+		AUTH_WHITE_LIST.put("/api/administrative-areas/sido", GET);
+		AUTH_WHITE_LIST.put("/api/administrative-areas/sgg", GET);
+		AUTH_WHITE_LIST.put("/api/administrative-areas/emd", GET);
+		AUTH_WHITE_LIST.put("/api/instruments", GET);
+		AUTH_WHITE_LIST.put("/api/instruments/electric-guitars", GET);
+		AUTH_WHITE_LIST.put("/api/instruments/bass-guitars", GET);
+		AUTH_WHITE_LIST.put("/api/instruments/acoustic-and-classic-guitars", GET);
+		AUTH_WHITE_LIST.put("/api/instruments/effectors", GET);
+		AUTH_WHITE_LIST.put("/api/instruments/amplifiers", GET);
+		AUTH_WHITE_LIST.put("/api/instruments/audio-equipments", GET);
+	}
 
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {

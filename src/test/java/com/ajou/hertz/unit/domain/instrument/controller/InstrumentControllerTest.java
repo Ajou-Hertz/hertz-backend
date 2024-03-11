@@ -1,6 +1,7 @@
 package com.ajou.hertz.unit.domain.instrument.controller;
 
 import static com.ajou.hertz.common.constant.GlobalConstants.*;
+import static org.hamcrest.collection.IsCollectionWithSize.*;
 import static org.mockito.BDDMockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -18,6 +19,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -44,37 +47,295 @@ import com.ajou.hertz.domain.instrument.constant.ElectricGuitarBrand;
 import com.ajou.hertz.domain.instrument.constant.ElectricGuitarModel;
 import com.ajou.hertz.domain.instrument.constant.GuitarColor;
 import com.ajou.hertz.domain.instrument.constant.InstrumentProgressStatus;
-import com.ajou.hertz.domain.instrument.controller.InstrumentControllerV1;
+import com.ajou.hertz.domain.instrument.constant.InstrumentSortOption;
+import com.ajou.hertz.domain.instrument.controller.InstrumentController;
 import com.ajou.hertz.domain.instrument.dto.AcousticAndClassicGuitarDto;
 import com.ajou.hertz.domain.instrument.dto.AmplifierDto;
 import com.ajou.hertz.domain.instrument.dto.AudioEquipmentDto;
 import com.ajou.hertz.domain.instrument.dto.BassGuitarDto;
 import com.ajou.hertz.domain.instrument.dto.EffectorDto;
 import com.ajou.hertz.domain.instrument.dto.ElectricGuitarDto;
+import com.ajou.hertz.domain.instrument.dto.InstrumentDto;
+import com.ajou.hertz.domain.instrument.dto.InstrumentImageDto;
 import com.ajou.hertz.domain.instrument.dto.request.CreateNewAcousticAndClassicGuitarRequest;
 import com.ajou.hertz.domain.instrument.dto.request.CreateNewAmplifierRequest;
 import com.ajou.hertz.domain.instrument.dto.request.CreateNewAudioEquipmentRequest;
 import com.ajou.hertz.domain.instrument.dto.request.CreateNewBassGuitarRequest;
 import com.ajou.hertz.domain.instrument.dto.request.CreateNewEffectorRequest;
 import com.ajou.hertz.domain.instrument.dto.request.CreateNewElectricGuitarRequest;
+import com.ajou.hertz.domain.instrument.dto.request.InstrumentFilterConditions;
 import com.ajou.hertz.domain.instrument.service.InstrumentCommandService;
+import com.ajou.hertz.domain.instrument.service.InstrumentQueryService;
 import com.ajou.hertz.domain.user.constant.Gender;
 import com.ajou.hertz.domain.user.constant.RoleType;
 import com.ajou.hertz.domain.user.dto.UserDto;
 
-@DisplayName("[Unit] Controller - Instrument(V1)")
+@DisplayName("[Unit] Controller - Instrument")
 @Import(ControllerTestConfig.class)
-@WebMvcTest(controllers = InstrumentControllerV1.class)
-class InstrumentControllerV1Test {
+@WebMvcTest(controllers = InstrumentController.class)
+class InstrumentControllerTest {
 
 	@MockBean
 	private InstrumentCommandService instrumentCommandService;
 
+	@MockBean
+	private InstrumentQueryService instrumentQueryService;
+
 	private final MockMvc mvc;
 
 	@Autowired
-	public InstrumentControllerV1Test(MockMvc mvc) {
+	public InstrumentControllerTest(MockMvc mvc) {
 		this.mvc = mvc;
+	}
+
+	@Test
+	void 전체_악기_매물_목록을_조회한다() throws Exception {
+		// given
+		long userId = 1L;
+		int page = 0;
+		int pageSize = 10;
+		InstrumentFilterConditions filterConditions = createInstrumentFilterConditions();
+		InstrumentSortOption sortOption = InstrumentSortOption.CREATED_BY_DESC;
+		Page<InstrumentDto> expectedResult = new PageImpl<>(List.of(
+			createBassGuitarDto(2L, userId),
+			createBassGuitarDto(3L, userId),
+			createBassGuitarDto(4L, userId)
+		));
+		given(instrumentQueryService.findInstruments(page, pageSize, sortOption)).willReturn(expectedResult);
+
+		// when & then
+		mvc.perform(
+				get("/api/instruments")
+					.header(API_VERSION_HEADER_NAME, 1)
+					.param("page", String.valueOf(page))
+					.param("size", String.valueOf(pageSize))
+					.param("sort", sortOption.name())
+					.param("progress", filterConditions.getProgress().name())
+			)
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.numberOfElements").value(expectedResult.getNumberOfElements()))
+			.andExpect(jsonPath("$.content").isArray())
+			.andExpect(jsonPath("$.content", hasSize(expectedResult.getNumberOfElements())));
+		then(instrumentQueryService).should().findInstruments(page, pageSize, sortOption);
+		verifyEveryMocksShouldHaveNoMoreInteractions();
+	}
+
+	@Test
+	void 일렉_기타_매물_목록을_조회한다() throws Exception {
+		// given
+		long userId = 1L;
+		int page = 0;
+		int pageSize = 10;
+		InstrumentFilterConditions filterConditions = createInstrumentFilterConditions();
+		InstrumentSortOption sortOption = InstrumentSortOption.CREATED_BY_DESC;
+		Page<ElectricGuitarDto> expectedResult = new PageImpl<>(List.of(
+			createElectricGuitarDto(2L, userId),
+			createElectricGuitarDto(3L, userId),
+			createElectricGuitarDto(4L, userId)
+		));
+		given(instrumentQueryService.findElectricGuitars(
+			eq(page), eq(pageSize), eq(sortOption), any(InstrumentFilterConditions.class)
+		)).willReturn(expectedResult);
+
+		// when & then
+		mvc.perform(
+				get("/api/instruments/electric-guitars")
+					.header(API_VERSION_HEADER_NAME, 1)
+					.param("page", String.valueOf(page))
+					.param("size", String.valueOf(pageSize))
+					.param("sort", sortOption.name())
+					.param("progress", filterConditions.getProgress().name())
+			)
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.numberOfElements").value(expectedResult.getNumberOfElements()))
+			.andExpect(jsonPath("$.content").isArray())
+			.andExpect(jsonPath("$.content", hasSize(expectedResult.getNumberOfElements())));
+		then(instrumentQueryService)
+			.should()
+			.findElectricGuitars(eq(page), eq(pageSize), eq(sortOption), any(InstrumentFilterConditions.class));
+		verifyEveryMocksShouldHaveNoMoreInteractions();
+	}
+
+	@Test
+	void 베이스_기타_매물_목록을_조회한다() throws Exception {
+		// given
+		long userId = 1L;
+		int page = 0;
+		int pageSize = 10;
+		InstrumentFilterConditions filterConditions = createInstrumentFilterConditions();
+		InstrumentSortOption sortOption = InstrumentSortOption.CREATED_BY_DESC;
+		Page<BassGuitarDto> expectedResult = new PageImpl<>(List.of(
+			createBassGuitarDto(2L, userId),
+			createBassGuitarDto(3L, userId),
+			createBassGuitarDto(4L, userId)
+		));
+		given(instrumentQueryService.findBassGuitars(
+			eq(page), eq(pageSize), eq(sortOption), any(InstrumentFilterConditions.class)
+		)).willReturn(expectedResult);
+
+		// when & then
+		mvc.perform(
+				get("/api/instruments/bass-guitars")
+					.header(API_VERSION_HEADER_NAME, 1)
+					.param("page", String.valueOf(page))
+					.param("size", String.valueOf(pageSize))
+					.param("sort", sortOption.name())
+					.param("progress", filterConditions.getProgress().name())
+			)
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.numberOfElements").value(expectedResult.getNumberOfElements()))
+			.andExpect(jsonPath("$.content").isArray())
+			.andExpect(jsonPath("$.content", hasSize(expectedResult.getNumberOfElements())));
+		then(instrumentQueryService)
+			.should()
+			.findBassGuitars(eq(page), eq(pageSize), eq(sortOption), any(InstrumentFilterConditions.class));
+		verifyEveryMocksShouldHaveNoMoreInteractions();
+	}
+
+	@Test
+	void 어쿠스틱_클래식_기타_매물_목록을_조회한다() throws Exception {
+		// given
+		long userId = 1L;
+		int page = 0;
+		int pageSize = 10;
+		InstrumentFilterConditions filterConditions = createInstrumentFilterConditions();
+		InstrumentSortOption sortOption = InstrumentSortOption.CREATED_BY_DESC;
+		Page<AcousticAndClassicGuitarDto> expectedResult = new PageImpl<>(List.of(
+			createAcousticAndClassicGuitarDto(2L, userId),
+			createAcousticAndClassicGuitarDto(3L, userId),
+			createAcousticAndClassicGuitarDto(4L, userId)
+		));
+		given(instrumentQueryService.findAcousticAndClassicGuitars(
+			eq(page), eq(pageSize), eq(sortOption), any(InstrumentFilterConditions.class)
+		)).willReturn(expectedResult);
+
+		// when & then
+		mvc.perform(
+				get("/api/instruments/acoustic-and-classic-guitars")
+					.header(API_VERSION_HEADER_NAME, 1)
+					.param("page", String.valueOf(page))
+					.param("size", String.valueOf(pageSize))
+					.param("sort", sortOption.name())
+					.param("progress", filterConditions.getProgress().name())
+			)
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.numberOfElements").value(expectedResult.getNumberOfElements()))
+			.andExpect(jsonPath("$.content").isArray())
+			.andExpect(jsonPath("$.content", hasSize(expectedResult.getNumberOfElements())));
+		then(instrumentQueryService)
+			.should()
+			.findAcousticAndClassicGuitars(
+				eq(page), eq(pageSize), eq(sortOption), any(InstrumentFilterConditions.class)
+			);
+		verifyEveryMocksShouldHaveNoMoreInteractions();
+	}
+
+	@Test
+	void 이펙터_매물_목록을_조회한다() throws Exception {
+		// given
+		long userId = 1L;
+		int page = 0;
+		int pageSize = 10;
+		InstrumentFilterConditions filterConditions = createInstrumentFilterConditions();
+		InstrumentSortOption sortOption = InstrumentSortOption.CREATED_BY_DESC;
+		Page<EffectorDto> expectedResult = new PageImpl<>(List.of(
+			createEffectorDto(2L, userId),
+			createEffectorDto(3L, userId),
+			createEffectorDto(4L, userId)
+		));
+		given(instrumentQueryService.findEffectors(
+			eq(page), eq(pageSize), eq(sortOption), any(InstrumentFilterConditions.class)
+		)).willReturn(expectedResult);
+
+		// when & then
+		mvc.perform(
+				get("/api/instruments/effectors")
+					.header(API_VERSION_HEADER_NAME, 1)
+					.param("page", String.valueOf(page))
+					.param("size", String.valueOf(pageSize))
+					.param("sort", sortOption.name())
+					.param("progress", filterConditions.getProgress().name())
+			)
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.numberOfElements").value(expectedResult.getNumberOfElements()))
+			.andExpect(jsonPath("$.content").isArray())
+			.andExpect(jsonPath("$.content", hasSize(expectedResult.getNumberOfElements())));
+		then(instrumentQueryService)
+			.should()
+			.findEffectors(eq(page), eq(pageSize), eq(sortOption), any(InstrumentFilterConditions.class));
+		verifyEveryMocksShouldHaveNoMoreInteractions();
+	}
+
+	@Test
+	void 앰프_매물_목록을_조회한다() throws Exception {
+		// given
+		long userId = 1L;
+		int page = 0;
+		int pageSize = 10;
+		InstrumentFilterConditions filterConditions = createInstrumentFilterConditions();
+		InstrumentSortOption sortOption = InstrumentSortOption.CREATED_BY_DESC;
+		Page<AmplifierDto> expectedResult = new PageImpl<>(List.of(
+			createAmplifierDto(2L, userId),
+			createAmplifierDto(3L, userId),
+			createAmplifierDto(4L, userId)
+		));
+		given(instrumentQueryService.findAmplifiers(
+			eq(page), eq(pageSize), eq(sortOption), any(InstrumentFilterConditions.class)
+		)).willReturn(expectedResult);
+
+		// when & then
+		mvc.perform(
+				get("/api/instruments/amplifiers")
+					.header(API_VERSION_HEADER_NAME, 1)
+					.param("page", String.valueOf(page))
+					.param("size", String.valueOf(pageSize))
+					.param("sort", sortOption.name())
+					.param("progress", filterConditions.getProgress().name())
+			)
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.numberOfElements").value(expectedResult.getNumberOfElements()))
+			.andExpect(jsonPath("$.content").isArray())
+			.andExpect(jsonPath("$.content", hasSize(expectedResult.getNumberOfElements())));
+		then(instrumentQueryService)
+			.should()
+			.findAmplifiers(eq(page), eq(pageSize), eq(sortOption), any(InstrumentFilterConditions.class));
+		verifyEveryMocksShouldHaveNoMoreInteractions();
+	}
+
+	@Test
+	void 음향_장비_매물_목록을_조회한다() throws Exception {
+		// given
+		long userId = 1L;
+		int page = 0;
+		int pageSize = 10;
+		InstrumentFilterConditions filterConditions = createInstrumentFilterConditions();
+		InstrumentSortOption sortOption = InstrumentSortOption.CREATED_BY_DESC;
+		Page<AudioEquipmentDto> expectedResult = new PageImpl<>(List.of(
+			createAudioEquipmentDto(2L, userId),
+			createAudioEquipmentDto(3L, userId),
+			createAudioEquipmentDto(4L, userId)
+		));
+		given(instrumentQueryService.findAudioEquipments(
+			eq(page), eq(pageSize), eq(sortOption), any(InstrumentFilterConditions.class)
+		)).willReturn(expectedResult);
+
+		// when & then
+		mvc.perform(
+				get("/api/instruments/audio-equipments")
+					.header(API_VERSION_HEADER_NAME, 1)
+					.param("page", String.valueOf(page))
+					.param("size", String.valueOf(pageSize))
+					.param("sort", sortOption.name())
+					.param("progress", filterConditions.getProgress().name())
+			)
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.numberOfElements").value(expectedResult.getNumberOfElements()))
+			.andExpect(jsonPath("$.content").isArray())
+			.andExpect(jsonPath("$.content", hasSize(expectedResult.getNumberOfElements())));
+		then(instrumentQueryService)
+			.should()
+			.findAudioEquipments(eq(page), eq(pageSize), eq(sortOption), any(InstrumentFilterConditions.class));
+		verifyEveryMocksShouldHaveNoMoreInteractions();
 	}
 
 	@Test
@@ -89,12 +350,12 @@ class InstrumentControllerV1Test {
 
 		// when & then
 		mvc.perform(
-				multipart("/api/v1/instruments/electric-guitars")
+				multipart("/api/instruments/electric-guitars")
 					.file("images[0]", electricGuitarRequest.getImages().get(0).getBytes())
 					.file("images[1]", electricGuitarRequest.getImages().get(1).getBytes())
 					.file("images[2]", electricGuitarRequest.getImages().get(2).getBytes())
 					.file("images[3]", electricGuitarRequest.getImages().get(3).getBytes())
-					.header(API_MINOR_VERSION_HEADER_NAME, 1)
+					.header(API_VERSION_HEADER_NAME, 1)
 					.param("title", electricGuitarRequest.getTitle())
 					.param("progressStatus", electricGuitarRequest.getProgressStatus().name())
 					.param("tradeAddress.sido", electricGuitarRequest.getTradeAddress().getSido())
@@ -135,12 +396,12 @@ class InstrumentControllerV1Test {
 
 		// when & then
 		mvc.perform(
-				multipart("/api/v1/instruments/bass-guitars")
+				multipart("/api/instruments/bass-guitars")
 					.file("images[0]", bassGuitarRequest.getImages().get(0).getBytes())
 					.file("images[1]", bassGuitarRequest.getImages().get(1).getBytes())
 					.file("images[2]", bassGuitarRequest.getImages().get(2).getBytes())
 					.file("images[3]", bassGuitarRequest.getImages().get(3).getBytes())
-					.header(API_MINOR_VERSION_HEADER_NAME, 1)
+					.header(API_VERSION_HEADER_NAME, 1)
 					.param("title", bassGuitarRequest.getTitle())
 					.param("progressStatus", bassGuitarRequest.getProgressStatus().name())
 					.param("tradeAddress.sido", bassGuitarRequest.getTradeAddress().getSido())
@@ -181,12 +442,12 @@ class InstrumentControllerV1Test {
 
 		// when & then
 		mvc.perform(
-				multipart("/api/v1/instruments/acoustic-and-classic-guitars")
+				multipart("/api/instruments/acoustic-and-classic-guitars")
 					.file("images[0]", request.getImages().get(0).getBytes())
 					.file("images[1]", request.getImages().get(1).getBytes())
 					.file("images[2]", request.getImages().get(2).getBytes())
 					.file("images[3]", request.getImages().get(3).getBytes())
-					.header(API_MINOR_VERSION_HEADER_NAME, 1)
+					.header(API_VERSION_HEADER_NAME, 1)
 					.param("title", request.getTitle())
 					.param("progressStatus", request.getProgressStatus().name())
 					.param("tradeAddress.sido", request.getTradeAddress().getSido())
@@ -222,17 +483,17 @@ class InstrumentControllerV1Test {
 		CreateNewEffectorRequest request = createEffectorRequest();
 		EffectorDto expectedResult = createEffectorDto(2L, sellerId);
 		given(instrumentCommandService.createNewEffector(
-			eq(sellerId), any(CreateNewEffectorRequest.class))
-		).willReturn(expectedResult);
+			eq(sellerId), any(CreateNewEffectorRequest.class)
+		)).willReturn(expectedResult);
 
 		// when & then
 		mvc.perform(
-				multipart("/api/v1/instruments/effectors")
+				multipart("/api/instruments/effectors")
 					.file("images[0]", request.getImages().get(0).getBytes())
 					.file("images[1]", request.getImages().get(1).getBytes())
 					.file("images[2]", request.getImages().get(2).getBytes())
 					.file("images[3]", request.getImages().get(3).getBytes())
-					.header(API_MINOR_VERSION_HEADER_NAME, 1)
+					.header(API_VERSION_HEADER_NAME, 1)
 					.param("title", request.getTitle())
 					.param("progressStatus", request.getProgressStatus().name())
 					.param("tradeAddress.sido", request.getTradeAddress().getSido())
@@ -264,17 +525,17 @@ class InstrumentControllerV1Test {
 		CreateNewAmplifierRequest request = createAmplifierRequest();
 		AmplifierDto expectedResult = createAmplifierDto(2L, sellerId);
 		given(instrumentCommandService.createNewAmplifier(
-			eq(sellerId), any(CreateNewAmplifierRequest.class))
-		).willReturn(expectedResult);
+			eq(sellerId), any(CreateNewAmplifierRequest.class)
+		)).willReturn(expectedResult);
 
 		// when & then
 		mvc.perform(
-				multipart("/api/v1/instruments/amplifiers")
+				multipart("/api/instruments/amplifiers")
 					.file("images[0]", request.getImages().get(0).getBytes())
 					.file("images[1]", request.getImages().get(1).getBytes())
 					.file("images[2]", request.getImages().get(2).getBytes())
 					.file("images[3]", request.getImages().get(3).getBytes())
-					.header(API_MINOR_VERSION_HEADER_NAME, 1)
+					.header(API_VERSION_HEADER_NAME, 1)
 					.param("title", request.getTitle())
 					.param("progressStatus", request.getProgressStatus().name())
 					.param("tradeAddress.sido", request.getTradeAddress().getSido())
@@ -307,17 +568,17 @@ class InstrumentControllerV1Test {
 		CreateNewAudioEquipmentRequest request = createAudioEquipmentRequest();
 		AudioEquipmentDto expectedResult = createAudioEquipmentDto(2L, sellerId);
 		given(instrumentCommandService.createNewAudioEquipment(
-			eq(sellerId), any(CreateNewAudioEquipmentRequest.class))
-		).willReturn(expectedResult);
+			eq(sellerId), any(CreateNewAudioEquipmentRequest.class)
+		)).willReturn(expectedResult);
 
 		// when & then
 		mvc.perform(
-				multipart("/api/v1/instruments/audio-equipments")
+				multipart("/api/instruments/audio-equipments")
 					.file("images[0]", request.getImages().get(0).getBytes())
 					.file("images[1]", request.getImages().get(1).getBytes())
 					.file("images[2]", request.getImages().get(2).getBytes())
 					.file("images[3]", request.getImages().get(3).getBytes())
-					.header(API_MINOR_VERSION_HEADER_NAME, 1)
+					.header(API_VERSION_HEADER_NAME, 1)
 					.param("title", request.getTitle())
 					.param("progressStatus", request.getProgressStatus().name())
 					.param("tradeAddress.sido", request.getTradeAddress().getSido())
@@ -345,6 +606,7 @@ class InstrumentControllerV1Test {
 
 	private void verifyEveryMocksShouldHaveNoMoreInteractions() {
 		then(instrumentCommandService).shouldHaveNoMoreInteractions();
+		then(instrumentQueryService).shouldHaveNoMoreInteractions();
 	}
 
 	private UserDetails createTestUser(Long userId) throws Exception {
@@ -390,6 +652,18 @@ class InstrumentControllerV1Test {
 		return addressDtoConstructor.newInstance("서울특별시", "강남구", "청담동");
 	}
 
+	private InstrumentImageDto createInstrumentImageDto(long instrumentImageId) throws Exception {
+		Constructor<InstrumentImageDto> instrumentImageDtoConstructor = InstrumentImageDto.class.getDeclaredConstructor(
+			Long.class, String.class, String.class
+		);
+		instrumentImageDtoConstructor.setAccessible(true);
+		return instrumentImageDtoConstructor.newInstance(
+			instrumentImageId,
+			"image-name",
+			"https://instrument-image-url"
+		);
+	}
+
 	private ElectricGuitarDto createElectricGuitarDto(long id, long sellerId) throws Exception {
 		Constructor<ElectricGuitarDto> electricGuitarDtoConstructor = ElectricGuitarDto.class.getDeclaredConstructor(
 			Long.class, UserDto.class, String.class, InstrumentProgressStatus.class, AddressDto.class, Short.class,
@@ -411,7 +685,12 @@ class InstrumentControllerV1Test {
 			ElectricGuitarModel.TELECASTER,
 			(short)2014,
 			GuitarColor.RED,
-			List.of(),
+			List.of(
+				createInstrumentImageDto(id + 1),
+				createInstrumentImageDto(id + 2),
+				createInstrumentImageDto(id + 3),
+				createInstrumentImageDto(id + 4)
+			),
 			List.of()
 		);
 	}
@@ -433,7 +712,12 @@ class InstrumentControllerV1Test {
 			550000,
 			true,
 			"description",
-			List.of(),
+			List.of(
+				createInstrumentImageDto(id + 1),
+				createInstrumentImageDto(id + 2),
+				createInstrumentImageDto(id + 3),
+				createInstrumentImageDto(id + 4)
+			),
 			List.of(),
 			BassGuitarBrand.FENDER,
 			BassGuitarPickUp.JAZZ,
@@ -461,7 +745,12 @@ class InstrumentControllerV1Test {
 			550000,
 			true,
 			"description",
-			List.of(),
+			List.of(
+				createInstrumentImageDto(id + 1),
+				createInstrumentImageDto(id + 2),
+				createInstrumentImageDto(id + 3),
+				createInstrumentImageDto(id + 4)
+			),
 			List.of(),
 			AcousticAndClassicGuitarBrand.HEX,
 			AcousticAndClassicGuitarModel.JUMBO_BODY,
@@ -487,7 +776,12 @@ class InstrumentControllerV1Test {
 			550000,
 			true,
 			"description",
-			List.of(),
+			List.of(
+				createInstrumentImageDto(id + 1),
+				createInstrumentImageDto(id + 2),
+				createInstrumentImageDto(id + 3),
+				createInstrumentImageDto(id + 4)
+			),
 			List.of(),
 			EffectorType.GUITAR,
 			EffectorFeature.ETC
@@ -511,7 +805,12 @@ class InstrumentControllerV1Test {
 			550000,
 			true,
 			"description",
-			List.of(),
+			List.of(
+				createInstrumentImageDto(id + 1),
+				createInstrumentImageDto(id + 2),
+				createInstrumentImageDto(id + 3),
+				createInstrumentImageDto(id + 4)
+			),
 			List.of(),
 			AmplifierType.GUITAR,
 			AmplifierBrand.FENDER,
@@ -536,7 +835,12 @@ class InstrumentControllerV1Test {
 			550000,
 			true,
 			"description",
-			List.of(),
+			List.of(
+				createInstrumentImageDto(id + 1),
+				createInstrumentImageDto(id + 2),
+				createInstrumentImageDto(id + 3),
+				createInstrumentImageDto(id + 4)
+			),
 			List.of(),
 			AudioEquipmentType.AUDIO_EQUIPMENT
 		);
@@ -551,11 +855,12 @@ class InstrumentControllerV1Test {
 	}
 
 	private CreateNewElectricGuitarRequest createElectricGuitarRequest() throws Exception {
-		Constructor<CreateNewElectricGuitarRequest> createNewElectricGuitarRequestConstructor = CreateNewElectricGuitarRequest.class.getDeclaredConstructor(
-			String.class, List.class, InstrumentProgressStatus.class, AddressRequest.class,
-			Short.class, Integer.class, Boolean.class, String.class, ElectricGuitarBrand.class,
-			ElectricGuitarModel.class, Short.class, GuitarColor.class, List.class
-		);
+		Constructor<CreateNewElectricGuitarRequest> createNewElectricGuitarRequestConstructor =
+			CreateNewElectricGuitarRequest.class.getDeclaredConstructor(
+				String.class, List.class, InstrumentProgressStatus.class, AddressRequest.class,
+				Short.class, Integer.class, Boolean.class, String.class, ElectricGuitarBrand.class,
+				ElectricGuitarModel.class, Short.class, GuitarColor.class, List.class
+			);
 		createNewElectricGuitarRequestConstructor.setAccessible(true);
 		return createNewElectricGuitarRequestConstructor.newInstance(
 			"Test electric guitar",
@@ -691,6 +996,15 @@ class InstrumentControllerV1Test {
 			List.of(createMultipartFile(), createMultipartFile(), createMultipartFile(), createMultipartFile()),
 			List.of("Fender", "Guitar"),
 			AudioEquipmentType.AUDIO_EQUIPMENT
+		);
+	}
+
+	private InstrumentFilterConditions createInstrumentFilterConditions() throws Exception {
+		Constructor<InstrumentFilterConditions> instrumentFilterConditionsConstructor =
+			InstrumentFilterConditions.class.getDeclaredConstructor(InstrumentProgressStatus.class);
+		instrumentFilterConditionsConstructor.setAccessible(true);
+		return instrumentFilterConditionsConstructor.newInstance(
+			InstrumentProgressStatus.SELLING
 		);
 	}
 }

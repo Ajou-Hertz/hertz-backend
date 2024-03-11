@@ -24,9 +24,9 @@ import lombok.RequiredArgsConstructor;
 
 @Tag(name = "로그인 등 인증 관련 API")
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/auth")
+@RequestMapping("/api/auth")
 @RestController
-public class AuthControllerV1 {
+public class AuthController {
 
 	private final AuthService authService;
 	private final KakaoService kakaoService;
@@ -40,8 +40,8 @@ public class AuthControllerV1 {
 		@ApiResponse(responseCode = "400", description = "[2003] 비밀번호가 일치하지 않는 경우", content = @Content),
 		@ApiResponse(responseCode = "404", description = "[2202] 이메일에 해당하는 유저를 찾을 수 없는 경우", content = @Content)
 	})
-	@PostMapping(value = "/login", headers = API_MINOR_VERSION_HEADER_NAME + "=" + 1)
-	public JwtTokenInfoResponse loginV1_1(@RequestBody @Valid LoginRequest loginRequest) {
+	@PostMapping(value = "/login", headers = API_VERSION_HEADER_NAME + "=" + 1)
+	public JwtTokenInfoResponse loginV1(@RequestBody @Valid LoginRequest loginRequest) {
 		JwtTokenInfoDto jwtTokenInfoDto = authService.login(loginRequest);
 		return JwtTokenInfoResponse.from(jwtTokenInfoDto);
 	}
@@ -61,8 +61,8 @@ public class AuthControllerV1 {
 		),
 		@ApiResponse(responseCode = "Any", description = "[10000] 카카오 서버와의 통신 중 오류가 발생한 경우. Http status code는 kakao에서 응답받은 것과 동일하게 설정하여 응답한다.", content = @Content)
 	})
-	@PostMapping(value = "/kakao/login", headers = API_MINOR_VERSION_HEADER_NAME + "=" + 1)
-	public JwtTokenInfoResponse kakaoLoginV1_1(@RequestBody @Valid KakaoLoginRequest kakaoLoginRequest) {
+	@PostMapping(value = "/kakao/login", headers = API_VERSION_HEADER_NAME + "=" + 1)
+	public JwtTokenInfoResponse kakaoLoginV1(@RequestBody @Valid KakaoLoginRequest kakaoLoginRequest) {
 		JwtTokenInfoDto jwtTokenInfoDto = kakaoService.login(kakaoLoginRequest);
 		return JwtTokenInfoResponse.from(jwtTokenInfoDto);
 	}
