@@ -37,6 +37,7 @@ import com.ajou.hertz.domain.instrument.constant.InstrumentProgressStatus;
 import com.ajou.hertz.domain.instrument.constant.InstrumentSortOption;
 import com.ajou.hertz.domain.instrument.dto.request.AcousticAndClassicGuitarFilterConditions;
 import com.ajou.hertz.domain.instrument.dto.request.BassGuitarFilterConditions;
+import com.ajou.hertz.domain.instrument.dto.request.EffectorFilterConditions;
 import com.ajou.hertz.domain.instrument.dto.request.ElectricGuitarFilterConditions;
 import com.ajou.hertz.domain.instrument.dto.request.InstrumentFilterConditions;
 import com.ajou.hertz.domain.instrument.entity.AcousticAndClassicGuitar;
@@ -133,7 +134,7 @@ class InstrumentRepositoryTest {
 	void 이펙터_목록을_조회한다() throws Exception {
 		// given
 		InstrumentSortOption sortOption = InstrumentSortOption.CREATED_BY_DESC;
-		InstrumentFilterConditions filterConditions = createEmptyInstrumentFilterConditions();
+		EffectorFilterConditions filterConditions = createEmptyEffectorFilterConditions();
 		User user = userRepository.save(createUser());
 		List<Instrument> savedInstruments = sut.saveAll(List.of(
 			createElectricGuitar(user),
@@ -322,5 +323,9 @@ class InstrumentRepositoryTest {
 	private AcousticAndClassicGuitarFilterConditions createEmptyAcousticAndClassicGuitarFilterConditions(
 	) throws Exception {
 		return ReflectionUtils.createAcousticAndClassicGuitarFilterConditions(null, null, null, null, null, null, null);
+	}
+
+	private EffectorFilterConditions createEmptyEffectorFilterConditions() throws Exception {
+		return ReflectionUtils.createEffectorFilterConditions(null, null, null, null, null);
 	}
 }

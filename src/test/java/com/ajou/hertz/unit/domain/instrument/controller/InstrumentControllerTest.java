@@ -64,6 +64,7 @@ import com.ajou.hertz.domain.instrument.dto.request.CreateNewAudioEquipmentReque
 import com.ajou.hertz.domain.instrument.dto.request.CreateNewBassGuitarRequest;
 import com.ajou.hertz.domain.instrument.dto.request.CreateNewEffectorRequest;
 import com.ajou.hertz.domain.instrument.dto.request.CreateNewElectricGuitarRequest;
+import com.ajou.hertz.domain.instrument.dto.request.EffectorFilterConditions;
 import com.ajou.hertz.domain.instrument.dto.request.ElectricGuitarFilterConditions;
 import com.ajou.hertz.domain.instrument.dto.request.InstrumentFilterConditions;
 import com.ajou.hertz.domain.instrument.service.InstrumentCommandService;
@@ -247,7 +248,7 @@ class InstrumentControllerTest {
 			createEffectorDto(4L, userId)
 		));
 		given(instrumentQueryService.findEffectors(
-			eq(page), eq(pageSize), eq(sortOption), any(InstrumentFilterConditions.class)
+			eq(page), eq(pageSize), eq(sortOption), any(EffectorFilterConditions.class)
 		)).willReturn(expectedResult);
 
 		// when & then
@@ -265,7 +266,7 @@ class InstrumentControllerTest {
 			.andExpect(jsonPath("$.content", hasSize(expectedResult.getNumberOfElements())));
 		then(instrumentQueryService)
 			.should()
-			.findEffectors(eq(page), eq(pageSize), eq(sortOption), any(InstrumentFilterConditions.class));
+			.findEffectors(eq(page), eq(pageSize), eq(sortOption), any(EffectorFilterConditions.class));
 		verifyEveryMocksShouldHaveNoMoreInteractions();
 	}
 

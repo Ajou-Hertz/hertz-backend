@@ -32,6 +32,7 @@ import com.ajou.hertz.domain.instrument.dto.request.CreateNewAudioEquipmentReque
 import com.ajou.hertz.domain.instrument.dto.request.CreateNewBassGuitarRequest;
 import com.ajou.hertz.domain.instrument.dto.request.CreateNewEffectorRequest;
 import com.ajou.hertz.domain.instrument.dto.request.CreateNewElectricGuitarRequest;
+import com.ajou.hertz.domain.instrument.dto.request.EffectorFilterConditions;
 import com.ajou.hertz.domain.instrument.dto.request.ElectricGuitarFilterConditions;
 import com.ajou.hertz.domain.instrument.dto.request.InstrumentFilterConditions;
 import com.ajou.hertz.domain.instrument.dto.response.AcousticAndClassicGuitarResponse;
@@ -172,7 +173,7 @@ public class InstrumentController {
 		@Parameter(
 			description = "정렬 기준"
 		) @RequestParam InstrumentSortOption sort,
-		@ParameterObject @Valid @ModelAttribute InstrumentFilterConditions filterConditions
+		@ParameterObject @Valid @ModelAttribute EffectorFilterConditions filterConditions
 	) {
 		return instrumentQueryService
 			.findEffectors(page, size, sort, filterConditions)

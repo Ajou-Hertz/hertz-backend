@@ -2,6 +2,7 @@ package com.ajou.hertz.domain.instrument.repository;
 
 import static com.ajou.hertz.domain.instrument.entity.QAcousticAndClassicGuitar.*;
 import static com.ajou.hertz.domain.instrument.entity.QBassGuitar.*;
+import static com.ajou.hertz.domain.instrument.entity.QEffector.*;
 import static com.ajou.hertz.domain.instrument.entity.QElectricGuitar.*;
 import static com.ajou.hertz.domain.instrument.entity.QInstrument.*;
 import static com.ajou.hertz.domain.user.entity.QUser.*;
@@ -22,6 +23,8 @@ import com.ajou.hertz.domain.instrument.constant.AcousticAndClassicGuitarWood;
 import com.ajou.hertz.domain.instrument.constant.BassGuitarBrand;
 import com.ajou.hertz.domain.instrument.constant.BassGuitarPickUp;
 import com.ajou.hertz.domain.instrument.constant.BassGuitarPreAmplifier;
+import com.ajou.hertz.domain.instrument.constant.EffectorFeature;
+import com.ajou.hertz.domain.instrument.constant.EffectorType;
 import com.ajou.hertz.domain.instrument.constant.ElectricGuitarBrand;
 import com.ajou.hertz.domain.instrument.constant.ElectricGuitarModel;
 import com.ajou.hertz.domain.instrument.constant.GuitarColor;
@@ -29,6 +32,7 @@ import com.ajou.hertz.domain.instrument.constant.InstrumentProgressStatus;
 import com.ajou.hertz.domain.instrument.constant.InstrumentSortOption;
 import com.ajou.hertz.domain.instrument.dto.request.AcousticAndClassicGuitarFilterConditions;
 import com.ajou.hertz.domain.instrument.dto.request.BassGuitarFilterConditions;
+import com.ajou.hertz.domain.instrument.dto.request.EffectorFilterConditions;
 import com.ajou.hertz.domain.instrument.dto.request.ElectricGuitarFilterConditions;
 import com.ajou.hertz.domain.instrument.dto.request.InstrumentFilterConditions;
 import com.ajou.hertz.domain.instrument.entity.AcousticAndClassicGuitar;
@@ -157,9 +161,30 @@ public class InstrumentRepositoryCustomImpl implements InstrumentRepositoryCusto
 		int page,
 		int pageSize,
 		InstrumentSortOption sort,
-		InstrumentFilterConditions filterConditions
+		EffectorFilterConditions filterConditions
 	) {
-		return findInstrumentsByClassType(Effector.class, page, pageSize, sort, filterConditions);
+		PageRequest pageable = PageRequest.of(page, pageSize, sort.toSort());
+
+		List<Predicate> conditions = new ArrayList<>(convertEffectorFilterConditionsToPredicates(filterConditions));
+
+		List<Effector> content = queryFactory
+			.selectFrom(effector)
+			.join(effector.seller, user).fetchJoin()
+			.where(conditions.toArray(Predicate[]::new))
+			.offset(pageable.getOffset())
+			.limit(pageable.getPageSize())
+			.orderBy(convertSortToOrderSpecifiers(pageable.getSort(), createPathBuilder(effector)))
+			.fetch();
+
+		long totalCount = Optional.ofNullable(
+			queryFactory.select(effector.count())
+				.from(effector)
+				.join(effector.seller, user)
+				.where(conditions.toArray(Predicate[]::new))
+				.fetchOne()
+		).orElse(0L);
+
+		return new PageImpl<>(content, pageable, totalCount);
 	}
 
 	@Override
@@ -272,6 +297,18 @@ public class InstrumentRepositoryCustomImpl implements InstrumentRepositoryCusto
 		return res;
 	}
 
+	private List<Predicate> convertEffectorFilterConditionsToPredicates(
+		EffectorFilterConditions filterConditions
+	) {
+		List<Predicate> res = new ArrayList<>();
+		res.add(applyProgressStatusCondition(filterConditions.getProgress(), bassGuitar.progressStatus));
+		res.add(applyTradeAddressSidoCondition(filterConditions.getSido(), bassGuitar.tradeAddress.sido));
+		res.add(applyTradeAddressSggCondition(filterConditions.getSgg(), bassGuitar.tradeAddress.sgg));
+		res.add(applyEffectorTypeCondition(filterConditions.getType()));
+		res.add(applyEffectorFeatureCondition(filterConditions.getFeature()));
+		return res;
+	}
+
 	private BooleanExpression applyProgressStatusCondition(
 		InstrumentProgressStatus progressStatus,
 		EnumPath<InstrumentProgressStatus> progressStatusExpression
@@ -311,20 +348,28 @@ public class InstrumentRepositoryCustomImpl implements InstrumentRepositoryCusto
 		return createCondition(color, colorExpression);
 	}
 
-	private Predicate applyAcousticAndClassicGuitarBrandCondition(AcousticAndClassicGuitarBrand brand) {
+	private BooleanExpression applyAcousticAndClassicGuitarBrandCondition(AcousticAndClassicGuitarBrand brand) {
 		return createCondition(brand, acousticAndClassicGuitar.brand);
 	}
 
-	private Predicate applyAcousticAndClassicGuitarModelCondition(AcousticAndClassicGuitarModel model) {
+	private BooleanExpression applyAcousticAndClassicGuitarModelCondition(AcousticAndClassicGuitarModel model) {
 		return createCondition(model, acousticAndClassicGuitar.model);
 	}
 
-	private Predicate applyAcousticAndClassicGuitarWood(AcousticAndClassicGuitarWood wood) {
+	private BooleanExpression applyAcousticAndClassicGuitarWood(AcousticAndClassicGuitarWood wood) {
 		return createCondition(wood, acousticAndClassicGuitar.wood);
 	}
 
-	private Predicate applyAcousticAndClassicGuitarPickUpCondition(AcousticAndClassicGuitarPickUp pickUp) {
+	private BooleanExpression applyAcousticAndClassicGuitarPickUpCondition(AcousticAndClassicGuitarPickUp pickUp) {
 		return createCondition(pickUp, acousticAndClassicGuitar.pickUp);
+	}
+
+	private BooleanExpression applyEffectorTypeCondition(EffectorType type) {
+		return createCondition(type, effector.type);
+	}
+
+	private BooleanExpression applyEffectorFeatureCondition(EffectorFeature feature) {
+		return createCondition(feature, effector.feature);
 	}
 
 	private <T extends Comparable<T>> BooleanExpression createCondition(T value, ComparableExpression<T> path) {
