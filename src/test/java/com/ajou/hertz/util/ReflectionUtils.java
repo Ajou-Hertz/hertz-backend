@@ -43,6 +43,7 @@ import com.ajou.hertz.domain.instrument.dto.EffectorDto;
 import com.ajou.hertz.domain.instrument.dto.ElectricGuitarDto;
 import com.ajou.hertz.domain.instrument.dto.InstrumentImageDto;
 import com.ajou.hertz.domain.instrument.dto.request.AcousticAndClassicGuitarFilterConditions;
+import com.ajou.hertz.domain.instrument.dto.request.AmplifierFilterConditions;
 import com.ajou.hertz.domain.instrument.dto.request.BassGuitarFilterConditions;
 import com.ajou.hertz.domain.instrument.dto.request.CreateNewAcousticAndClassicGuitarRequest;
 import com.ajou.hertz.domain.instrument.dto.request.CreateNewAmplifierRequest;
@@ -796,6 +797,22 @@ public class ReflectionUtils {
 		);
 		constructor.setAccessible(true);
 		return constructor.newInstance(progressStatus, sido, sgg, type, feature);
+	}
+
+	public static AmplifierFilterConditions createAmplifierFilterConditions(
+		InstrumentProgressStatus progressStatus,
+		String sido,
+		String sgg,
+		AmplifierType type,
+		AmplifierBrand brand,
+		AmplifierUsage usage
+	) throws Exception {
+		Constructor<AmplifierFilterConditions> constructor = AmplifierFilterConditions.class.getDeclaredConstructor(
+			InstrumentProgressStatus.class, String.class, String.class,
+			AmplifierType.class, AmplifierBrand.class, AmplifierUsage.class
+		);
+		constructor.setAccessible(true);
+		return constructor.newInstance(progressStatus, sido, sgg, type, brand, usage);
 	}
 
 	/**

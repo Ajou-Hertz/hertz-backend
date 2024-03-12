@@ -14,6 +14,7 @@ import com.ajou.hertz.domain.instrument.dto.EffectorDto;
 import com.ajou.hertz.domain.instrument.dto.ElectricGuitarDto;
 import com.ajou.hertz.domain.instrument.dto.InstrumentDto;
 import com.ajou.hertz.domain.instrument.dto.request.AcousticAndClassicGuitarFilterConditions;
+import com.ajou.hertz.domain.instrument.dto.request.AmplifierFilterConditions;
 import com.ajou.hertz.domain.instrument.dto.request.BassGuitarFilterConditions;
 import com.ajou.hertz.domain.instrument.dto.request.EffectorFilterConditions;
 import com.ajou.hertz.domain.instrument.dto.request.ElectricGuitarFilterConditions;
@@ -83,7 +84,7 @@ public class InstrumentQueryService {
 		int page,
 		int pageSize,
 		InstrumentSortOption sort,
-		InstrumentFilterConditions filterConditions
+		AmplifierFilterConditions filterConditions
 	) {
 		return instrumentRepository
 			.findAmplifiers(page, pageSize, sort, filterConditions)

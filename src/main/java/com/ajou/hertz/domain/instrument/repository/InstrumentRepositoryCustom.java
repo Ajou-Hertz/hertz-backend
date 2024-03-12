@@ -4,6 +4,7 @@ import org.springframework.data.domain.Page;
 
 import com.ajou.hertz.domain.instrument.constant.InstrumentSortOption;
 import com.ajou.hertz.domain.instrument.dto.request.AcousticAndClassicGuitarFilterConditions;
+import com.ajou.hertz.domain.instrument.dto.request.AmplifierFilterConditions;
 import com.ajou.hertz.domain.instrument.dto.request.BassGuitarFilterConditions;
 import com.ajou.hertz.domain.instrument.dto.request.EffectorFilterConditions;
 import com.ajou.hertz.domain.instrument.dto.request.ElectricGuitarFilterConditions;
@@ -34,7 +35,7 @@ public interface InstrumentRepositoryCustom {
 	);
 
 	Page<Amplifier> findAmplifiers(
-		int page, int pageSize, InstrumentSortOption sort, InstrumentFilterConditions filterConditions
+		int page, int pageSize, InstrumentSortOption sort, AmplifierFilterConditions filterConditions
 	);
 
 	Page<AudioEquipment> findAudioEquipments(

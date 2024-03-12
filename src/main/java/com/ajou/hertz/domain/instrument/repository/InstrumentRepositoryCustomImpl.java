@@ -1,6 +1,7 @@
 package com.ajou.hertz.domain.instrument.repository;
 
 import static com.ajou.hertz.domain.instrument.entity.QAcousticAndClassicGuitar.*;
+import static com.ajou.hertz.domain.instrument.entity.QAmplifier.*;
 import static com.ajou.hertz.domain.instrument.entity.QBassGuitar.*;
 import static com.ajou.hertz.domain.instrument.entity.QEffector.*;
 import static com.ajou.hertz.domain.instrument.entity.QElectricGuitar.*;
@@ -20,6 +21,9 @@ import com.ajou.hertz.domain.instrument.constant.AcousticAndClassicGuitarBrand;
 import com.ajou.hertz.domain.instrument.constant.AcousticAndClassicGuitarModel;
 import com.ajou.hertz.domain.instrument.constant.AcousticAndClassicGuitarPickUp;
 import com.ajou.hertz.domain.instrument.constant.AcousticAndClassicGuitarWood;
+import com.ajou.hertz.domain.instrument.constant.AmplifierBrand;
+import com.ajou.hertz.domain.instrument.constant.AmplifierType;
+import com.ajou.hertz.domain.instrument.constant.AmplifierUsage;
 import com.ajou.hertz.domain.instrument.constant.BassGuitarBrand;
 import com.ajou.hertz.domain.instrument.constant.BassGuitarPickUp;
 import com.ajou.hertz.domain.instrument.constant.BassGuitarPreAmplifier;
@@ -31,6 +35,7 @@ import com.ajou.hertz.domain.instrument.constant.GuitarColor;
 import com.ajou.hertz.domain.instrument.constant.InstrumentProgressStatus;
 import com.ajou.hertz.domain.instrument.constant.InstrumentSortOption;
 import com.ajou.hertz.domain.instrument.dto.request.AcousticAndClassicGuitarFilterConditions;
+import com.ajou.hertz.domain.instrument.dto.request.AmplifierFilterConditions;
 import com.ajou.hertz.domain.instrument.dto.request.BassGuitarFilterConditions;
 import com.ajou.hertz.domain.instrument.dto.request.EffectorFilterConditions;
 import com.ajou.hertz.domain.instrument.dto.request.ElectricGuitarFilterConditions;
@@ -192,9 +197,30 @@ public class InstrumentRepositoryCustomImpl implements InstrumentRepositoryCusto
 		int page,
 		int pageSize,
 		InstrumentSortOption sort,
-		InstrumentFilterConditions filterConditions
+		AmplifierFilterConditions filterConditions
 	) {
-		return findInstrumentsByClassType(Amplifier.class, page, pageSize, sort, filterConditions);
+		PageRequest pageable = PageRequest.of(page, pageSize, sort.toSort());
+
+		List<Predicate> conditions = new ArrayList<>(convertAmplifierFilterConditionsToPredicates(filterConditions));
+
+		List<Amplifier> content = queryFactory
+			.selectFrom(amplifier)
+			.join(amplifier.seller, user).fetchJoin()
+			.where(conditions.toArray(Predicate[]::new))
+			.offset(pageable.getOffset())
+			.limit(pageable.getPageSize())
+			.orderBy(convertSortToOrderSpecifiers(pageable.getSort(), createPathBuilder(amplifier)))
+			.fetch();
+
+		long totalCount = Optional.ofNullable(
+			queryFactory.select(amplifier.count())
+				.from(amplifier)
+				.join(amplifier.seller, user)
+				.where(conditions.toArray(Predicate[]::new))
+				.fetchOne()
+		).orElse(0L);
+
+		return new PageImpl<>(content, pageable, totalCount);
 	}
 
 	@Override
@@ -309,6 +335,19 @@ public class InstrumentRepositoryCustomImpl implements InstrumentRepositoryCusto
 		return res;
 	}
 
+	private List<Predicate> convertAmplifierFilterConditionsToPredicates(
+		AmplifierFilterConditions filterConditions
+	) {
+		List<Predicate> res = new ArrayList<>();
+		res.add(applyProgressStatusCondition(filterConditions.getProgress(), bassGuitar.progressStatus));
+		res.add(applyTradeAddressSidoCondition(filterConditions.getSido(), bassGuitar.tradeAddress.sido));
+		res.add(applyTradeAddressSggCondition(filterConditions.getSgg(), bassGuitar.tradeAddress.sgg));
+		res.add(applyAmplifierTypeCondition(filterConditions.getType()));
+		res.add(applyAmplifierBrandCondition(filterConditions.getBrand()));
+		res.add(applyAmplifierUsageCondition(filterConditions.getUsage()));
+		return res;
+	}
+
 	private BooleanExpression applyProgressStatusCondition(
 		InstrumentProgressStatus progressStatus,
 		EnumPath<InstrumentProgressStatus> progressStatusExpression
@@ -370,6 +409,18 @@ public class InstrumentRepositoryCustomImpl implements InstrumentRepositoryCusto
 
 	private BooleanExpression applyEffectorFeatureCondition(EffectorFeature feature) {
 		return createCondition(feature, effector.feature);
+	}
+
+	private BooleanExpression applyAmplifierTypeCondition(AmplifierType type) {
+		return createCondition(type, amplifier.type);
+	}
+
+	private BooleanExpression applyAmplifierBrandCondition(AmplifierBrand brand) {
+		return createCondition(brand, amplifier.brand);
+	}
+
+	private BooleanExpression applyAmplifierUsageCondition(AmplifierUsage usage) {
+		return createCondition(usage, amplifier.usage);
 	}
 
 	private <T extends Comparable<T>> BooleanExpression createCondition(T value, ComparableExpression<T> path) {

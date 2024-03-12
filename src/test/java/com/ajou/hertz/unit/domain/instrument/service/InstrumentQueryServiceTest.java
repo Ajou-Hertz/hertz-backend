@@ -45,6 +45,7 @@ import com.ajou.hertz.domain.instrument.dto.EffectorDto;
 import com.ajou.hertz.domain.instrument.dto.ElectricGuitarDto;
 import com.ajou.hertz.domain.instrument.dto.InstrumentDto;
 import com.ajou.hertz.domain.instrument.dto.request.AcousticAndClassicGuitarFilterConditions;
+import com.ajou.hertz.domain.instrument.dto.request.AmplifierFilterConditions;
 import com.ajou.hertz.domain.instrument.dto.request.BassGuitarFilterConditions;
 import com.ajou.hertz.domain.instrument.dto.request.EffectorFilterConditions;
 import com.ajou.hertz.domain.instrument.dto.request.ElectricGuitarFilterConditions;
@@ -221,7 +222,7 @@ class InstrumentQueryServiceTest {
 		// given
 		int page = 0;
 		int pageSize = 10;
-		InstrumentFilterConditions filterConditions = createEmptyInstrumentFilterConditions();
+		AmplifierFilterConditions filterConditions = createAmplifierFilterConditions();
 		InstrumentSortOption sort = InstrumentSortOption.CREATED_BY_DESC;
 		User user = createUser();
 		Page<Amplifier> expectedResult = new PageImpl<>(List.of(
@@ -467,6 +468,17 @@ class InstrumentQueryServiceTest {
 			"종로구",
 			EffectorType.GUITAR,
 			EffectorFeature.ETC
+		);
+	}
+
+	private AmplifierFilterConditions createAmplifierFilterConditions() throws Exception {
+		return ReflectionUtils.createAmplifierFilterConditions(
+			InstrumentProgressStatus.SELLING,
+			"서울특별시",
+			"종로구",
+			AmplifierType.GUITAR,
+			AmplifierBrand.FENDER,
+			AmplifierUsage.HOME
 		);
 	}
 }
