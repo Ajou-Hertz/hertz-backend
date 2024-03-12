@@ -44,6 +44,12 @@ import com.ajou.hertz.domain.instrument.dto.BassGuitarDto;
 import com.ajou.hertz.domain.instrument.dto.EffectorDto;
 import com.ajou.hertz.domain.instrument.dto.ElectricGuitarDto;
 import com.ajou.hertz.domain.instrument.dto.InstrumentDto;
+import com.ajou.hertz.domain.instrument.dto.request.AcousticAndClassicGuitarFilterConditions;
+import com.ajou.hertz.domain.instrument.dto.request.AmplifierFilterConditions;
+import com.ajou.hertz.domain.instrument.dto.request.AudioEquipmentFilterConditions;
+import com.ajou.hertz.domain.instrument.dto.request.BassGuitarFilterConditions;
+import com.ajou.hertz.domain.instrument.dto.request.EffectorFilterConditions;
+import com.ajou.hertz.domain.instrument.dto.request.ElectricGuitarFilterConditions;
 import com.ajou.hertz.domain.instrument.dto.request.InstrumentFilterConditions;
 import com.ajou.hertz.domain.instrument.entity.AcousticAndClassicGuitar;
 import com.ajou.hertz.domain.instrument.entity.Amplifier;
@@ -101,7 +107,7 @@ class InstrumentQueryServiceTest {
 		// given
 		int page = 0;
 		int pageSize = 10;
-		InstrumentFilterConditions filterConditions = createEmptyInstrumentFilterConditions();
+		ElectricGuitarFilterConditions filterConditions = createElectricGuitarFilterConditions();
 		InstrumentSortOption sort = InstrumentSortOption.CREATED_BY_DESC;
 		User user = createUser();
 		Page<ElectricGuitar> expectedResult = new PageImpl<>(List.of(
@@ -130,7 +136,7 @@ class InstrumentQueryServiceTest {
 		// given
 		int page = 0;
 		int pageSize = 10;
-		InstrumentFilterConditions filterConditions = createEmptyInstrumentFilterConditions();
+		BassGuitarFilterConditions filterConditions = createBassGuitarFilterConditions();
 		InstrumentSortOption sort = InstrumentSortOption.CREATED_BY_DESC;
 		User user = createUser();
 		Page<BassGuitar> expectedResult = new PageImpl<>(List.of(
@@ -158,7 +164,8 @@ class InstrumentQueryServiceTest {
 		// given
 		int page = 0;
 		int pageSize = 10;
-		InstrumentFilterConditions filterConditions = createEmptyInstrumentFilterConditions();
+		AcousticAndClassicGuitarFilterConditions filterConditions =
+			createEmptyAcousticAndClassicGuitarFilterConditions();
 		InstrumentSortOption sort = InstrumentSortOption.CREATED_BY_DESC;
 		User user = createUser();
 		Page<AcousticAndClassicGuitar> expectedResult = new PageImpl<>(List.of(
@@ -188,7 +195,7 @@ class InstrumentQueryServiceTest {
 		// given
 		int page = 0;
 		int pageSize = 10;
-		InstrumentFilterConditions filterConditions = createEmptyInstrumentFilterConditions();
+		EffectorFilterConditions filterConditions = createEmptyEffectorFilterConditions();
 		InstrumentSortOption sort = InstrumentSortOption.CREATED_BY_DESC;
 		User user = createUser();
 		Page<Effector> expectedResult = new PageImpl<>(List.of(
@@ -216,7 +223,7 @@ class InstrumentQueryServiceTest {
 		// given
 		int page = 0;
 		int pageSize = 10;
-		InstrumentFilterConditions filterConditions = createEmptyInstrumentFilterConditions();
+		AmplifierFilterConditions filterConditions = createAmplifierFilterConditions();
 		InstrumentSortOption sort = InstrumentSortOption.CREATED_BY_DESC;
 		User user = createUser();
 		Page<Amplifier> expectedResult = new PageImpl<>(List.of(
@@ -244,7 +251,7 @@ class InstrumentQueryServiceTest {
 		// given
 		int page = 0;
 		int pageSize = 10;
-		InstrumentFilterConditions filterConditions = createEmptyInstrumentFilterConditions();
+		AudioEquipmentFilterConditions filterConditions = createAudioEquipmentFilterConditions();
 		InstrumentSortOption sort = InstrumentSortOption.CREATED_BY_DESC;
 		User user = createUser();
 		Page<AudioEquipment> expectedResult = new PageImpl<>(List.of(
@@ -416,6 +423,72 @@ class InstrumentQueryServiceTest {
 	}
 
 	private InstrumentFilterConditions createEmptyInstrumentFilterConditions() throws Exception {
-		return ReflectionUtils.createInstrumentFilterConditions(null);
+		return ReflectionUtils.createInstrumentFilterConditions(null, null, null);
+	}
+
+	private ElectricGuitarFilterConditions createElectricGuitarFilterConditions() throws Exception {
+		return ReflectionUtils.createElectricGuitarFilterConditions(
+			InstrumentProgressStatus.SELLING,
+			"서울특별시",
+			"종로구",
+			ElectricGuitarBrand.FENDER_USA,
+			ElectricGuitarModel.TELECASTER,
+			GuitarColor.RED
+		);
+	}
+
+	private BassGuitarFilterConditions createBassGuitarFilterConditions() throws Exception {
+		return ReflectionUtils.createBassGuitarFilterConditions(
+			InstrumentProgressStatus.SELLING,
+			"서울특별시",
+			"종로구",
+			BassGuitarBrand.FENDER,
+			BassGuitarPickUp.JAZZ,
+			BassGuitarPreAmplifier.ACTIVE,
+			GuitarColor.RED
+		);
+	}
+
+	private AcousticAndClassicGuitarFilterConditions createEmptyAcousticAndClassicGuitarFilterConditions(
+	) throws Exception {
+		return ReflectionUtils.createAcousticAndClassicGuitarFilterConditions(
+			InstrumentProgressStatus.RESERVED,
+			"서울특별시",
+			"종로구",
+			AcousticAndClassicGuitarBrand.BENTIVOGLIO,
+			AcousticAndClassicGuitarModel.DREADNOUGHT,
+			AcousticAndClassicGuitarWood.PLYWOOD_AND_SOLID_WOOD,
+			AcousticAndClassicGuitarPickUp.MAGNETIC
+		);
+	}
+
+	private EffectorFilterConditions createEmptyEffectorFilterConditions() throws Exception {
+		return ReflectionUtils.createEffectorFilterConditions(
+			InstrumentProgressStatus.SOLD_OUT,
+			"서울특별시",
+			"종로구",
+			EffectorType.GUITAR,
+			EffectorFeature.ETC
+		);
+	}
+
+	private AmplifierFilterConditions createAmplifierFilterConditions() throws Exception {
+		return ReflectionUtils.createAmplifierFilterConditions(
+			InstrumentProgressStatus.SELLING,
+			"서울특별시",
+			"종로구",
+			AmplifierType.GUITAR,
+			AmplifierBrand.FENDER,
+			AmplifierUsage.HOME
+		);
+	}
+
+	private AudioEquipmentFilterConditions createAudioEquipmentFilterConditions() throws Exception {
+		return ReflectionUtils.createAudioEquipmentFilterConditions(
+			InstrumentProgressStatus.SELLING,
+			"서울특별시",
+			"종로구",
+			AudioEquipmentType.AUDIO_EQUIPMENT
+		);
 	}
 }

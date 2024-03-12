@@ -35,7 +35,12 @@ import com.ajou.hertz.domain.instrument.constant.ElectricGuitarModel;
 import com.ajou.hertz.domain.instrument.constant.GuitarColor;
 import com.ajou.hertz.domain.instrument.constant.InstrumentProgressStatus;
 import com.ajou.hertz.domain.instrument.constant.InstrumentSortOption;
-import com.ajou.hertz.domain.instrument.dto.request.InstrumentFilterConditions;
+import com.ajou.hertz.domain.instrument.dto.request.AcousticAndClassicGuitarFilterConditions;
+import com.ajou.hertz.domain.instrument.dto.request.AmplifierFilterConditions;
+import com.ajou.hertz.domain.instrument.dto.request.AudioEquipmentFilterConditions;
+import com.ajou.hertz.domain.instrument.dto.request.BassGuitarFilterConditions;
+import com.ajou.hertz.domain.instrument.dto.request.EffectorFilterConditions;
+import com.ajou.hertz.domain.instrument.dto.request.ElectricGuitarFilterConditions;
 import com.ajou.hertz.domain.instrument.entity.AcousticAndClassicGuitar;
 import com.ajou.hertz.domain.instrument.entity.Amplifier;
 import com.ajou.hertz.domain.instrument.entity.AudioEquipment;
@@ -72,8 +77,7 @@ class InstrumentRepositoryTest {
 	void 일렉_기타_목록을_조회한다() throws Exception {
 		// given
 		InstrumentSortOption sortOption = InstrumentSortOption.CREATED_BY_DESC;
-		InstrumentFilterConditions filterConditions =
-			createEmptyInstrumentFilterConditions(InstrumentProgressStatus.SELLING);
+		ElectricGuitarFilterConditions filterConditions = createEmptyElectricGuitarFilterConditions();
 		User user = userRepository.save(createUser());
 		List<Instrument> savedInstruments = sut.saveAll(List.of(
 			createBassGuitar(user),
@@ -89,10 +93,46 @@ class InstrumentRepositoryTest {
 	}
 
 	@Test
+	void 필터링_조건이_주어지고_일렉_기타_목록을_조회하면_조건에_일치하는_매물이_조회된다() throws Exception {
+		// given
+		InstrumentSortOption sortOption = InstrumentSortOption.CREATED_BY_DESC;
+		ElectricGuitarFilterConditions filterConditions = createElectricGuitarFilterConditions(
+			InstrumentProgressStatus.SELLING,
+			ElectricGuitarBrand.FENDER_USA,
+			ElectricGuitarModel.TELECASTER,
+			GuitarColor.RED
+		);
+		User user = userRepository.save(createUser());
+		sut.saveAll(List.of(
+			createBassGuitar(user),
+			createElectricGuitar(
+				user,
+				InstrumentProgressStatus.SELLING,
+				ElectricGuitarBrand.FENDER_JAPAN,
+				ElectricGuitarModel.TELECASTER,
+				GuitarColor.BLACK
+			),
+			createElectricGuitar(
+				user,
+				InstrumentProgressStatus.SELLING,
+				ElectricGuitarBrand.FENDER_USA,
+				ElectricGuitarModel.TELECASTER,
+				GuitarColor.RED
+			)
+		));
+
+		// when
+		Page<ElectricGuitar> result = sut.findElectricGuitars(0, 10, sortOption, filterConditions);
+
+		// then
+		assertThat(result.getNumberOfElements()).isEqualTo(1);
+	}
+
+	@Test
 	void 베이스_기타_목록을_조회한다() throws Exception {
 		// given
 		InstrumentSortOption sortOption = InstrumentSortOption.CREATED_BY_DESC;
-		InstrumentFilterConditions filterConditions = createEmptyInstrumentFilterConditions();
+		BassGuitarFilterConditions filterConditions = createEmptyBassGuitarFilterConditions();
 		User user = userRepository.save(createUser());
 		List<Instrument> savedInstruments = sut.saveAll(List.of(
 			createElectricGuitar(user),
@@ -111,7 +151,8 @@ class InstrumentRepositoryTest {
 	void 어쿠스틱_클래식_기타_목록을_조회한다() throws Exception {
 		// given
 		InstrumentSortOption sortOption = InstrumentSortOption.CREATED_BY_DESC;
-		InstrumentFilterConditions filterConditions = createEmptyInstrumentFilterConditions();
+		AcousticAndClassicGuitarFilterConditions filterConditions =
+			createEmptyAcousticAndClassicGuitarFilterConditions();
 		User user = userRepository.save(createUser());
 		List<Instrument> savedInstruments = sut.saveAll(List.of(
 			createElectricGuitar(user),
@@ -120,9 +161,7 @@ class InstrumentRepositoryTest {
 		));
 
 		// when
-		Page<AcousticAndClassicGuitar> result = sut.findAcousticAndClassicGuitars(
-			0, 10, sortOption, filterConditions
-		);
+		Page<AcousticAndClassicGuitar> result = sut.findAcousticAndClassicGuitars(0, 10, sortOption, filterConditions);
 
 		// then
 		assertThat(result.getNumberOfElements()).isEqualTo(savedInstruments.size() - 1);
@@ -132,7 +171,7 @@ class InstrumentRepositoryTest {
 	void 이펙터_목록을_조회한다() throws Exception {
 		// given
 		InstrumentSortOption sortOption = InstrumentSortOption.CREATED_BY_DESC;
-		InstrumentFilterConditions filterConditions = createEmptyInstrumentFilterConditions();
+		EffectorFilterConditions filterConditions = createEmptyEffectorFilterConditions();
 		User user = userRepository.save(createUser());
 		List<Instrument> savedInstruments = sut.saveAll(List.of(
 			createElectricGuitar(user),
@@ -151,7 +190,7 @@ class InstrumentRepositoryTest {
 	void 앰프_목록을_조회한다() throws Exception {
 		// given
 		InstrumentSortOption sortOption = InstrumentSortOption.CREATED_BY_DESC;
-		InstrumentFilterConditions filterConditions = createEmptyInstrumentFilterConditions();
+		AmplifierFilterConditions filterConditions = createEmptyAmplifierFilterConditions();
 		User user = userRepository.save(createUser());
 		List<Instrument> savedInstruments = sut.saveAll(List.of(
 			createElectricGuitar(user),
@@ -170,7 +209,7 @@ class InstrumentRepositoryTest {
 	void 음향_장비_목록을_조회한다() throws Exception {
 		// given
 		InstrumentSortOption sortOption = InstrumentSortOption.CREATED_BY_ASC;
-		InstrumentFilterConditions filterConditions = createEmptyInstrumentFilterConditions();
+		AudioEquipmentFilterConditions filterConditions = createAudioEquipmentFilterConditions();
 		User user = userRepository.save(createUser());
 		List<Instrument> savedInstruments = sut.saveAll(List.of(
 			createElectricGuitar(user),
@@ -201,6 +240,30 @@ class InstrumentRepositoryTest {
 			Gender.ETC,
 			"01012345678",
 			null
+		);
+	}
+
+	private ElectricGuitar createElectricGuitar(
+		User seller,
+		InstrumentProgressStatus progressStatus,
+		ElectricGuitarBrand brand,
+		ElectricGuitarModel model,
+		GuitarColor color
+	) throws Exception {
+		return ReflectionUtils.createElectricGuitar(
+			null,
+			seller,
+			"Test electric guitar",
+			progressStatus,
+			createAddress(),
+			(short)3,
+			550000,
+			true,
+			"description",
+			brand,
+			model,
+			(short)2014,
+			color
 		);
 	}
 
@@ -306,13 +369,37 @@ class InstrumentRepositoryTest {
 		);
 	}
 
-	private InstrumentFilterConditions createEmptyInstrumentFilterConditions() throws Exception {
-		return ReflectionUtils.createInstrumentFilterConditions(null);
+	private ElectricGuitarFilterConditions createEmptyElectricGuitarFilterConditions() throws Exception {
+		return ReflectionUtils.createElectricGuitarFilterConditions(null, null, null, null, null, null);
 	}
 
-	private InstrumentFilterConditions createEmptyInstrumentFilterConditions(
-		InstrumentProgressStatus progressStatus
+	private ElectricGuitarFilterConditions createElectricGuitarFilterConditions(
+		InstrumentProgressStatus progressStatus,
+		ElectricGuitarBrand brand,
+		ElectricGuitarModel model,
+		GuitarColor color
 	) throws Exception {
-		return ReflectionUtils.createInstrumentFilterConditions(progressStatus);
+		return ReflectionUtils.createElectricGuitarFilterConditions(progressStatus, null, null, brand, model, color);
+	}
+
+	private BassGuitarFilterConditions createEmptyBassGuitarFilterConditions() throws Exception {
+		return ReflectionUtils.createBassGuitarFilterConditions(null, null, null, null, null, null, null);
+	}
+
+	private AcousticAndClassicGuitarFilterConditions createEmptyAcousticAndClassicGuitarFilterConditions(
+	) throws Exception {
+		return ReflectionUtils.createAcousticAndClassicGuitarFilterConditions(null, null, null, null, null, null, null);
+	}
+
+	private EffectorFilterConditions createEmptyEffectorFilterConditions() throws Exception {
+		return ReflectionUtils.createEffectorFilterConditions(null, null, null, null, null);
+	}
+
+	private AmplifierFilterConditions createEmptyAmplifierFilterConditions() throws Exception {
+		return ReflectionUtils.createAmplifierFilterConditions(null, null, null, null, null, null);
+	}
+
+	private AudioEquipmentFilterConditions createAudioEquipmentFilterConditions() throws Exception {
+		return ReflectionUtils.createAudioEquipmentFilterConditions(null, null, null, null);
 	}
 }

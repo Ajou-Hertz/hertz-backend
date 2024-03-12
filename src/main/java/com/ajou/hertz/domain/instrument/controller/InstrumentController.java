@@ -24,12 +24,18 @@ import com.ajou.hertz.domain.instrument.dto.AudioEquipmentDto;
 import com.ajou.hertz.domain.instrument.dto.BassGuitarDto;
 import com.ajou.hertz.domain.instrument.dto.EffectorDto;
 import com.ajou.hertz.domain.instrument.dto.ElectricGuitarDto;
+import com.ajou.hertz.domain.instrument.dto.request.AcousticAndClassicGuitarFilterConditions;
+import com.ajou.hertz.domain.instrument.dto.request.AmplifierFilterConditions;
+import com.ajou.hertz.domain.instrument.dto.request.AudioEquipmentFilterConditions;
+import com.ajou.hertz.domain.instrument.dto.request.BassGuitarFilterConditions;
 import com.ajou.hertz.domain.instrument.dto.request.CreateNewAcousticAndClassicGuitarRequest;
 import com.ajou.hertz.domain.instrument.dto.request.CreateNewAmplifierRequest;
 import com.ajou.hertz.domain.instrument.dto.request.CreateNewAudioEquipmentRequest;
 import com.ajou.hertz.domain.instrument.dto.request.CreateNewBassGuitarRequest;
 import com.ajou.hertz.domain.instrument.dto.request.CreateNewEffectorRequest;
 import com.ajou.hertz.domain.instrument.dto.request.CreateNewElectricGuitarRequest;
+import com.ajou.hertz.domain.instrument.dto.request.EffectorFilterConditions;
+import com.ajou.hertz.domain.instrument.dto.request.ElectricGuitarFilterConditions;
 import com.ajou.hertz.domain.instrument.dto.request.InstrumentFilterConditions;
 import com.ajou.hertz.domain.instrument.dto.response.AcousticAndClassicGuitarResponse;
 import com.ajou.hertz.domain.instrument.dto.response.AmplifierResponse;
@@ -97,7 +103,7 @@ public class InstrumentController {
 		@Parameter(
 			description = "정렬 기준"
 		) @RequestParam InstrumentSortOption sort,
-		@ParameterObject @Valid @ModelAttribute InstrumentFilterConditions filterConditions
+		@ParameterObject @Valid @ModelAttribute ElectricGuitarFilterConditions filterConditions
 	) {
 		return instrumentQueryService
 			.findElectricGuitars(page, size, sort, filterConditions)
@@ -121,7 +127,7 @@ public class InstrumentController {
 		@Parameter(
 			description = "정렬 기준"
 		) @RequestParam InstrumentSortOption sort,
-		@ParameterObject @Valid @ModelAttribute InstrumentFilterConditions filterConditions
+		@ParameterObject @Valid @ModelAttribute BassGuitarFilterConditions filterConditions
 	) {
 		return instrumentQueryService
 			.findBassGuitars(page, size, sort, filterConditions)
@@ -145,7 +151,7 @@ public class InstrumentController {
 		@Parameter(
 			description = "정렬 기준"
 		) @RequestParam InstrumentSortOption sort,
-		@ParameterObject @Valid @ModelAttribute InstrumentFilterConditions filterConditions
+		@ParameterObject @Valid @ModelAttribute AcousticAndClassicGuitarFilterConditions filterConditions
 	) {
 		return instrumentQueryService
 			.findAcousticAndClassicGuitars(page, size, sort, filterConditions)
@@ -169,7 +175,7 @@ public class InstrumentController {
 		@Parameter(
 			description = "정렬 기준"
 		) @RequestParam InstrumentSortOption sort,
-		@ParameterObject @Valid @ModelAttribute InstrumentFilterConditions filterConditions
+		@ParameterObject @Valid @ModelAttribute EffectorFilterConditions filterConditions
 	) {
 		return instrumentQueryService
 			.findEffectors(page, size, sort, filterConditions)
@@ -193,7 +199,7 @@ public class InstrumentController {
 		@Parameter(
 			description = "정렬 기준"
 		) @RequestParam InstrumentSortOption sort,
-		@ParameterObject @Valid @ModelAttribute InstrumentFilterConditions filterConditions
+		@ParameterObject @Valid @ModelAttribute AmplifierFilterConditions filterConditions
 	) {
 		return instrumentQueryService
 			.findAmplifiers(page, size, sort, filterConditions)
@@ -217,7 +223,7 @@ public class InstrumentController {
 		@Parameter(
 			description = "정렬 기준"
 		) @RequestParam InstrumentSortOption sort,
-		@ParameterObject @Valid @ModelAttribute InstrumentFilterConditions filterConditions
+		@ParameterObject @Valid @ModelAttribute AudioEquipmentFilterConditions filterConditions
 	) {
 		return instrumentQueryService
 			.findAudioEquipments(page, size, sort, filterConditions)
