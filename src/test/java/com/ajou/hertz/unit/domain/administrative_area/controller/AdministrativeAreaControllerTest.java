@@ -6,7 +6,6 @@ import static org.mockito.BDDMockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-import java.lang.reflect.Constructor;
 import java.util.List;
 
 import org.junit.jupiter.api.DisplayName;
@@ -25,6 +24,7 @@ import com.ajou.hertz.domain.administrative_area.entity.AdministrativeAreaSido;
 import com.ajou.hertz.domain.administrative_area.repository.AdministrativeEmdRepository;
 import com.ajou.hertz.domain.administrative_area.repository.AdministrativeSggRepository;
 import com.ajou.hertz.domain.administrative_area.repository.AdministrativeSidoRepository;
+import com.ajou.hertz.util.ReflectionUtils;
 
 @DisplayName("[Unit] Controller - AdministrativeArea")
 @Import(ControllerTestConfig.class)
@@ -119,28 +119,15 @@ public class AdministrativeAreaControllerTest {
 	}
 
 	private AdministrativeAreaSido createSido(long id, String name) throws Exception {
-		Constructor<AdministrativeAreaSido> sidoConstructor = AdministrativeAreaSido.class.getDeclaredConstructor(
-			Long.class, String.class
-		);
-		sidoConstructor.setAccessible(true);
-		return sidoConstructor.newInstance(id, name);
+		return ReflectionUtils.createSido(id, name);
 	}
 
-	private AdministrativeAreaSgg createSgg(long id, AdministrativeAreaSido sido, String name) throws
-		Exception {
-		Constructor<AdministrativeAreaSgg> sidoConstructor = AdministrativeAreaSgg.class.getDeclaredConstructor(
-			Long.class, AdministrativeAreaSido.class, String.class
-		);
-		sidoConstructor.setAccessible(true);
-		return sidoConstructor.newInstance(id, sido, name);
+	private AdministrativeAreaSgg createSgg(long id, AdministrativeAreaSido sido, String name) throws Exception {
+		return ReflectionUtils.createSgg(id, sido, name);
 	}
 
 	private AdministrativeAreaEmd createEmd(long id, AdministrativeAreaSgg sgg, String name) throws Exception {
-		Constructor<AdministrativeAreaEmd> sidoConstructor = AdministrativeAreaEmd.class.getDeclaredConstructor(
-			Long.class, AdministrativeAreaSgg.class, String.class
-		);
-		sidoConstructor.setAccessible(true);
-		return sidoConstructor.newInstance(id, sgg, name);
+		return ReflectionUtils.createEmd(id, sgg, name);
 	}
 
 	private void verifyEveryMocksShouldHaveNoMoreInteractions() {

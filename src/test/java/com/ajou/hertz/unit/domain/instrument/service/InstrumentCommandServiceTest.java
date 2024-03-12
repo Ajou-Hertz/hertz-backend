@@ -3,7 +3,6 @@ package com.ajou.hertz.unit.domain.instrument.service;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
 
-import java.lang.reflect.Constructor;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
@@ -68,6 +67,7 @@ import com.ajou.hertz.domain.user.constant.Gender;
 import com.ajou.hertz.domain.user.constant.RoleType;
 import com.ajou.hertz.domain.user.entity.User;
 import com.ajou.hertz.domain.user.service.UserQueryService;
+import com.ajou.hertz.util.ReflectionUtils;
 
 @DisplayName("[Unit] Service(Command) - Instrument")
 @ExtendWith(MockitoExtension.class)
@@ -321,12 +321,7 @@ class InstrumentCommandServiceTest {
 	}
 
 	private User createUser(Long id) throws Exception {
-		Constructor<User> userConstructor = User.class.getDeclaredConstructor(
-			Long.class, Set.class, String.class, String.class, String.class,
-			String.class, LocalDate.class, Gender.class, String.class, String.class
-		);
-		userConstructor.setAccessible(true);
-		return userConstructor.newInstance(
+		return ReflectionUtils.createUser(
 			id,
 			Set.of(RoleType.USER),
 			"test@mail.com",
@@ -345,11 +340,7 @@ class InstrumentCommandServiceTest {
 	}
 
 	private InstrumentImage createInstrumentImage(Long id, Instrument instrument) throws Exception {
-		Constructor<InstrumentImage> instrumentImageConstructor = InstrumentImage.class.getDeclaredConstructor(
-			Long.class, Instrument.class, String.class, String.class, String.class
-		);
-		instrumentImageConstructor.setAccessible(true);
-		return instrumentImageConstructor.newInstance(
+		return ReflectionUtils.createInstrumentImage(
 			id,
 			instrument,
 			"original-name",
@@ -359,21 +350,11 @@ class InstrumentCommandServiceTest {
 	}
 
 	private InstrumentHashtag createInstrumentHashtag(Long id, Instrument instrument) throws Exception {
-		Constructor<InstrumentHashtag> instrumentHashtagConstructor = InstrumentHashtag.class.getDeclaredConstructor(
-			Long.class, Instrument.class, String.class
-		);
-		instrumentHashtagConstructor.setAccessible(true);
-		return instrumentHashtagConstructor.newInstance(id, instrument, "content");
+		return ReflectionUtils.createInstrumentHashtag(id, instrument, "content");
 	}
 
 	private ElectricGuitar createElectricGuitar(Long id, User seller) throws Exception {
-		Constructor<ElectricGuitar> electricGuitarConstructor = ElectricGuitar.class.getDeclaredConstructor(
-			Long.class, User.class, String.class, InstrumentProgressStatus.class, Address.class, Short.class,
-			Integer.class, Boolean.class, String.class, ElectricGuitarBrand.class, ElectricGuitarModel.class,
-			Short.class, GuitarColor.class
-		);
-		electricGuitarConstructor.setAccessible(true);
-		return electricGuitarConstructor.newInstance(
+		return ReflectionUtils.createElectricGuitar(
 			id,
 			seller,
 			"Test electric guitar",
@@ -391,13 +372,7 @@ class InstrumentCommandServiceTest {
 	}
 
 	private BassGuitar createBassGuitar(long id, User seller) throws Exception {
-		Constructor<BassGuitar> bassGuitarConstructor = BassGuitar.class.getDeclaredConstructor(
-			Long.class, User.class, String.class, InstrumentProgressStatus.class, Address.class,
-			Short.class, Integer.class, Boolean.class, String.class,
-			BassGuitarBrand.class, BassGuitarPickUp.class, BassGuitarPreAmplifier.class, GuitarColor.class
-		);
-		bassGuitarConstructor.setAccessible(true);
-		return bassGuitarConstructor.newInstance(
+		return ReflectionUtils.createBassGuitar(
 			id,
 			seller,
 			"Test electric guitar",
@@ -415,15 +390,7 @@ class InstrumentCommandServiceTest {
 	}
 
 	private AcousticAndClassicGuitar createAcousticAndClassicGuitar(long id, User seller) throws Exception {
-		Constructor<AcousticAndClassicGuitar> acousticAndClassicGuitarConstructor =
-			AcousticAndClassicGuitar.class.getDeclaredConstructor(
-				Long.class, User.class, String.class, InstrumentProgressStatus.class, Address.class,
-				Short.class, Integer.class, Boolean.class, String.class,
-				AcousticAndClassicGuitarBrand.class, AcousticAndClassicGuitarModel.class,
-				AcousticAndClassicGuitarWood.class, AcousticAndClassicGuitarPickUp.class
-			);
-		acousticAndClassicGuitarConstructor.setAccessible(true);
-		return acousticAndClassicGuitarConstructor.newInstance(
+		return ReflectionUtils.createAcousticAndClassicGuitar(
 			id,
 			seller,
 			"Test electric guitar",
@@ -441,13 +408,7 @@ class InstrumentCommandServiceTest {
 	}
 
 	private Effector createEffector(long id, User seller) throws Exception {
-		Constructor<Effector> effectorConstructor = Effector.class.getDeclaredConstructor(
-			Long.class, User.class, String.class, InstrumentProgressStatus.class, Address.class,
-			Short.class, Integer.class, Boolean.class, String.class,
-			EffectorType.class, EffectorFeature.class
-		);
-		effectorConstructor.setAccessible(true);
-		return effectorConstructor.newInstance(
+		return ReflectionUtils.createEffector(
 			id,
 			seller,
 			"Title",
@@ -463,13 +424,7 @@ class InstrumentCommandServiceTest {
 	}
 
 	private Amplifier createAmplifier(long id, User seller) throws Exception {
-		Constructor<Amplifier> amplifierConstructor = Amplifier.class.getDeclaredConstructor(
-			Long.class, User.class, String.class, InstrumentProgressStatus.class, Address.class,
-			Short.class, Integer.class, Boolean.class, String.class,
-			AmplifierType.class, AmplifierBrand.class, AmplifierUsage.class
-		);
-		amplifierConstructor.setAccessible(true);
-		return amplifierConstructor.newInstance(
+		return ReflectionUtils.createAmplifier(
 			id,
 			seller,
 			"Title",
@@ -486,13 +441,7 @@ class InstrumentCommandServiceTest {
 	}
 
 	private AudioEquipment createAudioEquipment(long id, User seller) throws Exception {
-		Constructor<AudioEquipment> audioEquipmentConstructor = AudioEquipment.class.getDeclaredConstructor(
-			Long.class, User.class, String.class, InstrumentProgressStatus.class, Address.class,
-			Short.class, Integer.class, Boolean.class, String.class,
-			AudioEquipmentType.class
-		);
-		audioEquipmentConstructor.setAccessible(true);
-		return audioEquipmentConstructor.newInstance(
+		return ReflectionUtils.createAudioEquipment(
 			id,
 			seller,
 			"Title",
@@ -507,55 +456,33 @@ class InstrumentCommandServiceTest {
 	}
 
 	private FileDto createFileDto() throws Exception {
-		Constructor<FileDto> fileDtoConstructor = FileDto.class.getDeclaredConstructor(
-			String.class, String.class, String.class
-		);
-		fileDtoConstructor.setAccessible(true);
-		return fileDtoConstructor.newInstance("original-name", "stored-name", "https://file-url");
+		return ReflectionUtils.createFileDto("original-name", "stored-name", "https://file-url");
 	}
 
 	private AddressRequest createAddressRequest() throws Exception {
-		Constructor<AddressRequest> addressRequestConstructor = AddressRequest.class.getDeclaredConstructor(
-			String.class, String.class, String.class
-		);
-		addressRequestConstructor.setAccessible(true);
-		return addressRequestConstructor.newInstance("서울특별시", "강남구", "청담동");
+		return ReflectionUtils.createAddressRequest("서울특별시", "강남구", "청담동");
 	}
 
 	private CreateNewElectricGuitarRequest createElectricGuitarRequest() throws Exception {
-		Constructor<CreateNewElectricGuitarRequest> createNewElectricGuitarRequestConstructor =
-			CreateNewElectricGuitarRequest.class.getDeclaredConstructor(
-				String.class, List.class, InstrumentProgressStatus.class, AddressRequest.class,
-				Short.class, Integer.class, Boolean.class, String.class, ElectricGuitarBrand.class,
-				ElectricGuitarModel.class, Short.class, GuitarColor.class, List.class
-			);
-		createNewElectricGuitarRequestConstructor.setAccessible(true);
-		return createNewElectricGuitarRequestConstructor.newInstance(
+		return ReflectionUtils.createElectricGuitarRequest(
 			"Title",
-			List.of(createMultipartFile()),
 			InstrumentProgressStatus.SELLING,
 			createAddressRequest(),
 			(short)3,
 			550000,
 			true,
 			"description",
+			List.of(createMultipartFile()),
+			List.of("Fender", "Guitar"),
 			ElectricGuitarBrand.FENDER_USA,
 			ElectricGuitarModel.TELECASTER,
 			(short)2014,
-			GuitarColor.RED,
-			List.of("Fender", "Guitar")
+			GuitarColor.RED
 		);
 	}
 
 	private CreateNewBassGuitarRequest createBassGuitarRequest() throws Exception {
-		Constructor<CreateNewBassGuitarRequest> createNewBassGuitarRequestConstructor =
-			CreateNewBassGuitarRequest.class.getDeclaredConstructor(
-				String.class, InstrumentProgressStatus.class, AddressRequest.class, Short.class,
-				Integer.class, Boolean.class, String.class, List.class, List.class,
-				BassGuitarBrand.class, BassGuitarPickUp.class, BassGuitarPreAmplifier.class, GuitarColor.class
-			);
-		createNewBassGuitarRequestConstructor.setAccessible(true);
-		return createNewBassGuitarRequestConstructor.newInstance(
+		return ReflectionUtils.createNewBassGuitarRequest(
 			"Title",
 			InstrumentProgressStatus.SELLING,
 			createAddressRequest(),
@@ -573,15 +500,7 @@ class InstrumentCommandServiceTest {
 	}
 
 	private CreateNewAcousticAndClassicGuitarRequest createAcousticAndClassicGuitarRequest() throws Exception {
-		Constructor<CreateNewAcousticAndClassicGuitarRequest> createNewAcousticAndClassicGuitarRequestConstructor =
-			CreateNewAcousticAndClassicGuitarRequest.class.getDeclaredConstructor(
-				String.class, InstrumentProgressStatus.class, AddressRequest.class, Short.class,
-				Integer.class, Boolean.class, String.class, List.class, List.class,
-				AcousticAndClassicGuitarBrand.class, AcousticAndClassicGuitarModel.class,
-				AcousticAndClassicGuitarWood.class, AcousticAndClassicGuitarPickUp.class
-			);
-		createNewAcousticAndClassicGuitarRequestConstructor.setAccessible(true);
-		return createNewAcousticAndClassicGuitarRequestConstructor.newInstance(
+		return ReflectionUtils.createAcousticAndClassicGuitarRequest(
 			"Title",
 			InstrumentProgressStatus.SELLING,
 			createAddressRequest(),
@@ -599,14 +518,7 @@ class InstrumentCommandServiceTest {
 	}
 
 	private CreateNewEffectorRequest createEffectorRequest() throws Exception {
-		Constructor<CreateNewEffectorRequest> createNewEffectorRequestConstructor =
-			CreateNewEffectorRequest.class.getDeclaredConstructor(
-				String.class, InstrumentProgressStatus.class, AddressRequest.class, Short.class,
-				Integer.class, Boolean.class, String.class, List.class, List.class,
-				EffectorType.class, EffectorFeature.class
-			);
-		createNewEffectorRequestConstructor.setAccessible(true);
-		return createNewEffectorRequestConstructor.newInstance(
+		return ReflectionUtils.createEffectorRequest(
 			"Title",
 			InstrumentProgressStatus.SELLING,
 			createAddressRequest(),
@@ -622,14 +534,7 @@ class InstrumentCommandServiceTest {
 	}
 
 	private CreateNewAmplifierRequest createAmplifierRequest() throws Exception {
-		Constructor<CreateNewAmplifierRequest> createNewAmplifierRequestConstructor =
-			CreateNewAmplifierRequest.class.getDeclaredConstructor(
-				String.class, InstrumentProgressStatus.class, AddressRequest.class, Short.class,
-				Integer.class, Boolean.class, String.class, List.class, List.class,
-				AmplifierType.class, AmplifierBrand.class, AmplifierUsage.class
-			);
-		createNewAmplifierRequestConstructor.setAccessible(true);
-		return createNewAmplifierRequestConstructor.newInstance(
+		return ReflectionUtils.createAmplifierRequest(
 			"Title",
 			InstrumentProgressStatus.SELLING,
 			createAddressRequest(),
@@ -646,14 +551,7 @@ class InstrumentCommandServiceTest {
 	}
 
 	private CreateNewAudioEquipmentRequest createAudioEquipmentRequest() throws Exception {
-		Constructor<CreateNewAudioEquipmentRequest> createNewAudioEquipmentRequestConstructor =
-			CreateNewAudioEquipmentRequest.class.getDeclaredConstructor(
-				String.class, InstrumentProgressStatus.class, AddressRequest.class, Short.class,
-				Integer.class, Boolean.class, String.class, List.class, List.class,
-				AudioEquipmentType.class
-			);
-		createNewAudioEquipmentRequestConstructor.setAccessible(true);
-		return createNewAudioEquipmentRequestConstructor.newInstance(
+		return ReflectionUtils.createAudioEquipmentRequest(
 			"Title",
 			InstrumentProgressStatus.SELLING,
 			createAddressRequest(),
