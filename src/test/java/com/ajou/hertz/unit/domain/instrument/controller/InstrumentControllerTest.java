@@ -95,7 +95,7 @@ class InstrumentControllerTest {
 	}
 
 	@Test
-	void 전체_악기_매물_목록을_조회한다() throws Exception {
+	void 종류_상관_없이_전체_악기_매물_목록을_조회한다() throws Exception {
 		// given
 		long userId = 1L;
 		int page = 0;
@@ -116,7 +116,9 @@ class InstrumentControllerTest {
 					.param("page", String.valueOf(page))
 					.param("size", String.valueOf(pageSize))
 					.param("sort", sortOption.name())
-					.param("progress", filterConditions.getProgress().name())
+					.param("progress", InstrumentProgressStatus.SELLING.name())
+					.param("sido", "서울특별시")
+					.param("sgg", "종로구")
 			)
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.numberOfElements").value(expectedResult.getNumberOfElements()))
@@ -127,12 +129,11 @@ class InstrumentControllerTest {
 	}
 
 	@Test
-	void 일렉_기타_매물_목록을_조회한다() throws Exception {
+	void 필터링_조건이_주어지고_주어진_조건에_해당하는_일렉_기타_매물_목록을_조회한다() throws Exception {
 		// given
 		long userId = 1L;
 		int page = 0;
 		int pageSize = 10;
-		InstrumentFilterConditions filterConditions = createInstrumentFilterConditions();
 		InstrumentSortOption sortOption = InstrumentSortOption.CREATED_BY_DESC;
 		Page<ElectricGuitarDto> expectedResult = new PageImpl<>(List.of(
 			createElectricGuitarDto(2L, userId),
@@ -150,7 +151,12 @@ class InstrumentControllerTest {
 					.param("page", String.valueOf(page))
 					.param("size", String.valueOf(pageSize))
 					.param("sort", sortOption.name())
-					.param("progress", filterConditions.getProgress().name())
+					.param("progress", InstrumentProgressStatus.SELLING.name())
+					.param("sido", "서울특별시")
+					.param("sgg", "종로구")
+					.param("brand", ElectricGuitarBrand.FENDER_USA.name())
+					.param("model", ElectricGuitarModel.TELECASTER.name())
+					.param("color", GuitarColor.RED.name())
 			)
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.numberOfElements").value(expectedResult.getNumberOfElements()))
@@ -163,7 +169,7 @@ class InstrumentControllerTest {
 	}
 
 	@Test
-	void 베이스_기타_매물_목록을_조회한다() throws Exception {
+	void 필터링_조건이_주어지고_주어진_조건에_해당하는_베이스_기타_매물_목록을_조회한다() throws Exception {
 		// given
 		long userId = 1L;
 		int page = 0;
@@ -186,7 +192,13 @@ class InstrumentControllerTest {
 					.param("page", String.valueOf(page))
 					.param("size", String.valueOf(pageSize))
 					.param("sort", sortOption.name())
-					.param("progress", filterConditions.getProgress().name())
+					.param("progress", InstrumentProgressStatus.SELLING.name())
+					.param("sido", "서울특별시")
+					.param("sgg", "종로구")
+					.param("brand", BassGuitarBrand.FENDER.name())
+					.param("pickUp", BassGuitarPickUp.ETC.name())
+					.param("preAmplifier", BassGuitarPreAmplifier.ACTIVE.name())
+					.param("color", GuitarColor.BLUE.name())
 			)
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.numberOfElements").value(expectedResult.getNumberOfElements()))
@@ -199,7 +211,7 @@ class InstrumentControllerTest {
 	}
 
 	@Test
-	void 어쿠스틱_클래식_기타_매물_목록을_조회한다() throws Exception {
+	void 필터링_조건이_주어지고_주어진_조건에_해당하는_어쿠스틱_클래식_기타_매물_목록을_조회한다() throws Exception {
 		// given
 		long userId = 1L;
 		int page = 0;
@@ -222,7 +234,13 @@ class InstrumentControllerTest {
 					.param("page", String.valueOf(page))
 					.param("size", String.valueOf(pageSize))
 					.param("sort", sortOption.name())
-					.param("progress", filterConditions.getProgress().name())
+					.param("progress", InstrumentProgressStatus.SELLING.name())
+					.param("sido", "서울특별시")
+					.param("sgg", "종로구")
+					.param("brand", AcousticAndClassicGuitarBrand.CORT.name())
+					.param("model", AcousticAndClassicGuitarModel.JUMBO_BODY.name())
+					.param("wood", AcousticAndClassicGuitarWood.SOLID_WOOD.name())
+					.param("pickUp", AcousticAndClassicGuitarPickUp.MICROPHONE.name())
 			)
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.numberOfElements").value(expectedResult.getNumberOfElements()))
@@ -237,7 +255,7 @@ class InstrumentControllerTest {
 	}
 
 	@Test
-	void 이펙터_매물_목록을_조회한다() throws Exception {
+	void 필터링_조건이_주어지고_주어진_조건에_해당하는_이펙터_매물_목록을_조회한다() throws Exception {
 		// given
 		long userId = 1L;
 		int page = 0;
@@ -260,7 +278,11 @@ class InstrumentControllerTest {
 					.param("page", String.valueOf(page))
 					.param("size", String.valueOf(pageSize))
 					.param("sort", sortOption.name())
-					.param("progress", filterConditions.getProgress().name())
+					.param("progress", InstrumentProgressStatus.SELLING.name())
+					.param("sido", "서울특별시")
+					.param("sgg", "종로구")
+					.param("type", EffectorType.GUITAR.name())
+					.param("feature", EffectorFeature.BASS_COMPRESSOR.name())
 			)
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.numberOfElements").value(expectedResult.getNumberOfElements()))
@@ -273,7 +295,7 @@ class InstrumentControllerTest {
 	}
 
 	@Test
-	void 앰프_매물_목록을_조회한다() throws Exception {
+	void 필터링_조건이_주어지고_주어진_조건에_해당하는_앰프_매물_목록을_조회한다() throws Exception {
 		// given
 		long userId = 1L;
 		int page = 0;
@@ -296,7 +318,12 @@ class InstrumentControllerTest {
 					.param("page", String.valueOf(page))
 					.param("size", String.valueOf(pageSize))
 					.param("sort", sortOption.name())
-					.param("progress", filterConditions.getProgress().name())
+					.param("progress", InstrumentProgressStatus.SELLING.name())
+					.param("sido", "서울특별시")
+					.param("sgg", "종로구")
+					.param("type", AmplifierType.GUITAR.name())
+					.param("brand", AmplifierBrand.FENDER.name())
+					.param("usage", AmplifierUsage.HOME.name())
 			)
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.numberOfElements").value(expectedResult.getNumberOfElements()))
@@ -309,7 +336,7 @@ class InstrumentControllerTest {
 	}
 
 	@Test
-	void 음향_장비_매물_목록을_조회한다() throws Exception {
+	void 필터링_조건이_주어지고_주어진_조건에_해당하는_음향_장비_매물_목록을_조회한다() throws Exception {
 		// given
 		long userId = 1L;
 		int page = 0;
@@ -332,7 +359,10 @@ class InstrumentControllerTest {
 					.param("page", String.valueOf(page))
 					.param("size", String.valueOf(pageSize))
 					.param("sort", sortOption.name())
-					.param("progress", filterConditions.getProgress().name())
+					.param("progress", InstrumentProgressStatus.SELLING.name())
+					.param("sido", "서울특별시")
+					.param("sgg", "종로구")
+					.param("type", AudioEquipmentType.AUDIO_EQUIPMENT.name())
 			)
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.numberOfElements").value(expectedResult.getNumberOfElements()))
