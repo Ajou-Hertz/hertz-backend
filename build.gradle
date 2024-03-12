@@ -117,6 +117,7 @@ jacocoTestReport {
                         includes: [
                                 '**/service/**',
                                 '**/controller/**',
+                                '**/common/entity/FullAddress*',
                                 '**/repository/**'
                         ])
             }))
@@ -147,6 +148,7 @@ jacocoTestCoverageVerification {
             includes = [
                     '*service.*Service*',
                     '*controller.*Controller*',
+                    '*common.entity.FullAddress*',
                     '*repository.*Repository*'
             ]
         }
