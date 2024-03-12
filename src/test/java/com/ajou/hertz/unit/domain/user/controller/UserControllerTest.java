@@ -6,7 +6,6 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-import java.lang.reflect.Constructor;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Set;
@@ -38,6 +37,7 @@ import com.ajou.hertz.domain.user.dto.UserDto;
 import com.ajou.hertz.domain.user.dto.request.SignUpRequest;
 import com.ajou.hertz.domain.user.service.UserCommandService;
 import com.ajou.hertz.domain.user.service.UserQueryService;
+import com.ajou.hertz.util.ReflectionUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @DisplayName("[Unit] Controller - User")
@@ -218,11 +218,7 @@ class UserControllerTest {
 	}
 
 	private SignUpRequest createSignUpRequest(String email, String password, String phone) throws Exception {
-		Constructor<SignUpRequest> signUpRequestConstructor = SignUpRequest.class.getDeclaredConstructor(
-			String.class, String.class, LocalDate.class, Gender.class, String.class
-		);
-		signUpRequestConstructor.setAccessible(true);
-		return signUpRequestConstructor.newInstance(
+		return ReflectionUtils.createSignUpRequest(
 			email,
 			password,
 			LocalDate.of(2024, 1, 1),
@@ -240,13 +236,7 @@ class UserControllerTest {
 	}
 
 	private UserDto createUserDto(long id) throws Exception {
-		Constructor<UserDto> userResponseConstructor = UserDto.class.getDeclaredConstructor(
-			Long.class, Set.class, String.class, String.class, String.class,
-			String.class, LocalDate.class, Gender.class, String.class, String.class,
-			LocalDateTime.class
-		);
-		userResponseConstructor.setAccessible(true);
-		return userResponseConstructor.newInstance(
+		return ReflectionUtils.createUserDto(
 			id,
 			Set.of(RoleType.USER),
 			"test@mail.com",

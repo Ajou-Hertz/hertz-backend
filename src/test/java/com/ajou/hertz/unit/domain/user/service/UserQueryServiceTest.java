@@ -3,7 +3,6 @@ package com.ajou.hertz.unit.domain.user.service;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
 
-import java.lang.reflect.Constructor;
 import java.time.LocalDate;
 import java.util.Optional;
 import java.util.Set;
@@ -24,6 +23,7 @@ import com.ajou.hertz.domain.user.exception.UserNotFoundByIdException;
 import com.ajou.hertz.domain.user.exception.UserNotFoundByPhoneException;
 import com.ajou.hertz.domain.user.repository.UserRepository;
 import com.ajou.hertz.domain.user.service.UserQueryService;
+import com.ajou.hertz.util.ReflectionUtils;
 
 @DisplayName("[Unit] Service(Query) - User")
 @ExtendWith(MockitoExtension.class)
@@ -205,12 +205,7 @@ class UserQueryServiceTest {
 	}
 
 	private User createUser(Long id, String email, String kakaoUid, String phone) throws Exception {
-		Constructor<User> userConstructor = User.class.getDeclaredConstructor(
-			Long.class, Set.class, String.class, String.class, String.class,
-			String.class, LocalDate.class, Gender.class, String.class, String.class
-		);
-		userConstructor.setAccessible(true);
-		return userConstructor.newInstance(
+		return ReflectionUtils.createUser(
 			id,
 			Set.of(RoleType.USER),
 			email,

@@ -2,7 +2,6 @@ package com.ajou.hertz.integration.domain.instrument.repository;
 
 import static org.assertj.core.api.Assertions.*;
 
-import java.lang.reflect.Constructor;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
@@ -49,6 +48,7 @@ import com.ajou.hertz.domain.user.constant.Gender;
 import com.ajou.hertz.domain.user.constant.RoleType;
 import com.ajou.hertz.domain.user.entity.User;
 import com.ajou.hertz.domain.user.repository.UserRepository;
+import com.ajou.hertz.util.ReflectionUtils;
 
 @DisplayName("[Integration] Repository - Instrument")
 @ActiveProfiles("test")
@@ -73,7 +73,7 @@ class InstrumentRepositoryTest {
 		// given
 		InstrumentSortOption sortOption = InstrumentSortOption.CREATED_BY_DESC;
 		InstrumentFilterConditions filterConditions =
-			createInstrumentFilterConditions(InstrumentProgressStatus.SELLING);
+			createEmptyInstrumentFilterConditions(InstrumentProgressStatus.SELLING);
 		User user = userRepository.save(createUser());
 		List<Instrument> savedInstruments = sut.saveAll(List.of(
 			createBassGuitar(user),
@@ -92,7 +92,7 @@ class InstrumentRepositoryTest {
 	void 베이스_기타_목록을_조회한다() throws Exception {
 		// given
 		InstrumentSortOption sortOption = InstrumentSortOption.CREATED_BY_DESC;
-		InstrumentFilterConditions filterConditions = createInstrumentFilterConditions();
+		InstrumentFilterConditions filterConditions = createEmptyInstrumentFilterConditions();
 		User user = userRepository.save(createUser());
 		List<Instrument> savedInstruments = sut.saveAll(List.of(
 			createElectricGuitar(user),
@@ -111,7 +111,7 @@ class InstrumentRepositoryTest {
 	void 어쿠스틱_클래식_기타_목록을_조회한다() throws Exception {
 		// given
 		InstrumentSortOption sortOption = InstrumentSortOption.CREATED_BY_DESC;
-		InstrumentFilterConditions filterConditions = createInstrumentFilterConditions();
+		InstrumentFilterConditions filterConditions = createEmptyInstrumentFilterConditions();
 		User user = userRepository.save(createUser());
 		List<Instrument> savedInstruments = sut.saveAll(List.of(
 			createElectricGuitar(user),
@@ -132,7 +132,7 @@ class InstrumentRepositoryTest {
 	void 이펙터_목록을_조회한다() throws Exception {
 		// given
 		InstrumentSortOption sortOption = InstrumentSortOption.CREATED_BY_DESC;
-		InstrumentFilterConditions filterConditions = createInstrumentFilterConditions();
+		InstrumentFilterConditions filterConditions = createEmptyInstrumentFilterConditions();
 		User user = userRepository.save(createUser());
 		List<Instrument> savedInstruments = sut.saveAll(List.of(
 			createElectricGuitar(user),
@@ -151,7 +151,7 @@ class InstrumentRepositoryTest {
 	void 앰프_목록을_조회한다() throws Exception {
 		// given
 		InstrumentSortOption sortOption = InstrumentSortOption.CREATED_BY_DESC;
-		InstrumentFilterConditions filterConditions = createInstrumentFilterConditions();
+		InstrumentFilterConditions filterConditions = createEmptyInstrumentFilterConditions();
 		User user = userRepository.save(createUser());
 		List<Instrument> savedInstruments = sut.saveAll(List.of(
 			createElectricGuitar(user),
@@ -170,7 +170,7 @@ class InstrumentRepositoryTest {
 	void 음향_장비_목록을_조회한다() throws Exception {
 		// given
 		InstrumentSortOption sortOption = InstrumentSortOption.CREATED_BY_ASC;
-		InstrumentFilterConditions filterConditions = createInstrumentFilterConditions();
+		InstrumentFilterConditions filterConditions = createEmptyInstrumentFilterConditions();
 		User user = userRepository.save(createUser());
 		List<Instrument> savedInstruments = sut.saveAll(List.of(
 			createElectricGuitar(user),
@@ -190,12 +190,7 @@ class InstrumentRepositoryTest {
 	}
 
 	private User createUser() throws Exception {
-		Constructor<User> userConstructor = User.class.getDeclaredConstructor(
-			Long.class, Set.class, String.class, String.class, String.class,
-			String.class, LocalDate.class, Gender.class, String.class, String.class
-		);
-		userConstructor.setAccessible(true);
-		return userConstructor.newInstance(
+		return ReflectionUtils.createUser(
 			null,
 			Set.of(RoleType.USER),
 			"test@mail.com",
@@ -210,13 +205,7 @@ class InstrumentRepositoryTest {
 	}
 
 	private ElectricGuitar createElectricGuitar(User seller) throws Exception {
-		Constructor<ElectricGuitar> electricGuitarConstructor = ElectricGuitar.class.getDeclaredConstructor(
-			Long.class, User.class, String.class, InstrumentProgressStatus.class, Address.class, Short.class,
-			Integer.class, Boolean.class, String.class, ElectricGuitarBrand.class, ElectricGuitarModel.class,
-			Short.class, GuitarColor.class
-		);
-		electricGuitarConstructor.setAccessible(true);
-		return electricGuitarConstructor.newInstance(
+		return ReflectionUtils.createElectricGuitar(
 			null,
 			seller,
 			"Test electric guitar",
@@ -234,13 +223,7 @@ class InstrumentRepositoryTest {
 	}
 
 	private BassGuitar createBassGuitar(User seller) throws Exception {
-		Constructor<BassGuitar> bassGuitarConstructor = BassGuitar.class.getDeclaredConstructor(
-			Long.class, User.class, String.class, InstrumentProgressStatus.class, Address.class,
-			Short.class, Integer.class, Boolean.class, String.class,
-			BassGuitarBrand.class, BassGuitarPickUp.class, BassGuitarPreAmplifier.class, GuitarColor.class
-		);
-		bassGuitarConstructor.setAccessible(true);
-		return bassGuitarConstructor.newInstance(
+		return ReflectionUtils.createBassGuitar(
 			null,
 			seller,
 			"Test electric guitar",
@@ -258,15 +241,7 @@ class InstrumentRepositoryTest {
 	}
 
 	private AcousticAndClassicGuitar createAcousticAndClassicGuitar(User seller) throws Exception {
-		Constructor<AcousticAndClassicGuitar> acousticAndClassicGuitarConstructor =
-			AcousticAndClassicGuitar.class.getDeclaredConstructor(
-				Long.class, User.class, String.class, InstrumentProgressStatus.class, Address.class,
-				Short.class, Integer.class, Boolean.class, String.class,
-				AcousticAndClassicGuitarBrand.class, AcousticAndClassicGuitarModel.class,
-				AcousticAndClassicGuitarWood.class, AcousticAndClassicGuitarPickUp.class
-			);
-		acousticAndClassicGuitarConstructor.setAccessible(true);
-		return acousticAndClassicGuitarConstructor.newInstance(
+		return ReflectionUtils.createAcousticAndClassicGuitar(
 			null,
 			seller,
 			"Test electric guitar",
@@ -284,13 +259,7 @@ class InstrumentRepositoryTest {
 	}
 
 	private Effector createEffector(User seller) throws Exception {
-		Constructor<Effector> effectorConstructor = Effector.class.getDeclaredConstructor(
-			Long.class, User.class, String.class, InstrumentProgressStatus.class, Address.class,
-			Short.class, Integer.class, Boolean.class, String.class,
-			EffectorType.class, EffectorFeature.class
-		);
-		effectorConstructor.setAccessible(true);
-		return effectorConstructor.newInstance(
+		return ReflectionUtils.createEffector(
 			null,
 			seller,
 			"Title",
@@ -306,13 +275,7 @@ class InstrumentRepositoryTest {
 	}
 
 	private Amplifier createAmplifier(User seller) throws Exception {
-		Constructor<Amplifier> amplifierConstructor = Amplifier.class.getDeclaredConstructor(
-			Long.class, User.class, String.class, InstrumentProgressStatus.class, Address.class,
-			Short.class, Integer.class, Boolean.class, String.class,
-			AmplifierType.class, AmplifierBrand.class, AmplifierUsage.class
-		);
-		amplifierConstructor.setAccessible(true);
-		return amplifierConstructor.newInstance(
+		return ReflectionUtils.createAmplifier(
 			null,
 			seller,
 			"Title",
@@ -329,13 +292,7 @@ class InstrumentRepositoryTest {
 	}
 
 	private AudioEquipment createAudioEquipment(User seller) throws Exception {
-		Constructor<AudioEquipment> audioEquipmentConstructor = AudioEquipment.class.getDeclaredConstructor(
-			Long.class, User.class, String.class, InstrumentProgressStatus.class, Address.class,
-			Short.class, Integer.class, Boolean.class, String.class,
-			AudioEquipmentType.class
-		);
-		audioEquipmentConstructor.setAccessible(true);
-		return audioEquipmentConstructor.newInstance(
+		return ReflectionUtils.createAudioEquipment(
 			null,
 			seller,
 			"Title",
@@ -349,18 +306,13 @@ class InstrumentRepositoryTest {
 		);
 	}
 
-	private InstrumentFilterConditions createInstrumentFilterConditions() throws Exception {
-		Constructor<InstrumentFilterConditions> instrumentFilterConditionsConstructor =
-			InstrumentFilterConditions.class.getDeclaredConstructor();
-		instrumentFilterConditionsConstructor.setAccessible(true);
-		return instrumentFilterConditionsConstructor.newInstance();
+	private InstrumentFilterConditions createEmptyInstrumentFilterConditions() throws Exception {
+		return ReflectionUtils.createInstrumentFilterConditions(null);
 	}
 
-	private InstrumentFilterConditions createInstrumentFilterConditions(InstrumentProgressStatus progressStatus) throws
-		Exception {
-		Constructor<InstrumentFilterConditions> instrumentFilterConditionsConstructor =
-			InstrumentFilterConditions.class.getDeclaredConstructor(InstrumentProgressStatus.class);
-		instrumentFilterConditionsConstructor.setAccessible(true);
-		return instrumentFilterConditionsConstructor.newInstance(progressStatus);
+	private InstrumentFilterConditions createEmptyInstrumentFilterConditions(
+		InstrumentProgressStatus progressStatus
+	) throws Exception {
+		return ReflectionUtils.createInstrumentFilterConditions(progressStatus);
 	}
 }

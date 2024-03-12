@@ -3,7 +3,6 @@ package com.ajou.hertz.unit.common.auth.service;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
 
-import java.lang.reflect.Constructor;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Set;
@@ -25,6 +24,7 @@ import com.ajou.hertz.domain.user.constant.Gender;
 import com.ajou.hertz.domain.user.constant.RoleType;
 import com.ajou.hertz.domain.user.dto.UserDto;
 import com.ajou.hertz.domain.user.service.UserQueryService;
+import com.ajou.hertz.util.ReflectionUtils;
 
 @DisplayName("[Unit] Service - Auth")
 @ExtendWith(MockitoExtension.class)
@@ -90,13 +90,7 @@ class AuthServiceTest {
 	}
 
 	private LoginRequest createLoginRequest() throws Exception {
-		Constructor<LoginRequest> loginRequestConstructor =
-			LoginRequest.class.getDeclaredConstructor(String.class, String.class);
-		loginRequestConstructor.setAccessible(true);
-		return loginRequestConstructor.newInstance(
-			"test@mail.com",
-			"encoded-password"
-		);
+		return ReflectionUtils.createLoginRequest("test@mail.com", "encoded-password");
 	}
 
 	private JwtTokenInfoDto createJwtTokenInfoDto() {
@@ -107,13 +101,7 @@ class AuthServiceTest {
 	}
 
 	private UserDto createUserDto(long id) throws Exception {
-		Constructor<UserDto> userResponseConstructor = UserDto.class.getDeclaredConstructor(
-			Long.class, Set.class, String.class, String.class, String.class,
-			String.class, LocalDate.class, Gender.class, String.class, String.class,
-			LocalDateTime.class
-		);
-		userResponseConstructor.setAccessible(true);
-		return userResponseConstructor.newInstance(
+		return ReflectionUtils.createUserDto(
 			id,
 			Set.of(RoleType.USER),
 			"test@mail.com",
