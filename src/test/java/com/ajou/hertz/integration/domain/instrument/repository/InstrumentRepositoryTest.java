@@ -93,6 +93,42 @@ class InstrumentRepositoryTest {
 	}
 
 	@Test
+	void 필터링_조건이_주어지고_일렉_기타_목록을_조회하면_조건에_일치하는_매물이_조회된다() throws Exception {
+		// given
+		InstrumentSortOption sortOption = InstrumentSortOption.CREATED_BY_DESC;
+		ElectricGuitarFilterConditions filterConditions = createElectricGuitarFilterConditions(
+			InstrumentProgressStatus.SELLING,
+			ElectricGuitarBrand.FENDER_USA,
+			ElectricGuitarModel.TELECASTER,
+			GuitarColor.RED
+		);
+		User user = userRepository.save(createUser());
+		sut.saveAll(List.of(
+			createBassGuitar(user),
+			createElectricGuitar(
+				user,
+				InstrumentProgressStatus.SELLING,
+				ElectricGuitarBrand.FENDER_JAPAN,
+				ElectricGuitarModel.TELECASTER,
+				GuitarColor.BLACK
+			),
+			createElectricGuitar(
+				user,
+				InstrumentProgressStatus.SELLING,
+				ElectricGuitarBrand.FENDER_USA,
+				ElectricGuitarModel.TELECASTER,
+				GuitarColor.RED
+			)
+		));
+
+		// when
+		Page<ElectricGuitar> result = sut.findElectricGuitars(0, 10, sortOption, filterConditions);
+
+		// then
+		assertThat(result.getNumberOfElements()).isEqualTo(1);
+	}
+
+	@Test
 	void 베이스_기타_목록을_조회한다() throws Exception {
 		// given
 		InstrumentSortOption sortOption = InstrumentSortOption.CREATED_BY_DESC;
@@ -207,6 +243,30 @@ class InstrumentRepositoryTest {
 		);
 	}
 
+	private ElectricGuitar createElectricGuitar(
+		User seller,
+		InstrumentProgressStatus progressStatus,
+		ElectricGuitarBrand brand,
+		ElectricGuitarModel model,
+		GuitarColor color
+	) throws Exception {
+		return ReflectionUtils.createElectricGuitar(
+			null,
+			seller,
+			"Test electric guitar",
+			progressStatus,
+			createAddress(),
+			(short)3,
+			550000,
+			true,
+			"description",
+			brand,
+			model,
+			(short)2014,
+			color
+		);
+	}
+
 	private ElectricGuitar createElectricGuitar(User seller) throws Exception {
 		return ReflectionUtils.createElectricGuitar(
 			null,
@@ -311,6 +371,15 @@ class InstrumentRepositoryTest {
 
 	private ElectricGuitarFilterConditions createEmptyElectricGuitarFilterConditions() throws Exception {
 		return ReflectionUtils.createElectricGuitarFilterConditions(null, null, null, null, null, null);
+	}
+
+	private ElectricGuitarFilterConditions createElectricGuitarFilterConditions(
+		InstrumentProgressStatus progressStatus,
+		ElectricGuitarBrand brand,
+		ElectricGuitarModel model,
+		GuitarColor color
+	) throws Exception {
+		return ReflectionUtils.createElectricGuitarFilterConditions(progressStatus, null, null, brand, model, color);
 	}
 
 	private BassGuitarFilterConditions createEmptyBassGuitarFilterConditions() throws Exception {
