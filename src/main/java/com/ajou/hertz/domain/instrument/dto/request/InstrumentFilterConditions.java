@@ -13,7 +13,7 @@ import lombok.Setter;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Setter    // for @ModelAttribute
 @Getter
-public class InstrumentFilterConditions {    // TODO: abstract class로 전환
+public class InstrumentFilterConditions {
 
 	private InstrumentProgressStatus progress;
 
