@@ -37,10 +37,10 @@ import com.ajou.hertz.domain.instrument.constant.InstrumentProgressStatus;
 import com.ajou.hertz.domain.instrument.constant.InstrumentSortOption;
 import com.ajou.hertz.domain.instrument.dto.request.AcousticAndClassicGuitarFilterConditions;
 import com.ajou.hertz.domain.instrument.dto.request.AmplifierFilterConditions;
+import com.ajou.hertz.domain.instrument.dto.request.AudioEquipmentFilterConditions;
 import com.ajou.hertz.domain.instrument.dto.request.BassGuitarFilterConditions;
 import com.ajou.hertz.domain.instrument.dto.request.EffectorFilterConditions;
 import com.ajou.hertz.domain.instrument.dto.request.ElectricGuitarFilterConditions;
-import com.ajou.hertz.domain.instrument.dto.request.InstrumentFilterConditions;
 import com.ajou.hertz.domain.instrument.entity.AcousticAndClassicGuitar;
 import com.ajou.hertz.domain.instrument.entity.Amplifier;
 import com.ajou.hertz.domain.instrument.entity.AudioEquipment;
@@ -173,7 +173,7 @@ class InstrumentRepositoryTest {
 	void 음향_장비_목록을_조회한다() throws Exception {
 		// given
 		InstrumentSortOption sortOption = InstrumentSortOption.CREATED_BY_ASC;
-		InstrumentFilterConditions filterConditions = createEmptyInstrumentFilterConditions();
+		AudioEquipmentFilterConditions filterConditions = createAudioEquipmentFilterConditions();
 		User user = userRepository.save(createUser());
 		List<Instrument> savedInstruments = sut.saveAll(List.of(
 			createElectricGuitar(user),
@@ -309,10 +309,6 @@ class InstrumentRepositoryTest {
 		);
 	}
 
-	private InstrumentFilterConditions createEmptyInstrumentFilterConditions() throws Exception {
-		return ReflectionUtils.createInstrumentFilterConditions(null, null, null);
-	}
-
 	private ElectricGuitarFilterConditions createEmptyElectricGuitarFilterConditions() throws Exception {
 		return ReflectionUtils.createElectricGuitarFilterConditions(null, null, null, null, null, null);
 	}
@@ -332,5 +328,9 @@ class InstrumentRepositoryTest {
 
 	private AmplifierFilterConditions createEmptyAmplifierFilterConditions() throws Exception {
 		return ReflectionUtils.createAmplifierFilterConditions(null, null, null, null, null, null);
+	}
+
+	private AudioEquipmentFilterConditions createAudioEquipmentFilterConditions() throws Exception {
+		return ReflectionUtils.createAudioEquipmentFilterConditions(null, null, null, null);
 	}
 }

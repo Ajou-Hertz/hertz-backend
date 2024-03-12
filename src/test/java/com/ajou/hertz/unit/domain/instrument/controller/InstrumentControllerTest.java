@@ -58,6 +58,7 @@ import com.ajou.hertz.domain.instrument.dto.InstrumentDto;
 import com.ajou.hertz.domain.instrument.dto.InstrumentImageDto;
 import com.ajou.hertz.domain.instrument.dto.request.AcousticAndClassicGuitarFilterConditions;
 import com.ajou.hertz.domain.instrument.dto.request.AmplifierFilterConditions;
+import com.ajou.hertz.domain.instrument.dto.request.AudioEquipmentFilterConditions;
 import com.ajou.hertz.domain.instrument.dto.request.BassGuitarFilterConditions;
 import com.ajou.hertz.domain.instrument.dto.request.CreateNewAcousticAndClassicGuitarRequest;
 import com.ajou.hertz.domain.instrument.dto.request.CreateNewAmplifierRequest;
@@ -321,7 +322,7 @@ class InstrumentControllerTest {
 			createAudioEquipmentDto(4L, userId)
 		));
 		given(instrumentQueryService.findAudioEquipments(
-			eq(page), eq(pageSize), eq(sortOption), any(InstrumentFilterConditions.class)
+			eq(page), eq(pageSize), eq(sortOption), any(AudioEquipmentFilterConditions.class)
 		)).willReturn(expectedResult);
 
 		// when & then
@@ -339,7 +340,7 @@ class InstrumentControllerTest {
 			.andExpect(jsonPath("$.content", hasSize(expectedResult.getNumberOfElements())));
 		then(instrumentQueryService)
 			.should()
-			.findAudioEquipments(eq(page), eq(pageSize), eq(sortOption), any(InstrumentFilterConditions.class));
+			.findAudioEquipments(eq(page), eq(pageSize), eq(sortOption), any(AudioEquipmentFilterConditions.class));
 		verifyEveryMocksShouldHaveNoMoreInteractions();
 	}
 

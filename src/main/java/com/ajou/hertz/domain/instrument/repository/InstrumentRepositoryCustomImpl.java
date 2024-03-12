@@ -2,10 +2,10 @@ package com.ajou.hertz.domain.instrument.repository;
 
 import static com.ajou.hertz.domain.instrument.entity.QAcousticAndClassicGuitar.*;
 import static com.ajou.hertz.domain.instrument.entity.QAmplifier.*;
+import static com.ajou.hertz.domain.instrument.entity.QAudioEquipment.*;
 import static com.ajou.hertz.domain.instrument.entity.QBassGuitar.*;
 import static com.ajou.hertz.domain.instrument.entity.QEffector.*;
 import static com.ajou.hertz.domain.instrument.entity.QElectricGuitar.*;
-import static com.ajou.hertz.domain.instrument.entity.QInstrument.*;
 import static com.ajou.hertz.domain.user.entity.QUser.*;
 
 import java.util.ArrayList;
@@ -24,6 +24,7 @@ import com.ajou.hertz.domain.instrument.constant.AcousticAndClassicGuitarWood;
 import com.ajou.hertz.domain.instrument.constant.AmplifierBrand;
 import com.ajou.hertz.domain.instrument.constant.AmplifierType;
 import com.ajou.hertz.domain.instrument.constant.AmplifierUsage;
+import com.ajou.hertz.domain.instrument.constant.AudioEquipmentType;
 import com.ajou.hertz.domain.instrument.constant.BassGuitarBrand;
 import com.ajou.hertz.domain.instrument.constant.BassGuitarPickUp;
 import com.ajou.hertz.domain.instrument.constant.BassGuitarPreAmplifier;
@@ -36,10 +37,10 @@ import com.ajou.hertz.domain.instrument.constant.InstrumentProgressStatus;
 import com.ajou.hertz.domain.instrument.constant.InstrumentSortOption;
 import com.ajou.hertz.domain.instrument.dto.request.AcousticAndClassicGuitarFilterConditions;
 import com.ajou.hertz.domain.instrument.dto.request.AmplifierFilterConditions;
+import com.ajou.hertz.domain.instrument.dto.request.AudioEquipmentFilterConditions;
 import com.ajou.hertz.domain.instrument.dto.request.BassGuitarFilterConditions;
 import com.ajou.hertz.domain.instrument.dto.request.EffectorFilterConditions;
 import com.ajou.hertz.domain.instrument.dto.request.ElectricGuitarFilterConditions;
-import com.ajou.hertz.domain.instrument.dto.request.InstrumentFilterConditions;
 import com.ajou.hertz.domain.instrument.entity.AcousticAndClassicGuitar;
 import com.ajou.hertz.domain.instrument.entity.Amplifier;
 import com.ajou.hertz.domain.instrument.entity.AudioEquipment;
@@ -228,39 +229,26 @@ public class InstrumentRepositoryCustomImpl implements InstrumentRepositoryCusto
 		int page,
 		int pageSize,
 		InstrumentSortOption sort,
-		InstrumentFilterConditions filterConditions
-	) {
-		return findInstrumentsByClassType(AudioEquipment.class, page, pageSize, sort, filterConditions);
-	}
-
-	private <T extends Instrument> Page<T> findInstrumentsByClassType(
-		Class<T> classType,
-		int page,
-		int pageSize,
-		InstrumentSortOption sort,
-		InstrumentFilterConditions filterConditions
+		AudioEquipmentFilterConditions filterConditions
 	) {
 		PageRequest pageable = PageRequest.of(page, pageSize, sort.toSort());
 
-		List<Predicate> conditions = new ArrayList<>();
-		conditions.add(instrument.instanceOf(classType));
+		List<Predicate> conditions =
+			new ArrayList<>(convertAudioEquipmentFilterConditionsToPredicates(filterConditions));
 
-		List<T> content = queryFactory
-			.selectFrom(instrument)
-			.join(instrument.seller, user).fetchJoin()
+		List<AudioEquipment> content = queryFactory
+			.selectFrom(audioEquipment)
+			.join(audioEquipment.seller, user).fetchJoin()
 			.where(conditions.toArray(Predicate[]::new))
 			.offset(pageable.getOffset())
 			.limit(pageable.getPageSize())
-			.orderBy(convertSortToOrderSpecifiers(pageable.getSort(), createPathBuilder(instrument)))
-			.fetch()
-			.stream()
-			.map(classType::cast)
-			.toList();
+			.orderBy(convertSortToOrderSpecifiers(pageable.getSort(), createPathBuilder(audioEquipment)))
+			.fetch();
 
 		long totalCount = Optional.ofNullable(
-			queryFactory.select(instrument.count())
-				.from(instrument)
-				.join(instrument.seller, user)
+			queryFactory.select(audioEquipment.count())
+				.from(audioEquipment)
+				.join(audioEquipment.seller, user)
 				.where(conditions.toArray(Predicate[]::new))
 				.fetchOne()
 		).orElse(0L);
@@ -313,9 +301,9 @@ public class InstrumentRepositoryCustomImpl implements InstrumentRepositoryCusto
 		AcousticAndClassicGuitarFilterConditions filterConditions
 	) {
 		List<Predicate> res = new ArrayList<>();
-		res.add(applyProgressStatusCondition(filterConditions.getProgress(), bassGuitar.progressStatus));
-		res.add(applyTradeAddressSidoCondition(filterConditions.getSido(), bassGuitar.tradeAddress.sido));
-		res.add(applyTradeAddressSggCondition(filterConditions.getSgg(), bassGuitar.tradeAddress.sgg));
+		res.add(applyProgressStatusCondition(filterConditions.getProgress(), acousticAndClassicGuitar.progressStatus));
+		res.add(applyTradeAddressSidoCondition(filterConditions.getSido(), acousticAndClassicGuitar.tradeAddress.sido));
+		res.add(applyTradeAddressSggCondition(filterConditions.getSgg(), acousticAndClassicGuitar.tradeAddress.sgg));
 		res.add(applyAcousticAndClassicGuitarBrandCondition(filterConditions.getBrand()));
 		res.add(applyAcousticAndClassicGuitarModelCondition(filterConditions.getModel()));
 		res.add(applyAcousticAndClassicGuitarWood(filterConditions.getWood()));
@@ -327,9 +315,9 @@ public class InstrumentRepositoryCustomImpl implements InstrumentRepositoryCusto
 		EffectorFilterConditions filterConditions
 	) {
 		List<Predicate> res = new ArrayList<>();
-		res.add(applyProgressStatusCondition(filterConditions.getProgress(), bassGuitar.progressStatus));
-		res.add(applyTradeAddressSidoCondition(filterConditions.getSido(), bassGuitar.tradeAddress.sido));
-		res.add(applyTradeAddressSggCondition(filterConditions.getSgg(), bassGuitar.tradeAddress.sgg));
+		res.add(applyProgressStatusCondition(filterConditions.getProgress(), effector.progressStatus));
+		res.add(applyTradeAddressSidoCondition(filterConditions.getSido(), effector.tradeAddress.sido));
+		res.add(applyTradeAddressSggCondition(filterConditions.getSgg(), effector.tradeAddress.sgg));
 		res.add(applyEffectorTypeCondition(filterConditions.getType()));
 		res.add(applyEffectorFeatureCondition(filterConditions.getFeature()));
 		return res;
@@ -339,12 +327,23 @@ public class InstrumentRepositoryCustomImpl implements InstrumentRepositoryCusto
 		AmplifierFilterConditions filterConditions
 	) {
 		List<Predicate> res = new ArrayList<>();
-		res.add(applyProgressStatusCondition(filterConditions.getProgress(), bassGuitar.progressStatus));
-		res.add(applyTradeAddressSidoCondition(filterConditions.getSido(), bassGuitar.tradeAddress.sido));
-		res.add(applyTradeAddressSggCondition(filterConditions.getSgg(), bassGuitar.tradeAddress.sgg));
+		res.add(applyProgressStatusCondition(filterConditions.getProgress(), amplifier.progressStatus));
+		res.add(applyTradeAddressSidoCondition(filterConditions.getSido(), amplifier.tradeAddress.sido));
+		res.add(applyTradeAddressSggCondition(filterConditions.getSgg(), amplifier.tradeAddress.sgg));
 		res.add(applyAmplifierTypeCondition(filterConditions.getType()));
 		res.add(applyAmplifierBrandCondition(filterConditions.getBrand()));
 		res.add(applyAmplifierUsageCondition(filterConditions.getUsage()));
+		return res;
+	}
+
+	private List<Predicate> convertAudioEquipmentFilterConditionsToPredicates(
+		AudioEquipmentFilterConditions filterConditions
+	) {
+		List<Predicate> res = new ArrayList<>();
+		res.add(applyProgressStatusCondition(filterConditions.getProgress(), audioEquipment.progressStatus));
+		res.add(applyTradeAddressSidoCondition(filterConditions.getSido(), audioEquipment.tradeAddress.sido));
+		res.add(applyTradeAddressSggCondition(filterConditions.getSgg(), audioEquipment.tradeAddress.sgg));
+		res.add(applyAudioEquipmentTypeCondition(filterConditions.getType()));
 		return res;
 	}
 
@@ -421,6 +420,10 @@ public class InstrumentRepositoryCustomImpl implements InstrumentRepositoryCusto
 
 	private BooleanExpression applyAmplifierUsageCondition(AmplifierUsage usage) {
 		return createCondition(usage, amplifier.usage);
+	}
+
+	private BooleanExpression applyAudioEquipmentTypeCondition(AudioEquipmentType type) {
+		return createCondition(type, audioEquipment.type);
 	}
 
 	private <T extends Comparable<T>> BooleanExpression createCondition(T value, ComparableExpression<T> path) {

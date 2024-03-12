@@ -44,6 +44,7 @@ import com.ajou.hertz.domain.instrument.dto.ElectricGuitarDto;
 import com.ajou.hertz.domain.instrument.dto.InstrumentImageDto;
 import com.ajou.hertz.domain.instrument.dto.request.AcousticAndClassicGuitarFilterConditions;
 import com.ajou.hertz.domain.instrument.dto.request.AmplifierFilterConditions;
+import com.ajou.hertz.domain.instrument.dto.request.AudioEquipmentFilterConditions;
 import com.ajou.hertz.domain.instrument.dto.request.BassGuitarFilterConditions;
 import com.ajou.hertz.domain.instrument.dto.request.CreateNewAcousticAndClassicGuitarRequest;
 import com.ajou.hertz.domain.instrument.dto.request.CreateNewAmplifierRequest;
@@ -580,11 +581,12 @@ public class ReflectionUtils {
 		Short productionYear,
 		GuitarColor color
 	) throws Exception {
-		Constructor<CreateNewElectricGuitarRequest> constructor = CreateNewElectricGuitarRequest.class.getDeclaredConstructor(
-			String.class, List.class, InstrumentProgressStatus.class, AddressRequest.class,
-			Short.class, Integer.class, Boolean.class, String.class, ElectricGuitarBrand.class,
-			ElectricGuitarModel.class, Short.class, GuitarColor.class, List.class
-		);
+		Constructor<CreateNewElectricGuitarRequest> constructor =
+			CreateNewElectricGuitarRequest.class.getDeclaredConstructor(
+				String.class, List.class, InstrumentProgressStatus.class, AddressRequest.class,
+				Short.class, Integer.class, Boolean.class, String.class, ElectricGuitarBrand.class,
+				ElectricGuitarModel.class, Short.class, GuitarColor.class, List.class
+			);
 		constructor.setAccessible(true);
 		return constructor.newInstance(
 			title, images, progressStatus, tradeAddress, qualityStatus, price, hasAnomaly, description,
@@ -634,12 +636,13 @@ public class ReflectionUtils {
 		AcousticAndClassicGuitarWood wood,
 		AcousticAndClassicGuitarPickUp pickUp
 	) throws Exception {
-		Constructor<CreateNewAcousticAndClassicGuitarRequest> constructor = CreateNewAcousticAndClassicGuitarRequest.class.getDeclaredConstructor(
-			String.class, InstrumentProgressStatus.class, AddressRequest.class, Short.class,
-			Integer.class, Boolean.class, String.class, List.class, List.class,
-			AcousticAndClassicGuitarBrand.class, AcousticAndClassicGuitarModel.class,
-			AcousticAndClassicGuitarWood.class, AcousticAndClassicGuitarPickUp.class
-		);
+		Constructor<CreateNewAcousticAndClassicGuitarRequest> constructor =
+			CreateNewAcousticAndClassicGuitarRequest.class.getDeclaredConstructor(
+				String.class, InstrumentProgressStatus.class, AddressRequest.class, Short.class,
+				Integer.class, Boolean.class, String.class, List.class, List.class,
+				AcousticAndClassicGuitarBrand.class, AcousticAndClassicGuitarModel.class,
+				AcousticAndClassicGuitarWood.class, AcousticAndClassicGuitarPickUp.class
+			);
 		constructor.setAccessible(true);
 		return constructor.newInstance(
 			title, progressStatus, tradeAddress, qualityStatus, price, hasAnomaly, description, images, hashtags,
@@ -710,11 +713,12 @@ public class ReflectionUtils {
 		List<String> hashtags,
 		AudioEquipmentType type
 	) throws Exception {
-		Constructor<CreateNewAudioEquipmentRequest> constructor = CreateNewAudioEquipmentRequest.class.getDeclaredConstructor(
-			String.class, InstrumentProgressStatus.class, AddressRequest.class, Short.class,
-			Integer.class, Boolean.class, String.class, List.class, List.class,
-			AudioEquipmentType.class
-		);
+		Constructor<CreateNewAudioEquipmentRequest> constructor =
+			CreateNewAudioEquipmentRequest.class.getDeclaredConstructor(
+				String.class, InstrumentProgressStatus.class, AddressRequest.class, Short.class,
+				Integer.class, Boolean.class, String.class, List.class, List.class,
+				AudioEquipmentType.class
+			);
 		constructor.setAccessible(true);
 		return constructor.newInstance(
 			title, progressStatus, tradeAddress, qualityStatus, price, hasAnomaly, description, images, hashtags, type
@@ -741,10 +745,11 @@ public class ReflectionUtils {
 		ElectricGuitarModel model,
 		GuitarColor color
 	) throws Exception {
-		Constructor<ElectricGuitarFilterConditions> constructor = ElectricGuitarFilterConditions.class.getDeclaredConstructor(
-			InstrumentProgressStatus.class, String.class, String.class,
-			ElectricGuitarBrand.class, ElectricGuitarModel.class, GuitarColor.class
-		);
+		Constructor<ElectricGuitarFilterConditions> constructor =
+			ElectricGuitarFilterConditions.class.getDeclaredConstructor(
+				InstrumentProgressStatus.class, String.class, String.class,
+				ElectricGuitarBrand.class, ElectricGuitarModel.class, GuitarColor.class
+			);
 		constructor.setAccessible(true);
 		return constructor.newInstance(progressStatus, sido, sgg, brand, model, color);
 	}
@@ -775,11 +780,12 @@ public class ReflectionUtils {
 		AcousticAndClassicGuitarWood wood,
 		AcousticAndClassicGuitarPickUp pickUp
 	) throws Exception {
-		Constructor<AcousticAndClassicGuitarFilterConditions> constructor = AcousticAndClassicGuitarFilterConditions.class.getDeclaredConstructor(
-			InstrumentProgressStatus.class, String.class, String.class,
-			AcousticAndClassicGuitarBrand.class, AcousticAndClassicGuitarModel.class,
-			AcousticAndClassicGuitarWood.class, AcousticAndClassicGuitarPickUp.class
-		);
+		Constructor<AcousticAndClassicGuitarFilterConditions> constructor =
+			AcousticAndClassicGuitarFilterConditions.class.getDeclaredConstructor(
+				InstrumentProgressStatus.class, String.class, String.class,
+				AcousticAndClassicGuitarBrand.class, AcousticAndClassicGuitarModel.class,
+				AcousticAndClassicGuitarWood.class, AcousticAndClassicGuitarPickUp.class
+			);
 		constructor.setAccessible(true);
 		return constructor.newInstance(progressStatus, sido, sgg, brand, model, wood, pickUp);
 	}
@@ -813,6 +819,20 @@ public class ReflectionUtils {
 		);
 		constructor.setAccessible(true);
 		return constructor.newInstance(progressStatus, sido, sgg, type, brand, usage);
+	}
+
+	public static AudioEquipmentFilterConditions createAudioEquipmentFilterConditions(
+		InstrumentProgressStatus progressStatus,
+		String sido,
+		String sgg,
+		AudioEquipmentType type
+	) throws Exception {
+		Constructor<AudioEquipmentFilterConditions> constructor =
+			AudioEquipmentFilterConditions.class.getDeclaredConstructor(
+				InstrumentProgressStatus.class, String.class, String.class, AudioEquipmentType.class
+			);
+		constructor.setAccessible(true);
+		return constructor.newInstance(progressStatus, sido, sgg, type);
 	}
 
 	/**
