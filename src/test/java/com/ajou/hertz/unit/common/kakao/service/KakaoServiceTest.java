@@ -3,7 +3,6 @@ package com.ajou.hertz.unit.common.kakao.service;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
 
-import java.lang.reflect.Constructor;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -32,6 +31,7 @@ import com.ajou.hertz.domain.user.constant.RoleType;
 import com.ajou.hertz.domain.user.dto.UserDto;
 import com.ajou.hertz.domain.user.service.UserCommandService;
 import com.ajou.hertz.domain.user.service.UserQueryService;
+import com.ajou.hertz.util.ReflectionUtils;
 
 @DisplayName("[Unit] Service - Kakao")
 @ExtendWith(MockitoExtension.class)
@@ -138,13 +138,7 @@ class KakaoServiceTest {
 	}
 
 	private UserDto createUserDto(long id) throws Exception {
-		Constructor<UserDto> userResponseConstructor = UserDto.class.getDeclaredConstructor(
-			Long.class, Set.class, String.class, String.class, String.class,
-			String.class, LocalDate.class, Gender.class, String.class, String.class,
-			LocalDateTime.class
-		);
-		userResponseConstructor.setAccessible(true);
-		return userResponseConstructor.newInstance(
+		return ReflectionUtils.createUserDto(
 			id,
 			Set.of(RoleType.USER),
 			"test@mail.com",
@@ -164,21 +158,14 @@ class KakaoServiceTest {
 	}
 
 	private static KakaoLoginRequest createKakaoLoginRequest() throws Exception {
-		Constructor<KakaoLoginRequest> kakaoLoginRequestConstructor =
-			KakaoLoginRequest.class.getDeclaredConstructor(String.class, String.class);
-		kakaoLoginRequestConstructor.setAccessible(true);
-		return kakaoLoginRequestConstructor.newInstance(
+		return ReflectionUtils.createKakaoLoginRequest(
 			"authorization-code",
 			"https://redirect-uri"
 		);
 	}
 
 	private static KakaoTokenResponse createKakaoTokenResponse() throws Exception {
-		Constructor<KakaoTokenResponse> kakaoTokenResponseConstructor = KakaoTokenResponse.class.getDeclaredConstructor(
-			String.class, String.class, Integer.class, String.class, Integer.class
-		);
-		kakaoTokenResponseConstructor.setAccessible(true);
-		return kakaoTokenResponseConstructor.newInstance("bearer", "access-token", 43199, "refresh-token", 5184000);
+		return ReflectionUtils.createKakaoTokenResponse("bearer", "access-token", 43199, "refresh-token", 5184000);
 	}
 
 	private static KakaoUserInfoResponse createKakaoUserInfoResponse() {

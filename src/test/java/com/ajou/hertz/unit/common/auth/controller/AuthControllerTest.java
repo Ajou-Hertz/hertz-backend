@@ -5,7 +5,6 @@ import static org.mockito.BDDMockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-import java.lang.reflect.Constructor;
 import java.time.LocalDateTime;
 
 import org.junit.jupiter.api.DisplayName;
@@ -24,6 +23,7 @@ import com.ajou.hertz.common.auth.dto.request.LoginRequest;
 import com.ajou.hertz.common.auth.service.AuthService;
 import com.ajou.hertz.common.kakao.service.KakaoService;
 import com.ajou.hertz.config.ControllerTestConfig;
+import com.ajou.hertz.util.ReflectionUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @DisplayName("[Unit] Controller - Auth")
@@ -93,23 +93,11 @@ class AuthControllerTest {
 	}
 
 	private LoginRequest createLoginRequest() throws Exception {
-		Constructor<LoginRequest> loginRequestConstructor =
-			LoginRequest.class.getDeclaredConstructor(String.class, String.class);
-		loginRequestConstructor.setAccessible(true);
-		return loginRequestConstructor.newInstance(
-			"test@mail.com",
-			"1q2w3e4r!"
-		);
+		return ReflectionUtils.createLoginRequest("test@mail.com", "1q2w3e4r!");
 	}
 
 	private static KakaoLoginRequest createKakaoLoginRequest() throws Exception {
-		Constructor<KakaoLoginRequest> kakaoLoginRequestConstructor =
-			KakaoLoginRequest.class.getDeclaredConstructor(String.class, String.class);
-		kakaoLoginRequestConstructor.setAccessible(true);
-		return kakaoLoginRequestConstructor.newInstance(
-			"authorization-code",
-			"https://redirect-uri"
-		);
+		return ReflectionUtils.createKakaoLoginRequest("authorization-code", "https://redirect-uri");
 	}
 
 	private JwtTokenInfoDto createJwtTokenInfoDto() {

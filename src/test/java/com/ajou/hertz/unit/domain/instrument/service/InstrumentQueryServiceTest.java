@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
 
-import java.lang.reflect.Constructor;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
@@ -60,6 +59,7 @@ import com.ajou.hertz.domain.instrument.service.InstrumentQueryService;
 import com.ajou.hertz.domain.user.constant.Gender;
 import com.ajou.hertz.domain.user.constant.RoleType;
 import com.ajou.hertz.domain.user.entity.User;
+import com.ajou.hertz.util.ReflectionUtils;
 
 @DisplayName("[Unit] Service(Query) - Instrument")
 @ExtendWith(MockitoExtension.class)
@@ -160,7 +160,7 @@ class InstrumentQueryServiceTest {
 		// given
 		int page = 0;
 		int pageSize = 10;
-		InstrumentFilterConditions filterConditions = createInstrumentFilterConditions();
+		InstrumentFilterConditions filterConditions = createEmptyInstrumentFilterConditions();
 		InstrumentSortOption sort = InstrumentSortOption.CREATED_BY_DESC;
 		User user = createUser();
 		Page<AcousticAndClassicGuitar> expectedResult = new PageImpl<>(List.of(
@@ -190,7 +190,7 @@ class InstrumentQueryServiceTest {
 		// given
 		int page = 0;
 		int pageSize = 10;
-		InstrumentFilterConditions filterConditions = createInstrumentFilterConditions();
+		InstrumentFilterConditions filterConditions = createEmptyInstrumentFilterConditions();
 		InstrumentSortOption sort = InstrumentSortOption.CREATED_BY_DESC;
 		User user = createUser();
 		Page<Effector> expectedResult = new PageImpl<>(List.of(
@@ -218,7 +218,7 @@ class InstrumentQueryServiceTest {
 		// given
 		int page = 0;
 		int pageSize = 10;
-		InstrumentFilterConditions filterConditions = createInstrumentFilterConditions();
+		InstrumentFilterConditions filterConditions = createEmptyInstrumentFilterConditions();
 		InstrumentSortOption sort = InstrumentSortOption.CREATED_BY_DESC;
 		User user = createUser();
 		Page<Amplifier> expectedResult = new PageImpl<>(List.of(
@@ -246,7 +246,7 @@ class InstrumentQueryServiceTest {
 		// given
 		int page = 0;
 		int pageSize = 10;
-		InstrumentFilterConditions filterConditions = createInstrumentFilterConditions();
+		InstrumentFilterConditions filterConditions = createEmptyInstrumentFilterConditions();
 		InstrumentSortOption sort = InstrumentSortOption.CREATED_BY_DESC;
 		User user = createUser();
 		Page<AudioEquipment> expectedResult = new PageImpl<>(List.of(
@@ -278,14 +278,23 @@ class InstrumentQueryServiceTest {
 		return new Address("서울특별시", "강남구", "청담동");
 	}
 
-	private Instrument createInstrument(long instrumentId, User seller) throws Exception {
-		Constructor<BassGuitar> bassGuitarConstructor = BassGuitar.class.getDeclaredConstructor(
-			Long.class, User.class, String.class, InstrumentProgressStatus.class, Address.class,
-			Short.class, Integer.class, Boolean.class, String.class,
-			BassGuitarBrand.class, BassGuitarPickUp.class, BassGuitarPreAmplifier.class, GuitarColor.class
+	private User createUser(long id) throws Exception {
+		return ReflectionUtils.createUser(
+			id,
+			Set.of(RoleType.USER),
+			"test@mail.com",
+			"password",
+			"12345",
+			"https://user-default-profile-image-url",
+			LocalDate.of(2024, 1, 1),
+			Gender.ETC,
+			"01012345678",
+			null
 		);
-		bassGuitarConstructor.setAccessible(true);
-		return bassGuitarConstructor.newInstance(
+	}
+
+	private Instrument createInstrument(long instrumentId, User seller) throws Exception {
+		return ReflectionUtils.createBassGuitar(
 			instrumentId,
 			seller,
 			"Test electric guitar",
@@ -303,13 +312,7 @@ class InstrumentQueryServiceTest {
 	}
 
 	private ElectricGuitar createElectricGuitar(long id, User seller) throws Exception {
-		Constructor<ElectricGuitar> electricGuitarConstructor = ElectricGuitar.class.getDeclaredConstructor(
-			Long.class, User.class, String.class, InstrumentProgressStatus.class, Address.class, Short.class,
-			Integer.class, Boolean.class, String.class, ElectricGuitarBrand.class, ElectricGuitarModel.class,
-			Short.class, GuitarColor.class
-		);
-		electricGuitarConstructor.setAccessible(true);
-		return electricGuitarConstructor.newInstance(
+		return ReflectionUtils.createElectricGuitar(
 			id,
 			seller,
 			"Test electric guitar",
@@ -327,13 +330,7 @@ class InstrumentQueryServiceTest {
 	}
 
 	private BassGuitar createBassGuitar(long id, User seller) throws Exception {
-		Constructor<BassGuitar> bassGuitarConstructor = BassGuitar.class.getDeclaredConstructor(
-			Long.class, User.class, String.class, InstrumentProgressStatus.class, Address.class,
-			Short.class, Integer.class, Boolean.class, String.class,
-			BassGuitarBrand.class, BassGuitarPickUp.class, BassGuitarPreAmplifier.class, GuitarColor.class
-		);
-		bassGuitarConstructor.setAccessible(true);
-		return bassGuitarConstructor.newInstance(
+		return ReflectionUtils.createBassGuitar(
 			id,
 			seller,
 			"Test electric guitar",
@@ -350,36 +347,8 @@ class InstrumentQueryServiceTest {
 		);
 	}
 
-	private User createUser(long id) throws Exception {
-		Constructor<User> userConstructor = User.class.getDeclaredConstructor(
-			Long.class, Set.class, String.class, String.class, String.class,
-			String.class, LocalDate.class, Gender.class, String.class, String.class
-		);
-		userConstructor.setAccessible(true);
-		return userConstructor.newInstance(
-			id,
-			Set.of(RoleType.USER),
-			"test@mail.com",
-			"password",
-			"12345",
-			"https://user-default-profile-image-url",
-			LocalDate.of(2024, 1, 1),
-			Gender.ETC,
-			"01012345678",
-			null
-		);
-	}
-
 	private AcousticAndClassicGuitar createAcousticAndClassicGuitar(long id, User seller) throws Exception {
-		Constructor<AcousticAndClassicGuitar> acousticAndClassicGuitarConstructor =
-			AcousticAndClassicGuitar.class.getDeclaredConstructor(
-				Long.class, User.class, String.class, InstrumentProgressStatus.class, Address.class,
-				Short.class, Integer.class, Boolean.class, String.class,
-				AcousticAndClassicGuitarBrand.class, AcousticAndClassicGuitarModel.class,
-				AcousticAndClassicGuitarWood.class, AcousticAndClassicGuitarPickUp.class
-			);
-		acousticAndClassicGuitarConstructor.setAccessible(true);
-		return acousticAndClassicGuitarConstructor.newInstance(
+		return ReflectionUtils.createAcousticAndClassicGuitar(
 			id,
 			seller,
 			"Test electric guitar",
@@ -397,13 +366,7 @@ class InstrumentQueryServiceTest {
 	}
 
 	private Effector createEffector(long id, User seller) throws Exception {
-		Constructor<Effector> effectorConstructor = Effector.class.getDeclaredConstructor(
-			Long.class, User.class, String.class, InstrumentProgressStatus.class, Address.class,
-			Short.class, Integer.class, Boolean.class, String.class,
-			EffectorType.class, EffectorFeature.class
-		);
-		effectorConstructor.setAccessible(true);
-		return effectorConstructor.newInstance(
+		return ReflectionUtils.createEffector(
 			id,
 			seller,
 			"Title",
@@ -419,13 +382,7 @@ class InstrumentQueryServiceTest {
 	}
 
 	private Amplifier createAmplifier(long id, User seller) throws Exception {
-		Constructor<Amplifier> amplifierConstructor = Amplifier.class.getDeclaredConstructor(
-			Long.class, User.class, String.class, InstrumentProgressStatus.class, Address.class,
-			Short.class, Integer.class, Boolean.class, String.class,
-			AmplifierType.class, AmplifierBrand.class, AmplifierUsage.class
-		);
-		amplifierConstructor.setAccessible(true);
-		return amplifierConstructor.newInstance(
+		return ReflectionUtils.createAmplifier(
 			id,
 			seller,
 			"Title",
@@ -442,13 +399,7 @@ class InstrumentQueryServiceTest {
 	}
 
 	private AudioEquipment createAudioEquipment(long id, User seller) throws Exception {
-		Constructor<AudioEquipment> audioEquipmentConstructor = AudioEquipment.class.getDeclaredConstructor(
-			Long.class, User.class, String.class, InstrumentProgressStatus.class, Address.class,
-			Short.class, Integer.class, Boolean.class, String.class,
-			AudioEquipmentType.class
-		);
-		audioEquipmentConstructor.setAccessible(true);
-		return audioEquipmentConstructor.newInstance(
+		return ReflectionUtils.createAudioEquipment(
 			id,
 			seller,
 			"Title",
@@ -466,20 +417,12 @@ class InstrumentQueryServiceTest {
 		return createUser(1L);
 	}
 
-	private InstrumentFilterConditions createInstrumentFilterConditions() throws Exception {
-		Constructor<InstrumentFilterConditions> instrumentFilterConditionsConstructor =
-			InstrumentFilterConditions.class.getDeclaredConstructor();
-		instrumentFilterConditionsConstructor.setAccessible(true);
-		return instrumentFilterConditionsConstructor.newInstance();
+	private InstrumentFilterConditions createEmptyInstrumentFilterConditions() throws Exception {
+		return ReflectionUtils.createInstrumentFilterConditions(null, null, null);
 	}
 
 	private ElectricGuitarFilterConditions createElectricGuitarFilterConditions() throws Exception {
-		Constructor<ElectricGuitarFilterConditions> constructor = ElectricGuitarFilterConditions.class.getDeclaredConstructor(
-			InstrumentProgressStatus.class, String.class, String.class,
-			ElectricGuitarBrand.class, ElectricGuitarModel.class, GuitarColor.class
-		);
-		constructor.setAccessible(true);
-		return constructor.newInstance(
+		return ReflectionUtils.createElectricGuitarFilterConditions(
 			InstrumentProgressStatus.SELLING,
 			"서울특별시",
 			"종로구",
@@ -490,12 +433,7 @@ class InstrumentQueryServiceTest {
 	}
 
 	private BassGuitarFilterConditions createBassGuitarFilterConditions() throws Exception {
-		Constructor<BassGuitarFilterConditions> constructor = BassGuitarFilterConditions.class.getDeclaredConstructor(
-			InstrumentProgressStatus.class, String.class, String.class,
-			BassGuitarBrand.class, BassGuitarPickUp.class, BassGuitarPreAmplifier.class, GuitarColor.class
-		);
-		constructor.setAccessible(true);
-		return constructor.newInstance(
+		return ReflectionUtils.createBassGuitarFilterConditions(
 			InstrumentProgressStatus.SELLING,
 			"서울특별시",
 			"종로구",

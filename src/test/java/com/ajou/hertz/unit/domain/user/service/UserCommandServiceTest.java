@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.params.provider.Arguments.*;
 import static org.mockito.BDDMockito.*;
 
-import java.lang.reflect.Constructor;
 import java.time.LocalDate;
 import java.util.Set;
 import java.util.stream.Stream;
@@ -34,6 +33,7 @@ import com.ajou.hertz.domain.user.exception.UserPhoneDuplicationException;
 import com.ajou.hertz.domain.user.repository.UserRepository;
 import com.ajou.hertz.domain.user.service.UserCommandService;
 import com.ajou.hertz.domain.user.service.UserQueryService;
+import com.ajou.hertz.util.ReflectionUtils;
 
 @DisplayName("[Unit] Service(Command) - User")
 @ExtendWith(MockitoExtension.class)
@@ -178,12 +178,7 @@ class UserCommandServiceTest {
 	}
 
 	private static User createUser(Long id, String password, String kakaoUid, Gender gender) throws Exception {
-		Constructor<User> userConstructor = User.class.getDeclaredConstructor(
-			Long.class, Set.class, String.class, String.class, String.class,
-			String.class, LocalDate.class, Gender.class, String.class, String.class
-		);
-		userConstructor.setAccessible(true);
-		return userConstructor.newInstance(
+		return ReflectionUtils.createUser(
 			id,
 			Set.of(RoleType.USER),
 			"test@test.com",
@@ -202,11 +197,7 @@ class UserCommandServiceTest {
 	}
 
 	private SignUpRequest createSignUpRequest(String email, String phone) throws Exception {
-		Constructor<SignUpRequest> signUpRequestConstructor = SignUpRequest.class.getDeclaredConstructor(
-			String.class, String.class, LocalDate.class, Gender.class, String.class
-		);
-		signUpRequestConstructor.setAccessible(true);
-		return signUpRequestConstructor.newInstance(
+		return ReflectionUtils.createSignUpRequest(
 			email,
 			"1q2w3e4r!",
 			LocalDate.of(2024, 1, 1),
