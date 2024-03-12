@@ -42,6 +42,7 @@ import com.ajou.hertz.domain.instrument.dto.BassGuitarDto;
 import com.ajou.hertz.domain.instrument.dto.EffectorDto;
 import com.ajou.hertz.domain.instrument.dto.ElectricGuitarDto;
 import com.ajou.hertz.domain.instrument.dto.InstrumentImageDto;
+import com.ajou.hertz.domain.instrument.dto.request.AcousticAndClassicGuitarFilterConditions;
 import com.ajou.hertz.domain.instrument.dto.request.BassGuitarFilterConditions;
 import com.ajou.hertz.domain.instrument.dto.request.CreateNewAcousticAndClassicGuitarRequest;
 import com.ajou.hertz.domain.instrument.dto.request.CreateNewAmplifierRequest;
@@ -761,6 +762,24 @@ public class ReflectionUtils {
 		);
 		constructor.setAccessible(true);
 		return constructor.newInstance(progressStatus, sido, sgg, brand, pickUp, preAmplifier, color);
+	}
+
+	public static AcousticAndClassicGuitarFilterConditions createAcousticAndClassicGuitarFilterConditions(
+		InstrumentProgressStatus progressStatus,
+		String sido,
+		String sgg,
+		AcousticAndClassicGuitarBrand brand,
+		AcousticAndClassicGuitarModel model,
+		AcousticAndClassicGuitarWood wood,
+		AcousticAndClassicGuitarPickUp pickUp
+	) throws Exception {
+		Constructor<AcousticAndClassicGuitarFilterConditions> constructor = AcousticAndClassicGuitarFilterConditions.class.getDeclaredConstructor(
+			InstrumentProgressStatus.class, String.class, String.class,
+			AcousticAndClassicGuitarBrand.class, AcousticAndClassicGuitarModel.class,
+			AcousticAndClassicGuitarWood.class, AcousticAndClassicGuitarPickUp.class
+		);
+		constructor.setAccessible(true);
+		return constructor.newInstance(progressStatus, sido, sgg, brand, model, wood, pickUp);
 	}
 
 	/**

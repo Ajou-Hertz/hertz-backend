@@ -44,6 +44,7 @@ import com.ajou.hertz.domain.instrument.dto.BassGuitarDto;
 import com.ajou.hertz.domain.instrument.dto.EffectorDto;
 import com.ajou.hertz.domain.instrument.dto.ElectricGuitarDto;
 import com.ajou.hertz.domain.instrument.dto.InstrumentDto;
+import com.ajou.hertz.domain.instrument.dto.request.AcousticAndClassicGuitarFilterConditions;
 import com.ajou.hertz.domain.instrument.dto.request.BassGuitarFilterConditions;
 import com.ajou.hertz.domain.instrument.dto.request.ElectricGuitarFilterConditions;
 import com.ajou.hertz.domain.instrument.dto.request.InstrumentFilterConditions;
@@ -160,7 +161,8 @@ class InstrumentQueryServiceTest {
 		// given
 		int page = 0;
 		int pageSize = 10;
-		InstrumentFilterConditions filterConditions = createEmptyInstrumentFilterConditions();
+		AcousticAndClassicGuitarFilterConditions filterConditions =
+			createEmptyAcousticAndClassicGuitarFilterConditions();
 		InstrumentSortOption sort = InstrumentSortOption.CREATED_BY_DESC;
 		User user = createUser();
 		Page<AcousticAndClassicGuitar> expectedResult = new PageImpl<>(List.of(
@@ -441,6 +443,19 @@ class InstrumentQueryServiceTest {
 			BassGuitarPickUp.JAZZ,
 			BassGuitarPreAmplifier.ACTIVE,
 			GuitarColor.RED
+		);
+	}
+
+	private AcousticAndClassicGuitarFilterConditions createEmptyAcousticAndClassicGuitarFilterConditions(
+	) throws Exception {
+		return ReflectionUtils.createAcousticAndClassicGuitarFilterConditions(
+			InstrumentProgressStatus.RESERVED,
+			"서울특별시",
+			"종로구",
+			AcousticAndClassicGuitarBrand.BENTIVOGLIO,
+			AcousticAndClassicGuitarModel.DREADNOUGHT,
+			AcousticAndClassicGuitarWood.PLYWOOD_AND_SOLID_WOOD,
+			AcousticAndClassicGuitarPickUp.MAGNETIC
 		);
 	}
 }

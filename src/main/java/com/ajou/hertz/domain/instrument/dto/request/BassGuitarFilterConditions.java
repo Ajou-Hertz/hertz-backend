@@ -21,7 +21,7 @@ public class BassGuitarFilterConditions extends InstrumentFilterConditions {
 	private BassGuitarPreAmplifier preAmplifier;
 	private GuitarColor color;
 
-	public BassGuitarFilterConditions(
+	private BassGuitarFilterConditions(
 		InstrumentProgressStatus progress,
 		String sido,
 		String sgg,

@@ -56,6 +56,7 @@ import com.ajou.hertz.domain.instrument.dto.EffectorDto;
 import com.ajou.hertz.domain.instrument.dto.ElectricGuitarDto;
 import com.ajou.hertz.domain.instrument.dto.InstrumentDto;
 import com.ajou.hertz.domain.instrument.dto.InstrumentImageDto;
+import com.ajou.hertz.domain.instrument.dto.request.AcousticAndClassicGuitarFilterConditions;
 import com.ajou.hertz.domain.instrument.dto.request.BassGuitarFilterConditions;
 import com.ajou.hertz.domain.instrument.dto.request.CreateNewAcousticAndClassicGuitarRequest;
 import com.ajou.hertz.domain.instrument.dto.request.CreateNewAmplifierRequest;
@@ -208,7 +209,7 @@ class InstrumentControllerTest {
 			createAcousticAndClassicGuitarDto(4L, userId)
 		));
 		given(instrumentQueryService.findAcousticAndClassicGuitars(
-			eq(page), eq(pageSize), eq(sortOption), any(InstrumentFilterConditions.class)
+			eq(page), eq(pageSize), eq(sortOption), any(AcousticAndClassicGuitarFilterConditions.class)
 		)).willReturn(expectedResult);
 
 		// when & then
@@ -227,7 +228,7 @@ class InstrumentControllerTest {
 		then(instrumentQueryService)
 			.should()
 			.findAcousticAndClassicGuitars(
-				eq(page), eq(pageSize), eq(sortOption), any(InstrumentFilterConditions.class)
+				eq(page), eq(pageSize), eq(sortOption), any(AcousticAndClassicGuitarFilterConditions.class)
 			);
 		verifyEveryMocksShouldHaveNoMoreInteractions();
 	}

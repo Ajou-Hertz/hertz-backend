@@ -19,7 +19,7 @@ public class ElectricGuitarFilterConditions extends InstrumentFilterConditions {
 	private ElectricGuitarModel model;
 	private GuitarColor color;
 
-	public ElectricGuitarFilterConditions(
+	private ElectricGuitarFilterConditions(
 		InstrumentProgressStatus progress,
 		String sido,
 		String sgg,

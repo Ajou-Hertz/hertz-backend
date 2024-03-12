@@ -1,5 +1,6 @@
 package com.ajou.hertz.domain.instrument.repository;
 
+import static com.ajou.hertz.domain.instrument.entity.QAcousticAndClassicGuitar.*;
 import static com.ajou.hertz.domain.instrument.entity.QBassGuitar.*;
 import static com.ajou.hertz.domain.instrument.entity.QElectricGuitar.*;
 import static com.ajou.hertz.domain.instrument.entity.QInstrument.*;
@@ -14,6 +15,10 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 
+import com.ajou.hertz.domain.instrument.constant.AcousticAndClassicGuitarBrand;
+import com.ajou.hertz.domain.instrument.constant.AcousticAndClassicGuitarModel;
+import com.ajou.hertz.domain.instrument.constant.AcousticAndClassicGuitarPickUp;
+import com.ajou.hertz.domain.instrument.constant.AcousticAndClassicGuitarWood;
 import com.ajou.hertz.domain.instrument.constant.BassGuitarBrand;
 import com.ajou.hertz.domain.instrument.constant.BassGuitarPickUp;
 import com.ajou.hertz.domain.instrument.constant.BassGuitarPreAmplifier;
@@ -22,6 +27,7 @@ import com.ajou.hertz.domain.instrument.constant.ElectricGuitarModel;
 import com.ajou.hertz.domain.instrument.constant.GuitarColor;
 import com.ajou.hertz.domain.instrument.constant.InstrumentProgressStatus;
 import com.ajou.hertz.domain.instrument.constant.InstrumentSortOption;
+import com.ajou.hertz.domain.instrument.dto.request.AcousticAndClassicGuitarFilterConditions;
 import com.ajou.hertz.domain.instrument.dto.request.BassGuitarFilterConditions;
 import com.ajou.hertz.domain.instrument.dto.request.ElectricGuitarFilterConditions;
 import com.ajou.hertz.domain.instrument.dto.request.InstrumentFilterConditions;
@@ -119,9 +125,31 @@ public class InstrumentRepositoryCustomImpl implements InstrumentRepositoryCusto
 		int page,
 		int pageSize,
 		InstrumentSortOption sort,
-		InstrumentFilterConditions filterConditions
+		AcousticAndClassicGuitarFilterConditions filterConditions
 	) {
-		return findInstrumentsByClassType(AcousticAndClassicGuitar.class, page, pageSize, sort, filterConditions);
+		PageRequest pageable = PageRequest.of(page, pageSize, sort.toSort());
+
+		List<Predicate> conditions =
+			new ArrayList<>(convertAcousticAndClassicGuitarFilterConditionsToPredicates(filterConditions));
+
+		List<AcousticAndClassicGuitar> content = queryFactory
+			.selectFrom(acousticAndClassicGuitar)
+			.join(acousticAndClassicGuitar.seller, user).fetchJoin()
+			.where(conditions.toArray(Predicate[]::new))
+			.offset(pageable.getOffset())
+			.limit(pageable.getPageSize())
+			.orderBy(convertSortToOrderSpecifiers(pageable.getSort(), createPathBuilder(acousticAndClassicGuitar)))
+			.fetch();
+
+		long totalCount = Optional.ofNullable(
+			queryFactory.select(acousticAndClassicGuitar.count())
+				.from(acousticAndClassicGuitar)
+				.join(acousticAndClassicGuitar.seller, user)
+				.where(conditions.toArray(Predicate[]::new))
+				.fetchOne()
+		).orElse(0L);
+
+		return new PageImpl<>(content, pageable, totalCount);
 	}
 
 	@Override
@@ -230,6 +258,20 @@ public class InstrumentRepositoryCustomImpl implements InstrumentRepositoryCusto
 		return res;
 	}
 
+	private List<Predicate> convertAcousticAndClassicGuitarFilterConditionsToPredicates(
+		AcousticAndClassicGuitarFilterConditions filterConditions
+	) {
+		List<Predicate> res = new ArrayList<>();
+		res.add(applyProgressStatusCondition(filterConditions.getProgress(), bassGuitar.progressStatus));
+		res.add(applyTradeAddressSidoCondition(filterConditions.getSido(), bassGuitar.tradeAddress.sido));
+		res.add(applyTradeAddressSggCondition(filterConditions.getSgg(), bassGuitar.tradeAddress.sgg));
+		res.add(applyAcousticAndClassicGuitarBrandCondition(filterConditions.getBrand()));
+		res.add(applyAcousticAndClassicGuitarModelCondition(filterConditions.getModel()));
+		res.add(applyAcousticAndClassicGuitarWood(filterConditions.getWood()));
+		res.add(applyAcousticAndClassicGuitarPickUpCondition(filterConditions.getPickUp()));
+		return res;
+	}
+
 	private BooleanExpression applyProgressStatusCondition(
 		InstrumentProgressStatus progressStatus,
 		EnumPath<InstrumentProgressStatus> progressStatusExpression
@@ -267,6 +309,22 @@ public class InstrumentRepositoryCustomImpl implements InstrumentRepositoryCusto
 
 	private BooleanExpression applyGuitarColorCondition(GuitarColor color, EnumPath<GuitarColor> colorExpression) {
 		return createCondition(color, colorExpression);
+	}
+
+	private Predicate applyAcousticAndClassicGuitarBrandCondition(AcousticAndClassicGuitarBrand brand) {
+		return createCondition(brand, acousticAndClassicGuitar.brand);
+	}
+
+	private Predicate applyAcousticAndClassicGuitarModelCondition(AcousticAndClassicGuitarModel model) {
+		return createCondition(model, acousticAndClassicGuitar.model);
+	}
+
+	private Predicate applyAcousticAndClassicGuitarWood(AcousticAndClassicGuitarWood wood) {
+		return createCondition(wood, acousticAndClassicGuitar.wood);
+	}
+
+	private Predicate applyAcousticAndClassicGuitarPickUpCondition(AcousticAndClassicGuitarPickUp pickUp) {
+		return createCondition(pickUp, acousticAndClassicGuitar.pickUp);
 	}
 
 	private <T extends Comparable<T>> BooleanExpression createCondition(T value, ComparableExpression<T> path) {
