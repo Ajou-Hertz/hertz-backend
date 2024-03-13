@@ -6,6 +6,7 @@ import com.ajou.hertz.common.dto.AddressDto;
 import com.ajou.hertz.domain.instrument.constant.ElectricGuitarBrand;
 import com.ajou.hertz.domain.instrument.constant.ElectricGuitarModel;
 import com.ajou.hertz.domain.instrument.constant.GuitarColor;
+import com.ajou.hertz.domain.instrument.constant.InstrumentCategory;
 import com.ajou.hertz.domain.instrument.constant.InstrumentProgressStatus;
 import com.ajou.hertz.domain.instrument.entity.ElectricGuitar;
 import com.ajou.hertz.domain.user.dto.UserDto;
@@ -33,16 +34,16 @@ public class ElectricGuitarDto extends InstrumentDto {
 		Integer price,
 		Boolean hasAnomaly,
 		String description,
+		List<InstrumentImageDto> images,
+		List<String> hashtags,
 		ElectricGuitarBrand brand,
 		ElectricGuitarModel model,
 		Short productionYear,
-		GuitarColor color,
-		List<InstrumentImageDto> images,
-		List<String> hashtags
+		GuitarColor color
 	) {
 		super(
-			id, seller, title, progressStatus, tradeAddress, qualityStatus,
-			price, hasAnomaly, description, images, hashtags
+			id, seller, InstrumentCategory.ELECTRIC_GUITAR, title, progressStatus, tradeAddress,
+			qualityStatus, price, hasAnomaly, description, images, hashtags
 		);
 		this.brand = brand;
 		this.model = model;
@@ -50,24 +51,15 @@ public class ElectricGuitarDto extends InstrumentDto {
 		this.color = color;
 	}
 
+	private ElectricGuitarDto(ElectricGuitar electricGuitar) {
+		super(electricGuitar);
+		this.brand = electricGuitar.getBrand();
+		this.model = electricGuitar.getModel();
+		this.productionYear = electricGuitar.getProductionYear();
+		this.color = electricGuitar.getColor();
+	}
+
 	public static ElectricGuitarDto from(ElectricGuitar electricGuitar) {
-		InstrumentDto instrumentDto = InstrumentDto.from(electricGuitar);
-		return new ElectricGuitarDto(
-			instrumentDto.getId(),
-			instrumentDto.getSeller(),
-			instrumentDto.getTitle(),
-			instrumentDto.getProgressStatus(),
-			instrumentDto.getTradeAddress(),
-			instrumentDto.getQualityStatus(),
-			instrumentDto.getPrice(),
-			instrumentDto.getHasAnomaly(),
-			instrumentDto.getDescription(),
-			electricGuitar.getBrand(),
-			electricGuitar.getModel(),
-			electricGuitar.getProductionYear(),
-			electricGuitar.getColor(),
-			instrumentDto.getImages(),
-			instrumentDto.getHashtags()
-		);
+		return new ElectricGuitarDto(electricGuitar);
 	}
 }

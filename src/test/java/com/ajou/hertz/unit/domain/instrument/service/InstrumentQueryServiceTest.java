@@ -35,6 +35,7 @@ import com.ajou.hertz.domain.instrument.constant.EffectorType;
 import com.ajou.hertz.domain.instrument.constant.ElectricGuitarBrand;
 import com.ajou.hertz.domain.instrument.constant.ElectricGuitarModel;
 import com.ajou.hertz.domain.instrument.constant.GuitarColor;
+import com.ajou.hertz.domain.instrument.constant.InstrumentCategory;
 import com.ajou.hertz.domain.instrument.constant.InstrumentProgressStatus;
 import com.ajou.hertz.domain.instrument.constant.InstrumentSortOption;
 import com.ajou.hertz.domain.instrument.dto.AcousticAndClassicGuitarDto;
@@ -50,7 +51,6 @@ import com.ajou.hertz.domain.instrument.dto.request.AudioEquipmentFilterConditio
 import com.ajou.hertz.domain.instrument.dto.request.BassGuitarFilterConditions;
 import com.ajou.hertz.domain.instrument.dto.request.EffectorFilterConditions;
 import com.ajou.hertz.domain.instrument.dto.request.ElectricGuitarFilterConditions;
-import com.ajou.hertz.domain.instrument.dto.request.InstrumentFilterConditions;
 import com.ajou.hertz.domain.instrument.entity.AcousticAndClassicGuitar;
 import com.ajou.hertz.domain.instrument.entity.Amplifier;
 import com.ajou.hertz.domain.instrument.entity.AudioEquipment;
@@ -83,9 +83,9 @@ class InstrumentQueryServiceTest {
 		InstrumentSortOption sort = InstrumentSortOption.CREATED_BY_DESC;
 		User user = createUser();
 		Page<Instrument> expectedResult = new PageImpl<>(List.of(
-			createInstrument(1L, user),
-			createInstrument(2L, user),
-			createInstrument(3L, user)
+			createElectricGuitar(1L, user),
+			createElectricGuitar(2L, user),
+			createBassGuitar(3L, user)
 		));
 		given(instrumentRepository.findAll(any(Pageable.class))).willReturn(expectedResult);
 
@@ -96,6 +96,24 @@ class InstrumentQueryServiceTest {
 		then(instrumentRepository).should().findAll(any(Pageable.class));
 		verifyEveryMocksShouldHaveNoMoreInteractions();
 		assertThat(actualResult.getNumberOfElements()).isEqualTo(actualResult.getNumberOfElements());
+		assertThat(actualResult.stream()
+			.filter(instrumentDto -> instrumentDto.getCategory().equals(InstrumentCategory.ELECTRIC_GUITAR))
+			.count()).isEqualTo(2);
+		assertThat(actualResult.stream()
+			.filter(instrumentDto -> instrumentDto.getCategory().equals(InstrumentCategory.BASS_GUITAR))
+			.count()).isEqualTo(1);
+		assertThat(actualResult.stream()
+			.filter(instrumentDto -> instrumentDto.getCategory().equals(InstrumentCategory.ACOUSTIC_AND_CLASSIC_GUITAR))
+			.count()).isEqualTo(0);
+		assertThat(actualResult.stream()
+			.filter(instrumentDto -> instrumentDto.getCategory().equals(InstrumentCategory.EFFECTOR))
+			.count()).isEqualTo(0);
+		assertThat(actualResult.stream()
+			.filter(instrumentDto -> instrumentDto.getCategory().equals(InstrumentCategory.AMPLIFIER))
+			.count()).isEqualTo(0);
+		assertThat(actualResult.stream()
+			.filter(instrumentDto -> instrumentDto.getCategory().equals(InstrumentCategory.AUDIO_EQUIPMENT))
+			.count()).isEqualTo(0);
 		assertIterableEquals(
 			expectedResult.getContent().stream().map(Instrument::getId).toList(),
 			actualResult.getContent().stream().map(InstrumentDto::getId).toList()
@@ -420,10 +438,6 @@ class InstrumentQueryServiceTest {
 
 	private User createUser() throws Exception {
 		return createUser(1L);
-	}
-
-	private InstrumentFilterConditions createEmptyInstrumentFilterConditions() throws Exception {
-		return ReflectionUtils.createInstrumentFilterConditions(null, null, null);
 	}
 
 	private ElectricGuitarFilterConditions createElectricGuitarFilterConditions() throws Exception {

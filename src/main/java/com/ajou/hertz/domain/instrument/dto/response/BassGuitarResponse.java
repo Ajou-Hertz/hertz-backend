@@ -7,6 +7,7 @@ import com.ajou.hertz.domain.instrument.constant.BassGuitarBrand;
 import com.ajou.hertz.domain.instrument.constant.BassGuitarPickUp;
 import com.ajou.hertz.domain.instrument.constant.BassGuitarPreAmplifier;
 import com.ajou.hertz.domain.instrument.constant.GuitarColor;
+import com.ajou.hertz.domain.instrument.constant.InstrumentCategory;
 import com.ajou.hertz.domain.instrument.constant.InstrumentProgressStatus;
 import com.ajou.hertz.domain.instrument.dto.BassGuitarDto;
 
@@ -49,8 +50,8 @@ public class BassGuitarResponse extends InstrumentResponse {
 		GuitarColor color
 	) {
 		super(
-			id, sellerId, title, progressStatus, tradeAddress, qualityStatus,
-			price, hasAnomaly, description, images, hashtags
+			id, sellerId, InstrumentCategory.BASS_GUITAR, title, progressStatus, tradeAddress,
+			qualityStatus, price, hasAnomaly, description, images, hashtags
 		);
 		this.brand = brand;
 		this.pickUp = pickUp;
@@ -58,24 +59,15 @@ public class BassGuitarResponse extends InstrumentResponse {
 		this.color = color;
 	}
 
+	private BassGuitarResponse(BassGuitarDto bassGuitarDto) {
+		super(bassGuitarDto);
+		this.brand = bassGuitarDto.getBrand();
+		this.pickUp = bassGuitarDto.getPickUp();
+		this.preAmplifier = bassGuitarDto.getPreAmplifier();
+		this.color = bassGuitarDto.getColor();
+	}
+
 	public static BassGuitarResponse from(BassGuitarDto bassGuitarDto) {
-		InstrumentResponse instrumentResponse = InstrumentResponse.from(bassGuitarDto);
-		return new BassGuitarResponse(
-			instrumentResponse.getId(),
-			instrumentResponse.getSellerId(),
-			instrumentResponse.getTitle(),
-			instrumentResponse.getProgressStatus(),
-			instrumentResponse.getTradeAddress(),
-			instrumentResponse.getQualityStatus(),
-			instrumentResponse.getPrice(),
-			instrumentResponse.getHasAnomaly(),
-			instrumentResponse.getDescription(),
-			instrumentResponse.getImages(),
-			instrumentResponse.getHashtags(),
-			bassGuitarDto.getBrand(),
-			bassGuitarDto.getPickUp(),
-			bassGuitarDto.getPreAmplifier(),
-			bassGuitarDto.getColor()
-		);
+		return new BassGuitarResponse(bassGuitarDto);
 	}
 }

@@ -45,6 +45,7 @@ import com.ajou.hertz.domain.instrument.constant.EffectorType;
 import com.ajou.hertz.domain.instrument.constant.ElectricGuitarBrand;
 import com.ajou.hertz.domain.instrument.constant.ElectricGuitarModel;
 import com.ajou.hertz.domain.instrument.constant.GuitarColor;
+import com.ajou.hertz.domain.instrument.constant.InstrumentCategory;
 import com.ajou.hertz.domain.instrument.constant.InstrumentProgressStatus;
 import com.ajou.hertz.domain.instrument.constant.InstrumentSortOption;
 import com.ajou.hertz.domain.instrument.controller.InstrumentController;
@@ -100,12 +101,11 @@ class InstrumentControllerTest {
 		long userId = 1L;
 		int page = 0;
 		int pageSize = 10;
-		InstrumentFilterConditions filterConditions = createInstrumentFilterConditions();
 		InstrumentSortOption sortOption = InstrumentSortOption.CREATED_BY_DESC;
 		Page<InstrumentDto> expectedResult = new PageImpl<>(List.of(
-			createBassGuitarDto(2L, userId),
+			createElectricGuitarDto(2L, userId),
 			createBassGuitarDto(3L, userId),
-			createBassGuitarDto(4L, userId)
+			createAcousticAndClassicGuitarDto(4L, userId)
 		));
 		given(instrumentQueryService.findInstruments(page, pageSize, sortOption)).willReturn(expectedResult);
 
@@ -123,7 +123,10 @@ class InstrumentControllerTest {
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.numberOfElements").value(expectedResult.getNumberOfElements()))
 			.andExpect(jsonPath("$.content").isArray())
-			.andExpect(jsonPath("$.content", hasSize(expectedResult.getNumberOfElements())));
+			.andExpect(jsonPath("$.content", hasSize(expectedResult.getNumberOfElements())))
+			.andExpect(jsonPath("$.content[0].category").value(InstrumentCategory.ELECTRIC_GUITAR.name()))
+			.andExpect(jsonPath("$.content[1].category").value(InstrumentCategory.BASS_GUITAR.name()))
+			.andExpect(jsonPath("$.content[2].category").value(InstrumentCategory.ACOUSTIC_AND_CLASSIC_GUITAR.name()));
 		then(instrumentQueryService).should().findInstruments(page, pageSize, sortOption);
 		verifyEveryMocksShouldHaveNoMoreInteractions();
 	}

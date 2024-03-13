@@ -7,6 +7,7 @@ import com.ajou.hertz.domain.instrument.constant.AcousticAndClassicGuitarBrand;
 import com.ajou.hertz.domain.instrument.constant.AcousticAndClassicGuitarModel;
 import com.ajou.hertz.domain.instrument.constant.AcousticAndClassicGuitarPickUp;
 import com.ajou.hertz.domain.instrument.constant.AcousticAndClassicGuitarWood;
+import com.ajou.hertz.domain.instrument.constant.InstrumentCategory;
 import com.ajou.hertz.domain.instrument.constant.InstrumentProgressStatus;
 import com.ajou.hertz.domain.instrument.entity.AcousticAndClassicGuitar;
 import com.ajou.hertz.domain.user.dto.UserDto;
@@ -42,8 +43,8 @@ public class AcousticAndClassicGuitarDto extends InstrumentDto {
 		AcousticAndClassicGuitarPickUp pickUp
 	) {
 		super(
-			id, seller, title, progressStatus, tradeAddress, qualityStatus,
-			price, hasAnomaly, description, images, hashtags
+			id, seller, InstrumentCategory.ACOUSTIC_AND_CLASSIC_GUITAR, title, progressStatus, tradeAddress,
+			qualityStatus, price, hasAnomaly, description, images, hashtags
 		);
 		this.brand = brand;
 		this.model = model;
@@ -51,24 +52,17 @@ public class AcousticAndClassicGuitarDto extends InstrumentDto {
 		this.pickUp = pickUp;
 	}
 
-	public static AcousticAndClassicGuitarDto from(AcousticAndClassicGuitar acousticAndClassicGuitar) {
-		InstrumentDto instrumentDto = InstrumentDto.from(acousticAndClassicGuitar);
-		return new AcousticAndClassicGuitarDto(
-			instrumentDto.getId(),
-			instrumentDto.getSeller(),
-			instrumentDto.getTitle(),
-			instrumentDto.getProgressStatus(),
-			instrumentDto.getTradeAddress(),
-			instrumentDto.getQualityStatus(),
-			instrumentDto.getPrice(),
-			instrumentDto.getHasAnomaly(),
-			instrumentDto.getDescription(),
-			instrumentDto.getImages(),
-			instrumentDto.getHashtags(),
-			acousticAndClassicGuitar.getBrand(),
-			acousticAndClassicGuitar.getModel(),
-			acousticAndClassicGuitar.getWood(),
-			acousticAndClassicGuitar.getPickUp()
+	private AcousticAndClassicGuitarDto(AcousticAndClassicGuitar acousticAndClassicGuitar) {
+		super(
+			acousticAndClassicGuitar
 		);
+		this.brand = acousticAndClassicGuitar.getBrand();
+		this.model = acousticAndClassicGuitar.getModel();
+		this.wood = acousticAndClassicGuitar.getWood();
+		this.pickUp = acousticAndClassicGuitar.getPickUp();
+	}
+
+	public static AcousticAndClassicGuitarDto from(AcousticAndClassicGuitar acousticAndClassicGuitar) {
+		return new AcousticAndClassicGuitarDto(acousticAndClassicGuitar);
 	}
 }

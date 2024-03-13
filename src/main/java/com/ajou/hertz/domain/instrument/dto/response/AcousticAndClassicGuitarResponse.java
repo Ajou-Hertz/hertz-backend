@@ -7,6 +7,7 @@ import com.ajou.hertz.domain.instrument.constant.AcousticAndClassicGuitarBrand;
 import com.ajou.hertz.domain.instrument.constant.AcousticAndClassicGuitarModel;
 import com.ajou.hertz.domain.instrument.constant.AcousticAndClassicGuitarPickUp;
 import com.ajou.hertz.domain.instrument.constant.AcousticAndClassicGuitarWood;
+import com.ajou.hertz.domain.instrument.constant.InstrumentCategory;
 import com.ajou.hertz.domain.instrument.constant.InstrumentProgressStatus;
 import com.ajou.hertz.domain.instrument.dto.AcousticAndClassicGuitarDto;
 
@@ -49,8 +50,8 @@ public class AcousticAndClassicGuitarResponse extends InstrumentResponse {
 		AcousticAndClassicGuitarPickUp pickUp
 	) {
 		super(
-			id, sellerId, title, progressStatus, tradeAddress, qualityStatus,
-			price, hasAnomaly, description, images, hashtags
+			id, sellerId, InstrumentCategory.ACOUSTIC_AND_CLASSIC_GUITAR, title, progressStatus, tradeAddress,
+			qualityStatus, price, hasAnomaly, description, images, hashtags
 		);
 		this.brand = brand;
 		this.model = model;
@@ -58,24 +59,15 @@ public class AcousticAndClassicGuitarResponse extends InstrumentResponse {
 		this.pickUp = pickUp;
 	}
 
+	private AcousticAndClassicGuitarResponse(AcousticAndClassicGuitarDto acousticAndClassicGuitarDto) {
+		super(acousticAndClassicGuitarDto);
+		this.brand = acousticAndClassicGuitarDto.getBrand();
+		this.model = acousticAndClassicGuitarDto.getModel();
+		this.wood = acousticAndClassicGuitarDto.getWood();
+		this.pickUp = acousticAndClassicGuitarDto.getPickUp();
+	}
+
 	public static AcousticAndClassicGuitarResponse from(AcousticAndClassicGuitarDto acousticAndClassicGuitarDto) {
-		InstrumentResponse instrumentResponse = InstrumentResponse.from(acousticAndClassicGuitarDto);
-		return new AcousticAndClassicGuitarResponse(
-			instrumentResponse.getId(),
-			instrumentResponse.getSellerId(),
-			instrumentResponse.getTitle(),
-			instrumentResponse.getProgressStatus(),
-			instrumentResponse.getTradeAddress(),
-			instrumentResponse.getQualityStatus(),
-			instrumentResponse.getPrice(),
-			instrumentResponse.getHasAnomaly(),
-			instrumentResponse.getDescription(),
-			instrumentResponse.getImages(),
-			instrumentResponse.getHashtags(),
-			acousticAndClassicGuitarDto.getBrand(),
-			acousticAndClassicGuitarDto.getModel(),
-			acousticAndClassicGuitarDto.getWood(),
-			acousticAndClassicGuitarDto.getPickUp()
-		);
+		return new AcousticAndClassicGuitarResponse(acousticAndClassicGuitarDto);
 	}
 }

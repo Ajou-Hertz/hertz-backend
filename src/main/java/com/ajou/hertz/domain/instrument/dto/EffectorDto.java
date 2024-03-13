@@ -5,6 +5,7 @@ import java.util.List;
 import com.ajou.hertz.common.dto.AddressDto;
 import com.ajou.hertz.domain.instrument.constant.EffectorFeature;
 import com.ajou.hertz.domain.instrument.constant.EffectorType;
+import com.ajou.hertz.domain.instrument.constant.InstrumentCategory;
 import com.ajou.hertz.domain.instrument.constant.InstrumentProgressStatus;
 import com.ajou.hertz.domain.instrument.entity.Effector;
 import com.ajou.hertz.domain.user.dto.UserDto;
@@ -36,29 +37,20 @@ public class EffectorDto extends InstrumentDto {
 		EffectorFeature feature
 	) {
 		super(
-			id, seller, title, progressStatus, tradeAddress, qualityStatus,
-			price, hasAnomaly, description, images, hashtags
+			id, seller, InstrumentCategory.EFFECTOR, title, progressStatus, tradeAddress,
+			qualityStatus, price, hasAnomaly, description, images, hashtags
 		);
 		this.type = type;
 		this.feature = feature;
 	}
 
+	private EffectorDto(Effector effector) {
+		super(effector);
+		this.type = effector.getType();
+		this.feature = effector.getFeature();
+	}
+
 	public static EffectorDto from(Effector effector) {
-		InstrumentDto instrumentDto = InstrumentDto.from(effector);
-		return new EffectorDto(
-			instrumentDto.getId(),
-			instrumentDto.getSeller(),
-			instrumentDto.getTitle(),
-			instrumentDto.getProgressStatus(),
-			instrumentDto.getTradeAddress(),
-			instrumentDto.getQualityStatus(),
-			instrumentDto.getPrice(),
-			instrumentDto.getHasAnomaly(),
-			instrumentDto.getDescription(),
-			instrumentDto.getImages(),
-			instrumentDto.getHashtags(),
-			effector.getType(),
-			effector.getFeature()
-		);
+		return new EffectorDto(effector);
 	}
 }

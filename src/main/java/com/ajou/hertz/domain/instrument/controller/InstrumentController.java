@@ -36,7 +36,6 @@ import com.ajou.hertz.domain.instrument.dto.request.CreateNewEffectorRequest;
 import com.ajou.hertz.domain.instrument.dto.request.CreateNewElectricGuitarRequest;
 import com.ajou.hertz.domain.instrument.dto.request.EffectorFilterConditions;
 import com.ajou.hertz.domain.instrument.dto.request.ElectricGuitarFilterConditions;
-import com.ajou.hertz.domain.instrument.dto.request.InstrumentFilterConditions;
 import com.ajou.hertz.domain.instrument.dto.response.AcousticAndClassicGuitarResponse;
 import com.ajou.hertz.domain.instrument.dto.response.AmplifierResponse;
 import com.ajou.hertz.domain.instrument.dto.response.AudioEquipmentResponse;
