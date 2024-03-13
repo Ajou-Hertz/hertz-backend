@@ -373,14 +373,15 @@ public class ReflectionUtils {
 		GuitarColor color
 	) throws Exception {
 		Constructor<ElectricGuitarDto> constructor = ElectricGuitarDto.class.getDeclaredConstructor(
-			Long.class, UserDto.class, String.class, InstrumentProgressStatus.class, AddressDto.class, Short.class,
-			Integer.class, Boolean.class, String.class, ElectricGuitarBrand.class, ElectricGuitarModel.class,
-			Short.class, GuitarColor.class, List.class, List.class
+			Long.class, UserDto.class, String.class, InstrumentProgressStatus.class, AddressDto.class,
+			Short.class, Integer.class, Boolean.class, String.class, List.class, List.class,
+			ElectricGuitarBrand.class, ElectricGuitarModel.class, Short.class, GuitarColor.class
 		);
 		constructor.setAccessible(true);
 		return constructor.newInstance(
-			id, seller, title, progressStatus, tradeAddress, qualityStatus, price, hasAnomaly, description,
-			brand, model, productionYear, color, images, hashtags
+			id, seller, title, progressStatus, tradeAddress,
+			qualityStatus, price, hasAnomaly, description, images, hashtags,
+			brand, model, productionYear, color
 		);
 	}
 
@@ -459,8 +460,8 @@ public class ReflectionUtils {
 		EffectorFeature feature
 	) throws Exception {
 		Constructor<EffectorDto> constructor = EffectorDto.class.getDeclaredConstructor(
-			Long.class, UserDto.class, String.class, InstrumentProgressStatus.class, AddressDto.class, Short.class,
-			Integer.class, Boolean.class, String.class, List.class, List.class,
+			Long.class, UserDto.class, String.class, InstrumentProgressStatus.class, AddressDto.class,
+			Short.class, Integer.class, Boolean.class, String.class, List.class, List.class,
 			EffectorType.class, EffectorFeature.class
 		);
 		constructor.setAccessible(true);

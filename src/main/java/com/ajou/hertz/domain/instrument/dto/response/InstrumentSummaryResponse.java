@@ -1,6 +1,7 @@
 package com.ajou.hertz.domain.instrument.dto.response;
 
 import com.ajou.hertz.common.dto.response.AddressResponse;
+import com.ajou.hertz.domain.instrument.constant.InstrumentCategory;
 import com.ajou.hertz.domain.instrument.constant.InstrumentProgressStatus;
 import com.ajou.hertz.domain.instrument.dto.InstrumentDto;
 
@@ -17,6 +18,9 @@ public class InstrumentSummaryResponse {
 
 	@Schema(description = "Id of instrument(electric guitar)", example = "2")
 	private Long id;
+
+	@Schema(description = "종류")
+	private InstrumentCategory category;
 
 	@Schema(description = "제목", example = "펜더 로드원 텔레캐스터")
 	private String title;
@@ -36,6 +40,7 @@ public class InstrumentSummaryResponse {
 	public static InstrumentSummaryResponse from(InstrumentDto instrumentDto) {
 		return new InstrumentSummaryResponse(
 			instrumentDto.getId(),
+			instrumentDto.getCategory(),
 			instrumentDto.getTitle(),
 			instrumentDto.getProgressStatus(),
 			AddressResponse.from(instrumentDto.getTradeAddress()),

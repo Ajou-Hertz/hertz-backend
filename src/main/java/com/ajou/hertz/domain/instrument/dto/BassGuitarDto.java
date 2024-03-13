@@ -7,6 +7,7 @@ import com.ajou.hertz.domain.instrument.constant.BassGuitarBrand;
 import com.ajou.hertz.domain.instrument.constant.BassGuitarPickUp;
 import com.ajou.hertz.domain.instrument.constant.BassGuitarPreAmplifier;
 import com.ajou.hertz.domain.instrument.constant.GuitarColor;
+import com.ajou.hertz.domain.instrument.constant.InstrumentCategory;
 import com.ajou.hertz.domain.instrument.constant.InstrumentProgressStatus;
 import com.ajou.hertz.domain.instrument.entity.BassGuitar;
 import com.ajou.hertz.domain.user.dto.UserDto;
@@ -42,8 +43,8 @@ public class BassGuitarDto extends InstrumentDto {
 		GuitarColor color
 	) {
 		super(
-			id, seller, title, progressStatus, tradeAddress, qualityStatus,
-			price, hasAnomaly, description, images, hashtags
+			id, seller, InstrumentCategory.BASS_GUITAR, title, progressStatus, tradeAddress,
+			qualityStatus, price, hasAnomaly, description, images, hashtags
 		);
 		this.brand = brand;
 		this.pickUp = pickUp;
@@ -51,24 +52,15 @@ public class BassGuitarDto extends InstrumentDto {
 		this.color = color;
 	}
 
+	private BassGuitarDto(BassGuitar bassGuitar) {
+		super(bassGuitar);
+		this.brand = bassGuitar.getBrand();
+		this.pickUp = bassGuitar.getPickUp();
+		this.preAmplifier = bassGuitar.getPreAmplifier();
+		this.color = bassGuitar.getColor();
+	}
+
 	public static BassGuitarDto from(BassGuitar bassGuitar) {
-		InstrumentDto instrumentDto = InstrumentDto.from(bassGuitar);
-		return new BassGuitarDto(
-			instrumentDto.getId(),
-			instrumentDto.getSeller(),
-			instrumentDto.getTitle(),
-			instrumentDto.getProgressStatus(),
-			instrumentDto.getTradeAddress(),
-			instrumentDto.getQualityStatus(),
-			instrumentDto.getPrice(),
-			instrumentDto.getHasAnomaly(),
-			instrumentDto.getDescription(),
-			instrumentDto.getImages(),
-			instrumentDto.getHashtags(),
-			bassGuitar.getBrand(),
-			bassGuitar.getPickUp(),
-			bassGuitar.getPreAmplifier(),
-			bassGuitar.getColor()
-		);
+		return new BassGuitarDto(bassGuitar);
 	}
 }

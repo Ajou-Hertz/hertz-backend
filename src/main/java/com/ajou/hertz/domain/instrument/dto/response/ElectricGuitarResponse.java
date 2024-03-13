@@ -6,6 +6,7 @@ import com.ajou.hertz.common.dto.response.AddressResponse;
 import com.ajou.hertz.domain.instrument.constant.ElectricGuitarBrand;
 import com.ajou.hertz.domain.instrument.constant.ElectricGuitarModel;
 import com.ajou.hertz.domain.instrument.constant.GuitarColor;
+import com.ajou.hertz.domain.instrument.constant.InstrumentCategory;
 import com.ajou.hertz.domain.instrument.constant.InstrumentProgressStatus;
 import com.ajou.hertz.domain.instrument.dto.ElectricGuitarDto;
 
@@ -48,32 +49,24 @@ public class ElectricGuitarResponse extends InstrumentResponse {
 		GuitarColor color
 	) {
 		super(
-			id, sellerId, title, progressStatus, tradeAddress, qualityStatus,
-			price, hasAnomaly, description, images, hashtags);
+			id, sellerId, InstrumentCategory.ELECTRIC_GUITAR, title, progressStatus, tradeAddress,
+			qualityStatus, price, hasAnomaly, description, images, hashtags
+		);
 		this.brand = brand;
 		this.model = model;
 		this.productionYear = productionYear;
 		this.color = color;
 	}
 
+	private ElectricGuitarResponse(ElectricGuitarDto electricGuitarDto) {
+		super(electricGuitarDto);
+		this.brand = electricGuitarDto.getBrand();
+		this.model = electricGuitarDto.getModel();
+		this.productionYear = electricGuitarDto.getProductionYear();
+		this.color = electricGuitarDto.getColor();
+	}
+
 	public static ElectricGuitarResponse from(ElectricGuitarDto electricGuitarDto) {
-		InstrumentResponse instrumentResponse = InstrumentResponse.from(electricGuitarDto);
-		return new ElectricGuitarResponse(
-			instrumentResponse.getId(),
-			instrumentResponse.getSellerId(),
-			instrumentResponse.getTitle(),
-			instrumentResponse.getProgressStatus(),
-			instrumentResponse.getTradeAddress(),
-			instrumentResponse.getQualityStatus(),
-			instrumentResponse.getPrice(),
-			instrumentResponse.getHasAnomaly(),
-			instrumentResponse.getDescription(),
-			instrumentResponse.getImages(),
-			instrumentResponse.getHashtags(),
-			electricGuitarDto.getBrand(),
-			electricGuitarDto.getModel(),
-			electricGuitarDto.getProductionYear(),
-			electricGuitarDto.getColor()
-		);
+		return new ElectricGuitarResponse(electricGuitarDto);
 	}
 }

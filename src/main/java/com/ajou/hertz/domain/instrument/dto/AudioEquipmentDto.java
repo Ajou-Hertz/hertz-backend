@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.ajou.hertz.common.dto.AddressDto;
 import com.ajou.hertz.domain.instrument.constant.AudioEquipmentType;
+import com.ajou.hertz.domain.instrument.constant.InstrumentCategory;
 import com.ajou.hertz.domain.instrument.constant.InstrumentProgressStatus;
 import com.ajou.hertz.domain.instrument.entity.AudioEquipment;
 import com.ajou.hertz.domain.user.dto.UserDto;
@@ -33,27 +34,18 @@ public class AudioEquipmentDto extends InstrumentDto {
 		AudioEquipmentType type
 	) {
 		super(
-			id, seller, title, progressStatus, tradeAddress, qualityStatus,
-			price, hasAnomaly, description, images, hashtags
+			id, seller, InstrumentCategory.AUDIO_EQUIPMENT, title, progressStatus, tradeAddress,
+			qualityStatus, price, hasAnomaly, description, images, hashtags
 		);
 		this.type = type;
 	}
 
+	private AudioEquipmentDto(AudioEquipment audioEquipment) {
+		super(audioEquipment);
+		this.type = audioEquipment.getType();
+	}
+
 	public static AudioEquipmentDto from(AudioEquipment audioEquipment) {
-		InstrumentDto instrumentDto = InstrumentDto.from(audioEquipment);
-		return new AudioEquipmentDto(
-			instrumentDto.getId(),
-			instrumentDto.getSeller(),
-			instrumentDto.getTitle(),
-			instrumentDto.getProgressStatus(),
-			instrumentDto.getTradeAddress(),
-			instrumentDto.getQualityStatus(),
-			instrumentDto.getPrice(),
-			instrumentDto.getHasAnomaly(),
-			instrumentDto.getDescription(),
-			instrumentDto.getImages(),
-			instrumentDto.getHashtags(),
-			audioEquipment.getType()
-		);
+		return new AudioEquipmentDto(audioEquipment);
 	}
 }

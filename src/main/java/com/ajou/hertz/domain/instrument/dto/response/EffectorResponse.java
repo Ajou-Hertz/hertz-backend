@@ -5,6 +5,7 @@ import java.util.List;
 import com.ajou.hertz.common.dto.response.AddressResponse;
 import com.ajou.hertz.domain.instrument.constant.EffectorFeature;
 import com.ajou.hertz.domain.instrument.constant.EffectorType;
+import com.ajou.hertz.domain.instrument.constant.InstrumentCategory;
 import com.ajou.hertz.domain.instrument.constant.InstrumentProgressStatus;
 import com.ajou.hertz.domain.instrument.dto.EffectorDto;
 
@@ -39,29 +40,20 @@ public class EffectorResponse extends InstrumentResponse {
 		EffectorFeature feature
 	) {
 		super(
-			id, sellerId, title, progressStatus, tradeAddress, qualityStatus,
-			price, hasAnomaly, description, images, hashtags
+			id, sellerId, InstrumentCategory.EFFECTOR, title, progressStatus, tradeAddress,
+			qualityStatus, price, hasAnomaly, description, images, hashtags
 		);
 		this.type = type;
 		this.feature = feature;
 	}
 
+	private EffectorResponse(EffectorDto effectorDto) {
+		super(effectorDto);
+		this.type = effectorDto.getType();
+		this.feature = effectorDto.getFeature();
+	}
+
 	public static EffectorResponse from(EffectorDto effectorDto) {
-		InstrumentResponse instrumentResponse = InstrumentResponse.from(effectorDto);
-		return new EffectorResponse(
-			instrumentResponse.getId(),
-			instrumentResponse.getSellerId(),
-			instrumentResponse.getTitle(),
-			instrumentResponse.getProgressStatus(),
-			instrumentResponse.getTradeAddress(),
-			instrumentResponse.getQualityStatus(),
-			instrumentResponse.getPrice(),
-			instrumentResponse.getHasAnomaly(),
-			instrumentResponse.getDescription(),
-			instrumentResponse.getImages(),
-			instrumentResponse.getHashtags(),
-			effectorDto.getType(),
-			effectorDto.getFeature()
-		);
+		return new EffectorResponse(effectorDto);
 	}
 }

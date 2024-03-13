@@ -3,6 +3,7 @@ package com.ajou.hertz.domain.instrument.dto.response;
 import java.util.List;
 
 import com.ajou.hertz.common.dto.response.AddressResponse;
+import com.ajou.hertz.domain.instrument.constant.InstrumentCategory;
 import com.ajou.hertz.domain.instrument.constant.InstrumentProgressStatus;
 import com.ajou.hertz.domain.instrument.dto.InstrumentDto;
 
@@ -15,13 +16,16 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-public class InstrumentResponse {
+public abstract class InstrumentResponse {
 
 	@Schema(description = "Id of instrument(electric guitar)", example = "2")
 	private Long id;
 
 	@Schema(description = "Id of seller", example = "1")
 	private Long sellerId;
+
+	@Schema(description = "종류")
+	private InstrumentCategory category;
 
 	@Schema(description = "제목", example = "펜더 로드원 텔레캐스터")
 	private String title;
@@ -50,22 +54,20 @@ public class InstrumentResponse {
 	@Schema(description = "해시태그", example = "[\"펜더\", \"Fender\"]")
 	private List<String> hashtags;
 
-	public static InstrumentResponse from(InstrumentDto instrumentDto) {
-		return new InstrumentResponse(
-			instrumentDto.getId(),
-			instrumentDto.getSeller().getId(),
-			instrumentDto.getTitle(),
-			instrumentDto.getProgressStatus(),
-			AddressResponse.from(instrumentDto.getTradeAddress()),
-			instrumentDto.getQualityStatus(),
-			instrumentDto.getPrice(),
-			instrumentDto.getHasAnomaly(),
-			instrumentDto.getDescription(),
-			instrumentDto.getImages()
-				.stream()
-				.map(InstrumentImageResponse::from)
-				.toList(),
-			instrumentDto.getHashtags()
-		);
+	protected InstrumentResponse(InstrumentDto instrumentDto) {
+		this.id = instrumentDto.getId();
+		this.sellerId = instrumentDto.getSeller().getId();
+		this.category = instrumentDto.getCategory();
+		this.title = instrumentDto.getTitle();
+		this.progressStatus = instrumentDto.getProgressStatus();
+		this.tradeAddress = AddressResponse.from(instrumentDto.getTradeAddress());
+		this.qualityStatus = instrumentDto.getQualityStatus();
+		this.price = instrumentDto.getPrice();
+		this.hasAnomaly = instrumentDto.getHasAnomaly();
+		this.description = instrumentDto.getDescription();
+		this.images = instrumentDto.getImages().stream()
+			.map(InstrumentImageResponse::from)
+			.toList();
+		this.hashtags = instrumentDto.getHashtags();
 	}
 }

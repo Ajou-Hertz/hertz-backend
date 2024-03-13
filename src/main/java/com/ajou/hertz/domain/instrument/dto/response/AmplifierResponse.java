@@ -6,6 +6,7 @@ import com.ajou.hertz.common.dto.response.AddressResponse;
 import com.ajou.hertz.domain.instrument.constant.AmplifierBrand;
 import com.ajou.hertz.domain.instrument.constant.AmplifierType;
 import com.ajou.hertz.domain.instrument.constant.AmplifierUsage;
+import com.ajou.hertz.domain.instrument.constant.InstrumentCategory;
 import com.ajou.hertz.domain.instrument.constant.InstrumentProgressStatus;
 import com.ajou.hertz.domain.instrument.dto.AmplifierDto;
 
@@ -44,31 +45,22 @@ public class AmplifierResponse extends InstrumentResponse {
 		AmplifierUsage usage
 	) {
 		super(
-			id, sellerId, title, progressStatus, tradeAddress, qualityStatus,
-			price, hasAnomaly, description, images, hashtags
+			id, sellerId, InstrumentCategory.AMPLIFIER, title, progressStatus, tradeAddress,
+			qualityStatus, price, hasAnomaly, description, images, hashtags
 		);
 		this.type = type;
 		this.brand = brand;
 		this.usage = usage;
 	}
 
+	private AmplifierResponse(AmplifierDto amplifierDto) {
+		super(amplifierDto);
+		this.type = amplifierDto.getType();
+		this.brand = amplifierDto.getBrand();
+		this.usage = amplifierDto.getUsage();
+	}
+
 	public static AmplifierResponse from(AmplifierDto amplifierDto) {
-		InstrumentResponse instrumentResponse = InstrumentResponse.from(amplifierDto);
-		return new AmplifierResponse(
-			instrumentResponse.getId(),
-			instrumentResponse.getSellerId(),
-			instrumentResponse.getTitle(),
-			instrumentResponse.getProgressStatus(),
-			instrumentResponse.getTradeAddress(),
-			instrumentResponse.getQualityStatus(),
-			instrumentResponse.getPrice(),
-			instrumentResponse.getHasAnomaly(),
-			instrumentResponse.getDescription(),
-			instrumentResponse.getImages(),
-			instrumentResponse.getHashtags(),
-			amplifierDto.getType(),
-			amplifierDto.getBrand(),
-			amplifierDto.getUsage()
-		);
+		return new AmplifierResponse(amplifierDto);
 	}
 }
