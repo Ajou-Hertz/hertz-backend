@@ -90,7 +90,7 @@ class InstrumentQueryServiceTest {
 		given(instrumentRepository.findAll(any(Pageable.class))).willReturn(expectedResult);
 
 		// when
-		Page<InstrumentDto> actualResult = sut.findInstruments(page, pageSize, sort);
+		Page<InstrumentDto> actualResult = sut.findInstrumentDtos(page, pageSize, sort);
 
 		// then
 		then(instrumentRepository).should().findAll(any(Pageable.class));
@@ -137,7 +137,7 @@ class InstrumentQueryServiceTest {
 			.willReturn(expectedResult);
 
 		// when
-		Page<ElectricGuitarDto> actualResult = sut.findElectricGuitars(page, pageSize, sort, filterConditions);
+		Page<ElectricGuitarDto> actualResult = sut.findElectricGuitarDtos(page, pageSize, sort, filterConditions);
 
 		// then
 		then(instrumentRepository).should().findElectricGuitars(page, pageSize, sort, filterConditions);
@@ -165,7 +165,7 @@ class InstrumentQueryServiceTest {
 		given(instrumentRepository.findBassGuitars(page, pageSize, sort, filterConditions)).willReturn(expectedResult);
 
 		// when
-		Page<BassGuitarDto> actualResult = sut.findBassGuitars(page, pageSize, sort, filterConditions);
+		Page<BassGuitarDto> actualResult = sut.findBassGuitarDtos(page, pageSize, sort, filterConditions);
 
 		// then
 		then(instrumentRepository).should().findBassGuitars(page, pageSize, sort, filterConditions);
@@ -196,7 +196,7 @@ class InstrumentQueryServiceTest {
 
 		// when
 		Page<AcousticAndClassicGuitarDto> actualResult =
-			sut.findAcousticAndClassicGuitars(page, pageSize, sort, filterConditions);
+			sut.findAcousticAndClassicGuitarDtos(page, pageSize, sort, filterConditions);
 
 		// then
 		then(instrumentRepository).should().findAcousticAndClassicGuitars(page, pageSize, sort, filterConditions);
@@ -224,7 +224,7 @@ class InstrumentQueryServiceTest {
 		given(instrumentRepository.findEffectors(page, pageSize, sort, filterConditions)).willReturn(expectedResult);
 
 		// when
-		Page<EffectorDto> actualResult = sut.findEffectors(page, pageSize, sort, filterConditions);
+		Page<EffectorDto> actualResult = sut.findEffectorDtos(page, pageSize, sort, filterConditions);
 
 		// then
 		then(instrumentRepository).should().findEffectors(page, pageSize, sort, filterConditions);
@@ -252,7 +252,7 @@ class InstrumentQueryServiceTest {
 		given(instrumentRepository.findAmplifiers(page, pageSize, sort, filterConditions)).willReturn(expectedResult);
 
 		// when
-		Page<AmplifierDto> actualResult = sut.findAmplifiers(page, pageSize, sort, filterConditions);
+		Page<AmplifierDto> actualResult = sut.findAmplifierDtos(page, pageSize, sort, filterConditions);
 
 		// then
 		then(instrumentRepository).should().findAmplifiers(page, pageSize, sort, filterConditions);
@@ -281,7 +281,7 @@ class InstrumentQueryServiceTest {
 			.willReturn(expectedResult);
 
 		// when
-		Page<AudioEquipmentDto> actualResult = sut.findAudioEquipments(page, pageSize, sort, filterConditions);
+		Page<AudioEquipmentDto> actualResult = sut.findAudioEquipmentDtos(page, pageSize, sort, filterConditions);
 
 		// then
 		then(instrumentRepository).should().findAudioEquipments(page, pageSize, sort, filterConditions);

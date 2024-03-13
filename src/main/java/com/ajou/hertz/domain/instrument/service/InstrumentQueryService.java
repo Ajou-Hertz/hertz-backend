@@ -30,13 +30,13 @@ public class InstrumentQueryService {
 
 	private final InstrumentRepository instrumentRepository;
 
-	public Page<InstrumentDto> findInstruments(int page, int pageSize, InstrumentSortOption sort) {
+	public Page<InstrumentDto> findInstrumentDtos(int page, int pageSize, InstrumentSortOption sort) {
 		return instrumentRepository
 			.findAll(PageRequest.of(page, pageSize, sort.toSort()))
 			.map(InstrumentDto::from);
 	}
 
-	public Page<ElectricGuitarDto> findElectricGuitars(
+	public Page<ElectricGuitarDto> findElectricGuitarDtos(
 		int page,
 		int pageSize,
 		InstrumentSortOption sort,
@@ -47,7 +47,7 @@ public class InstrumentQueryService {
 			.map(ElectricGuitarDto::from);
 	}
 
-	public Page<BassGuitarDto> findBassGuitars(
+	public Page<BassGuitarDto> findBassGuitarDtos(
 		int page,
 		int pageSize,
 		InstrumentSortOption sort,
@@ -58,7 +58,7 @@ public class InstrumentQueryService {
 			.map(BassGuitarDto::from);
 	}
 
-	public Page<AcousticAndClassicGuitarDto> findAcousticAndClassicGuitars(
+	public Page<AcousticAndClassicGuitarDto> findAcousticAndClassicGuitarDtos(
 		int page,
 		int pageSize,
 		InstrumentSortOption sort,
@@ -69,7 +69,7 @@ public class InstrumentQueryService {
 			.map(AcousticAndClassicGuitarDto::from);
 	}
 
-	public Page<EffectorDto> findEffectors(
+	public Page<EffectorDto> findEffectorDtos(
 		int page,
 		int pageSize,
 		InstrumentSortOption sort,
@@ -80,7 +80,7 @@ public class InstrumentQueryService {
 			.map(EffectorDto::from);
 	}
 
-	public Page<AmplifierDto> findAmplifiers(
+	public Page<AmplifierDto> findAmplifierDtos(
 		int page,
 		int pageSize,
 		InstrumentSortOption sort,
@@ -91,7 +91,7 @@ public class InstrumentQueryService {
 			.map(AmplifierDto::from);
 	}
 
-	public Page<AudioEquipmentDto> findAudioEquipments(
+	public Page<AudioEquipmentDto> findAudioEquipmentDtos(
 		int page,
 		int pageSize,
 		InstrumentSortOption sort,

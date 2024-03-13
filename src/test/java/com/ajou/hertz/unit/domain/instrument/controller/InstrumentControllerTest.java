@@ -107,7 +107,7 @@ class InstrumentControllerTest {
 			createBassGuitarDto(3L, userId),
 			createAcousticAndClassicGuitarDto(4L, userId)
 		));
-		given(instrumentQueryService.findInstruments(page, pageSize, sortOption)).willReturn(expectedResult);
+		given(instrumentQueryService.findInstrumentDtos(page, pageSize, sortOption)).willReturn(expectedResult);
 
 		// when & then
 		mvc.perform(
@@ -127,7 +127,7 @@ class InstrumentControllerTest {
 			.andExpect(jsonPath("$.content[0].category").value(InstrumentCategory.ELECTRIC_GUITAR.name()))
 			.andExpect(jsonPath("$.content[1].category").value(InstrumentCategory.BASS_GUITAR.name()))
 			.andExpect(jsonPath("$.content[2].category").value(InstrumentCategory.ACOUSTIC_AND_CLASSIC_GUITAR.name()));
-		then(instrumentQueryService).should().findInstruments(page, pageSize, sortOption);
+		then(instrumentQueryService).should().findInstrumentDtos(page, pageSize, sortOption);
 		verifyEveryMocksShouldHaveNoMoreInteractions();
 	}
 
@@ -143,7 +143,7 @@ class InstrumentControllerTest {
 			createElectricGuitarDto(3L, userId),
 			createElectricGuitarDto(4L, userId)
 		));
-		given(instrumentQueryService.findElectricGuitars(
+		given(instrumentQueryService.findElectricGuitarDtos(
 			eq(page), eq(pageSize), eq(sortOption), any(ElectricGuitarFilterConditions.class)
 		)).willReturn(expectedResult);
 
@@ -167,7 +167,7 @@ class InstrumentControllerTest {
 			.andExpect(jsonPath("$.content", hasSize(expectedResult.getNumberOfElements())));
 		then(instrumentQueryService)
 			.should()
-			.findElectricGuitars(eq(page), eq(pageSize), eq(sortOption), any(ElectricGuitarFilterConditions.class));
+			.findElectricGuitarDtos(eq(page), eq(pageSize), eq(sortOption), any(ElectricGuitarFilterConditions.class));
 		verifyEveryMocksShouldHaveNoMoreInteractions();
 	}
 
@@ -184,7 +184,7 @@ class InstrumentControllerTest {
 			createBassGuitarDto(3L, userId),
 			createBassGuitarDto(4L, userId)
 		));
-		given(instrumentQueryService.findBassGuitars(
+		given(instrumentQueryService.findBassGuitarDtos(
 			eq(page), eq(pageSize), eq(sortOption), any(BassGuitarFilterConditions.class)
 		)).willReturn(expectedResult);
 
@@ -209,7 +209,7 @@ class InstrumentControllerTest {
 			.andExpect(jsonPath("$.content", hasSize(expectedResult.getNumberOfElements())));
 		then(instrumentQueryService)
 			.should()
-			.findBassGuitars(eq(page), eq(pageSize), eq(sortOption), any(BassGuitarFilterConditions.class));
+			.findBassGuitarDtos(eq(page), eq(pageSize), eq(sortOption), any(BassGuitarFilterConditions.class));
 		verifyEveryMocksShouldHaveNoMoreInteractions();
 	}
 
@@ -226,7 +226,7 @@ class InstrumentControllerTest {
 			createAcousticAndClassicGuitarDto(3L, userId),
 			createAcousticAndClassicGuitarDto(4L, userId)
 		));
-		given(instrumentQueryService.findAcousticAndClassicGuitars(
+		given(instrumentQueryService.findAcousticAndClassicGuitarDtos(
 			eq(page), eq(pageSize), eq(sortOption), any(AcousticAndClassicGuitarFilterConditions.class)
 		)).willReturn(expectedResult);
 
@@ -251,7 +251,7 @@ class InstrumentControllerTest {
 			.andExpect(jsonPath("$.content", hasSize(expectedResult.getNumberOfElements())));
 		then(instrumentQueryService)
 			.should()
-			.findAcousticAndClassicGuitars(
+			.findAcousticAndClassicGuitarDtos(
 				eq(page), eq(pageSize), eq(sortOption), any(AcousticAndClassicGuitarFilterConditions.class)
 			);
 		verifyEveryMocksShouldHaveNoMoreInteractions();
@@ -270,7 +270,7 @@ class InstrumentControllerTest {
 			createEffectorDto(3L, userId),
 			createEffectorDto(4L, userId)
 		));
-		given(instrumentQueryService.findEffectors(
+		given(instrumentQueryService.findEffectorDtos(
 			eq(page), eq(pageSize), eq(sortOption), any(EffectorFilterConditions.class)
 		)).willReturn(expectedResult);
 
@@ -293,7 +293,7 @@ class InstrumentControllerTest {
 			.andExpect(jsonPath("$.content", hasSize(expectedResult.getNumberOfElements())));
 		then(instrumentQueryService)
 			.should()
-			.findEffectors(eq(page), eq(pageSize), eq(sortOption), any(EffectorFilterConditions.class));
+			.findEffectorDtos(eq(page), eq(pageSize), eq(sortOption), any(EffectorFilterConditions.class));
 		verifyEveryMocksShouldHaveNoMoreInteractions();
 	}
 
@@ -310,7 +310,7 @@ class InstrumentControllerTest {
 			createAmplifierDto(3L, userId),
 			createAmplifierDto(4L, userId)
 		));
-		given(instrumentQueryService.findAmplifiers(
+		given(instrumentQueryService.findAmplifierDtos(
 			eq(page), eq(pageSize), eq(sortOption), any(AmplifierFilterConditions.class)
 		)).willReturn(expectedResult);
 
@@ -334,7 +334,7 @@ class InstrumentControllerTest {
 			.andExpect(jsonPath("$.content", hasSize(expectedResult.getNumberOfElements())));
 		then(instrumentQueryService)
 			.should()
-			.findAmplifiers(eq(page), eq(pageSize), eq(sortOption), any(AmplifierFilterConditions.class));
+			.findAmplifierDtos(eq(page), eq(pageSize), eq(sortOption), any(AmplifierFilterConditions.class));
 		verifyEveryMocksShouldHaveNoMoreInteractions();
 	}
 
@@ -351,7 +351,7 @@ class InstrumentControllerTest {
 			createAudioEquipmentDto(3L, userId),
 			createAudioEquipmentDto(4L, userId)
 		));
-		given(instrumentQueryService.findAudioEquipments(
+		given(instrumentQueryService.findAudioEquipmentDtos(
 			eq(page), eq(pageSize), eq(sortOption), any(AudioEquipmentFilterConditions.class)
 		)).willReturn(expectedResult);
 
@@ -373,7 +373,7 @@ class InstrumentControllerTest {
 			.andExpect(jsonPath("$.content", hasSize(expectedResult.getNumberOfElements())));
 		then(instrumentQueryService)
 			.should()
-			.findAudioEquipments(eq(page), eq(pageSize), eq(sortOption), any(AudioEquipmentFilterConditions.class));
+			.findAudioEquipmentDtos(eq(page), eq(pageSize), eq(sortOption), any(AudioEquipmentFilterConditions.class));
 		verifyEveryMocksShouldHaveNoMoreInteractions();
 	}
 

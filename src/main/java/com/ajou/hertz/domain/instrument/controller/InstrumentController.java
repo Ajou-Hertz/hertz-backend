@@ -81,7 +81,7 @@ public class InstrumentController {
 		) @RequestParam InstrumentSortOption sort
 	) {
 		return instrumentQueryService
-			.findInstruments(page, size, sort)
+			.findInstrumentDtos(page, size, sort)
 			.map(InstrumentSummaryResponse::from);
 	}
 
@@ -105,7 +105,7 @@ public class InstrumentController {
 		@ParameterObject @Valid @ModelAttribute ElectricGuitarFilterConditions filterConditions
 	) {
 		return instrumentQueryService
-			.findElectricGuitars(page, size, sort, filterConditions)
+			.findElectricGuitarDtos(page, size, sort, filterConditions)
 			.map(ElectricGuitarResponse::from);
 	}
 
@@ -129,7 +129,7 @@ public class InstrumentController {
 		@ParameterObject @Valid @ModelAttribute BassGuitarFilterConditions filterConditions
 	) {
 		return instrumentQueryService
-			.findBassGuitars(page, size, sort, filterConditions)
+			.findBassGuitarDtos(page, size, sort, filterConditions)
 			.map(BassGuitarResponse::from);
 	}
 
@@ -153,7 +153,7 @@ public class InstrumentController {
 		@ParameterObject @Valid @ModelAttribute AcousticAndClassicGuitarFilterConditions filterConditions
 	) {
 		return instrumentQueryService
-			.findAcousticAndClassicGuitars(page, size, sort, filterConditions)
+			.findAcousticAndClassicGuitarDtos(page, size, sort, filterConditions)
 			.map(AcousticAndClassicGuitarResponse::from);
 	}
 
@@ -177,7 +177,7 @@ public class InstrumentController {
 		@ParameterObject @Valid @ModelAttribute EffectorFilterConditions filterConditions
 	) {
 		return instrumentQueryService
-			.findEffectors(page, size, sort, filterConditions)
+			.findEffectorDtos(page, size, sort, filterConditions)
 			.map(EffectorResponse::from);
 	}
 
@@ -201,7 +201,7 @@ public class InstrumentController {
 		@ParameterObject @Valid @ModelAttribute AmplifierFilterConditions filterConditions
 	) {
 		return instrumentQueryService
-			.findAmplifiers(page, size, sort, filterConditions)
+			.findAmplifierDtos(page, size, sort, filterConditions)
 			.map(AmplifierResponse::from);
 	}
 
@@ -225,7 +225,7 @@ public class InstrumentController {
 		@ParameterObject @Valid @ModelAttribute AudioEquipmentFilterConditions filterConditions
 	) {
 		return instrumentQueryService
-			.findAudioEquipments(page, size, sort, filterConditions)
+			.findAudioEquipmentDtos(page, size, sort, filterConditions)
 			.map(AudioEquipmentResponse::from);
 	}
 
