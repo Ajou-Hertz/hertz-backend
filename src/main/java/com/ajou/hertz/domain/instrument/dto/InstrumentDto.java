@@ -64,23 +64,6 @@ public class InstrumentDto {
 		);
 	}
 
-	public static InstrumentDto from(Instrument instrument) {
-		return new InstrumentDto(
-			instrument.getId(),
-			UserDto.from(instrument.getSeller()),
-			getInstrumentCategory(instrument.getClass()),
-			instrument.getTitle(),
-			instrument.getProgressStatus(),
-			AddressDto.from(instrument.getTradeAddress()),
-			instrument.getQualityStatus(),
-			instrument.getPrice(),
-			instrument.getHasAnomaly(),
-			instrument.getDescription(),
-			instrument.getImages().toDtos(),
-			instrument.getHashtags().toStrings()
-		);
-	}
-
 	private static InstrumentCategory getInstrumentCategory(Class<? extends Instrument> instrumentClassType) {
 		if (!instrumentCategoryMap.containsKey(instrumentClassType)) {
 			throw new IllegalArgumentException("Unsupported instrument class: " + instrumentClassType.getName());

@@ -52,7 +52,7 @@ public class AcousticAndClassicGuitarDto extends InstrumentDto {
 		this.pickUp = pickUp;
 	}
 
-	private AcousticAndClassicGuitarDto(AcousticAndClassicGuitar acousticAndClassicGuitar) {
+	public AcousticAndClassicGuitarDto(AcousticAndClassicGuitar acousticAndClassicGuitar) {
 		super(
 			acousticAndClassicGuitar
 		);
@@ -60,9 +60,5 @@ public class AcousticAndClassicGuitarDto extends InstrumentDto {
 		this.model = acousticAndClassicGuitar.getModel();
 		this.wood = acousticAndClassicGuitar.getWood();
 		this.pickUp = acousticAndClassicGuitar.getPickUp();
-	}
-
-	public static AcousticAndClassicGuitarDto from(AcousticAndClassicGuitar acousticAndClassicGuitar) {
-		return new AcousticAndClassicGuitarDto(acousticAndClassicGuitar);
 	}
 }

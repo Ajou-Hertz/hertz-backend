@@ -53,14 +53,10 @@ public class AmplifierResponse extends InstrumentResponse {
 		this.usage = usage;
 	}
 
-	private AmplifierResponse(AmplifierDto amplifierDto) {
+	public AmplifierResponse(AmplifierDto amplifierDto) {
 		super(amplifierDto);
 		this.type = amplifierDto.getType();
 		this.brand = amplifierDto.getBrand();
 		this.usage = amplifierDto.getUsage();
-	}
-
-	public static AmplifierResponse from(AmplifierDto amplifierDto) {
-		return new AmplifierResponse(amplifierDto);
 	}
 }

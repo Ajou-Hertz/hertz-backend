@@ -29,6 +29,7 @@ import com.ajou.hertz.domain.instrument.entity.ElectricGuitar;
 import com.ajou.hertz.domain.instrument.entity.Instrument;
 import com.ajou.hertz.domain.instrument.entity.InstrumentHashtag;
 import com.ajou.hertz.domain.instrument.entity.InstrumentImage;
+import com.ajou.hertz.domain.instrument.mapper.InstrumentMapper;
 import com.ajou.hertz.domain.instrument.repository.InstrumentHashtagRepository;
 import com.ajou.hertz.domain.instrument.repository.InstrumentImageRepository;
 import com.ajou.hertz.domain.instrument.repository.InstrumentRepository;
@@ -66,7 +67,7 @@ public class InstrumentCommandService {
 	 */
 	public ElectricGuitarDto createNewElectricGuitar(Long sellerId, CreateNewElectricGuitarRequest request) {
 		ElectricGuitar electricGuitar = createNewInstrument(sellerId, request, new ElectricGuitarCreationStrategy());
-		return ElectricGuitarDto.from(electricGuitar);
+		return InstrumentMapper.toElectricGuitarDto(electricGuitar);
 	}
 
 	/**
@@ -78,7 +79,7 @@ public class InstrumentCommandService {
 	 */
 	public BassGuitarDto createNewBassGuitar(Long sellerId, CreateNewBassGuitarRequest request) {
 		BassGuitar bassGuitar = createNewInstrument(sellerId, request, new BassGuitarCreationStrategy());
-		return BassGuitarDto.from(bassGuitar);
+		return InstrumentMapper.toBassGuitarDto(bassGuitar);
 	}
 
 	/**
@@ -97,7 +98,7 @@ public class InstrumentCommandService {
 			request,
 			new AcousticAndClassicGuitarCreationStrategy()
 		);
-		return AcousticAndClassicGuitarDto.from(acousticAndClassicGuitar);
+		return InstrumentMapper.toAcousticAndClassicGuitarDto(acousticAndClassicGuitar);
 	}
 
 	/**
@@ -109,7 +110,7 @@ public class InstrumentCommandService {
 	 */
 	public EffectorDto createNewEffector(Long sellerId, CreateNewEffectorRequest request) {
 		Effector effector = createNewInstrument(sellerId, request, new EffectorCreationStrategy());
-		return EffectorDto.from(effector);
+		return InstrumentMapper.toEffectorDto(effector);
 	}
 
 	/**
@@ -121,7 +122,7 @@ public class InstrumentCommandService {
 	 */
 	public AmplifierDto createNewAmplifier(Long sellerId, CreateNewAmplifierRequest request) {
 		Amplifier amplifier = createNewInstrument(sellerId, request, new AmplifierCreationStrategy());
-		return AmplifierDto.from(amplifier);
+		return InstrumentMapper.toAmplifierDto(amplifier);
 	}
 
 	/**
@@ -133,7 +134,7 @@ public class InstrumentCommandService {
 	 */
 	public AudioEquipmentDto createNewAudioEquipment(Long sellerId, CreateNewAudioEquipmentRequest request) {
 		AudioEquipment audioEquipment = createNewInstrument(sellerId, request, new AudioEquipmentCreationStrategy());
-		return AudioEquipmentDto.from(audioEquipment);
+		return InstrumentMapper.toAmplifierDto(audioEquipment);
 	}
 
 	/**

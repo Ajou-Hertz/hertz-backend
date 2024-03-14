@@ -41,12 +41,8 @@ public class AudioEquipmentResponse extends InstrumentResponse {
 		this.type = type;
 	}
 
-	private AudioEquipmentResponse(AudioEquipmentDto audioEquipmentDto) {
+	public AudioEquipmentResponse(AudioEquipmentDto audioEquipmentDto) {
 		super(audioEquipmentDto);
 		this.type = audioEquipmentDto.getType();
-	}
-
-	public static AudioEquipmentResponse from(AudioEquipmentDto audioEquipmentDto) {
-		return new AudioEquipmentResponse(audioEquipmentDto);
 	}
 }

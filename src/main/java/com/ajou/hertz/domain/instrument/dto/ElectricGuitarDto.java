@@ -51,15 +51,11 @@ public class ElectricGuitarDto extends InstrumentDto {
 		this.color = color;
 	}
 
-	private ElectricGuitarDto(ElectricGuitar electricGuitar) {
+	public ElectricGuitarDto(ElectricGuitar electricGuitar) {
 		super(electricGuitar);
 		this.brand = electricGuitar.getBrand();
 		this.model = electricGuitar.getModel();
 		this.productionYear = electricGuitar.getProductionYear();
 		this.color = electricGuitar.getColor();
-	}
-
-	public static ElectricGuitarDto from(ElectricGuitar electricGuitar) {
-		return new ElectricGuitarDto(electricGuitar);
 	}
 }

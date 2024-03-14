@@ -108,7 +108,7 @@ public class InstrumentController {
 	) {
 		return instrumentQueryService
 			.findInstrumentDtos(page, size, sort)
-			.map(InstrumentSummaryResponse::from);
+			.map(InstrumentMapper::toInstrumentSummaryResponse);
 	}
 
 	@Operation(
@@ -132,7 +132,7 @@ public class InstrumentController {
 	) {
 		return instrumentQueryService
 			.findElectricGuitarDtos(page, size, sort, filterConditions)
-			.map(ElectricGuitarResponse::from);
+			.map(InstrumentMapper::toElectricGuitarResponse);
 	}
 
 	@Operation(
@@ -156,7 +156,7 @@ public class InstrumentController {
 	) {
 		return instrumentQueryService
 			.findBassGuitarDtos(page, size, sort, filterConditions)
-			.map(BassGuitarResponse::from);
+			.map(InstrumentMapper::toBassGuitarResponse);
 	}
 
 	@Operation(
@@ -180,7 +180,7 @@ public class InstrumentController {
 	) {
 		return instrumentQueryService
 			.findAcousticAndClassicGuitarDtos(page, size, sort, filterConditions)
-			.map(AcousticAndClassicGuitarResponse::from);
+			.map(InstrumentMapper::toAcousticAndClassicGuitarResponse);
 	}
 
 	@Operation(
@@ -204,7 +204,7 @@ public class InstrumentController {
 	) {
 		return instrumentQueryService
 			.findEffectorDtos(page, size, sort, filterConditions)
-			.map(EffectorResponse::from);
+			.map(InstrumentMapper::toEffectorResponse);
 	}
 
 	@Operation(
@@ -228,7 +228,7 @@ public class InstrumentController {
 	) {
 		return instrumentQueryService
 			.findAmplifierDtos(page, size, sort, filterConditions)
-			.map(AmplifierResponse::from);
+			.map(InstrumentMapper::toAmplifierResponse);
 	}
 
 	@Operation(
@@ -252,7 +252,7 @@ public class InstrumentController {
 	) {
 		return instrumentQueryService
 			.findAudioEquipmentDtos(page, size, sort, filterConditions)
-			.map(AudioEquipmentResponse::from);
+			.map(InstrumentMapper::toAudioEquipmentResponse);
 	}
 
 	@Operation(
@@ -278,7 +278,7 @@ public class InstrumentController {
 		);
 		return ResponseEntity
 			.created(URI.create("/instruments/" + electricGuitar.getId()))
-			.body(ElectricGuitarResponse.from(electricGuitar));
+			.body(InstrumentMapper.toElectricGuitarResponse(electricGuitar));
 	}
 
 	@Operation(
@@ -304,7 +304,7 @@ public class InstrumentController {
 		);
 		return ResponseEntity
 			.created(URI.create("/instruments/" + bassGuitar.getId()))
-			.body(BassGuitarResponse.from(bassGuitar));
+			.body(InstrumentMapper.toBassGuitarResponse(bassGuitar));
 	}
 
 	@Operation(
@@ -331,7 +331,7 @@ public class InstrumentController {
 			);
 		return ResponseEntity
 			.created(URI.create("/instruments/" + acousticAndClassicGuitar.getId()))
-			.body(AcousticAndClassicGuitarResponse.from(acousticAndClassicGuitar));
+			.body(InstrumentMapper.toAcousticAndClassicGuitarResponse(acousticAndClassicGuitar));
 	}
 
 	@Operation(
@@ -357,7 +357,7 @@ public class InstrumentController {
 		);
 		return ResponseEntity
 			.created(URI.create("/instruments/" + effector.getId()))
-			.body(EffectorResponse.from(effector));
+			.body(InstrumentMapper.toEffectorResponse(effector));
 	}
 
 	@Operation(
@@ -383,7 +383,7 @@ public class InstrumentController {
 		);
 		return ResponseEntity
 			.created(URI.create("/instruments/" + amplifier.getId()))
-			.body(AmplifierResponse.from(amplifier));
+			.body(InstrumentMapper.toAmplifierResponse(amplifier));
 	}
 
 	@Operation(
@@ -409,6 +409,6 @@ public class InstrumentController {
 		);
 		return ResponseEntity
 			.created(URI.create("/instruments/" + audioEquipment.getId()))
-			.body(AudioEquipmentResponse.from(audioEquipment));
+			.body(InstrumentMapper.toAudioEquipmentResponse(audioEquipment));
 	}
 }

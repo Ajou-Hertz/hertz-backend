@@ -3,7 +3,6 @@ package com.ajou.hertz.domain.instrument.dto.response;
 import com.ajou.hertz.common.dto.response.AddressResponse;
 import com.ajou.hertz.domain.instrument.constant.InstrumentCategory;
 import com.ajou.hertz.domain.instrument.constant.InstrumentProgressStatus;
-import com.ajou.hertz.domain.instrument.dto.InstrumentDto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AccessLevel;
@@ -11,7 +10,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @Getter
 public class InstrumentSummaryResponse {
@@ -36,16 +35,4 @@ public class InstrumentSummaryResponse {
 
 	@Schema(description = "악기 썸네일 이미지")
 	private InstrumentImageResponse thumbnailImage;
-
-	public static InstrumentSummaryResponse from(InstrumentDto instrumentDto) {
-		return new InstrumentSummaryResponse(
-			instrumentDto.getId(),
-			instrumentDto.getCategory(),
-			instrumentDto.getTitle(),
-			instrumentDto.getProgressStatus(),
-			AddressResponse.from(instrumentDto.getTradeAddress()),
-			instrumentDto.getPrice(),
-			InstrumentImageResponse.from(instrumentDto.getImages().get(0))
-		);
-	}
 }

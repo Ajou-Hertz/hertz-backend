@@ -58,15 +58,11 @@ public class ElectricGuitarResponse extends InstrumentResponse {
 		this.color = color;
 	}
 
-	private ElectricGuitarResponse(ElectricGuitarDto electricGuitarDto) {
+	public ElectricGuitarResponse(ElectricGuitarDto electricGuitarDto) {
 		super(electricGuitarDto);
 		this.brand = electricGuitarDto.getBrand();
 		this.model = electricGuitarDto.getModel();
 		this.productionYear = electricGuitarDto.getProductionYear();
 		this.color = electricGuitarDto.getColor();
-	}
-
-	public static ElectricGuitarResponse from(ElectricGuitarDto electricGuitarDto) {
-		return new ElectricGuitarResponse(electricGuitarDto);
 	}
 }

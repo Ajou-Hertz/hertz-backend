@@ -59,15 +59,11 @@ public class AcousticAndClassicGuitarResponse extends InstrumentResponse {
 		this.pickUp = pickUp;
 	}
 
-	private AcousticAndClassicGuitarResponse(AcousticAndClassicGuitarDto acousticAndClassicGuitarDto) {
+	public AcousticAndClassicGuitarResponse(AcousticAndClassicGuitarDto acousticAndClassicGuitarDto) {
 		super(acousticAndClassicGuitarDto);
 		this.brand = acousticAndClassicGuitarDto.getBrand();
 		this.model = acousticAndClassicGuitarDto.getModel();
 		this.wood = acousticAndClassicGuitarDto.getWood();
 		this.pickUp = acousticAndClassicGuitarDto.getPickUp();
-	}
-
-	public static AcousticAndClassicGuitarResponse from(AcousticAndClassicGuitarDto acousticAndClassicGuitarDto) {
-		return new AcousticAndClassicGuitarResponse(acousticAndClassicGuitarDto);
 	}
 }

@@ -44,13 +44,9 @@ public class EffectorDto extends InstrumentDto {
 		this.feature = feature;
 	}
 
-	private EffectorDto(Effector effector) {
+	public EffectorDto(Effector effector) {
 		super(effector);
 		this.type = effector.getType();
 		this.feature = effector.getFeature();
-	}
-
-	public static EffectorDto from(Effector effector) {
-		return new EffectorDto(effector);
 	}
 }
