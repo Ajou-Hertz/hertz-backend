@@ -12,6 +12,7 @@ import lombok.Getter;
  *     <li>2000 ~ 2199: 인증 관련 예외</li>
  *     <li>2200 ~ 2399: 유저 관련 예외</li>
  *     <li>2400 ~ 2599: 주소 관련 예외</li>
+ *     <li>2600 ~ 2799: 악기 관련 예외</li>
  * </ul>
  */
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
@@ -46,6 +47,11 @@ public enum CustomExceptionType {
 	 * 주소 관련 예외
 	 */
 	INVALID_ADDRESS_FORMAT(2400, "주소 형식이 올바르지 않습니다."),
+
+	/**
+	 * 악기 관련 예외
+	 */
+	INSTRUMENT_NOT_FOUND_BY_ID(2600, "일치하는 매물 정보를 찾을 수 없습니다.")
 	;
 
 	private final Integer code;

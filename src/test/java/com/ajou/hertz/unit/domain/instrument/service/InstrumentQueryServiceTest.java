@@ -6,6 +6,7 @@ import static org.mockito.BDDMockito.*;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import org.junit.jupiter.api.DisplayName;
@@ -58,6 +59,7 @@ import com.ajou.hertz.domain.instrument.entity.BassGuitar;
 import com.ajou.hertz.domain.instrument.entity.Effector;
 import com.ajou.hertz.domain.instrument.entity.ElectricGuitar;
 import com.ajou.hertz.domain.instrument.entity.Instrument;
+import com.ajou.hertz.domain.instrument.exception.InstrumentNotFoundByIdException;
 import com.ajou.hertz.domain.instrument.repository.InstrumentRepository;
 import com.ajou.hertz.domain.instrument.service.InstrumentQueryService;
 import com.ajou.hertz.domain.user.constant.Gender;
@@ -74,6 +76,39 @@ class InstrumentQueryServiceTest {
 
 	@Mock
 	private InstrumentRepository instrumentRepository;
+
+	@Test
+	void id가_주어지고_주어진_id에_해당하는_악기를_조회한다() throws Exception {
+		// given
+		long instrumentId = 1L;
+		Instrument expectedResult = createAmplifier(instrumentId, createUser(2L));
+		given(instrumentRepository.findById(instrumentId)).willReturn(Optional.of(expectedResult));
+
+		// when
+		InstrumentDto actualResult = sut.getInstrumentDtoById(instrumentId);
+
+		// then
+		then(instrumentRepository).should().findById(instrumentId);
+		verifyEveryMocksShouldHaveNoMoreInteractions();
+		assertThat(actualResult)
+			.hasFieldOrPropertyWithValue("id", expectedResult.getId())
+			.hasFieldOrPropertyWithValue("category", InstrumentCategory.AMPLIFIER);
+	}
+
+	@Test
+	void 존재하지_않은_id가_주어지고_id에_해당하는_악기를_조회하면_예외가_발생한다() throws Exception {
+		// given
+		long instrumentId = 1L;
+		given(instrumentRepository.findById(instrumentId)).willReturn(Optional.empty());
+
+		// when
+		Throwable t = catchThrowable(() -> sut.getInstrumentDtoById(instrumentId));
+
+		// then
+		then(instrumentRepository).should().findById(instrumentId);
+		verifyEveryMocksShouldHaveNoMoreInteractions();
+		assertThat(t).isInstanceOf(InstrumentNotFoundByIdException.class);
+	}
 
 	@Test
 	void 종류_상관_없이_전체_악기_목록을_조회한다() throws Exception {

@@ -18,7 +18,7 @@ import lombok.NoArgsConstructor;
 @Getter
 public abstract class InstrumentResponse {
 
-	@Schema(description = "Id of instrument(electric guitar)", example = "2")
+	@Schema(description = "Id of instrument", example = "2")
 	private Long id;
 
 	@Schema(description = "Id of seller", example = "1")

@@ -19,6 +19,15 @@ import com.ajou.hertz.domain.instrument.dto.request.AudioEquipmentFilterConditio
 import com.ajou.hertz.domain.instrument.dto.request.BassGuitarFilterConditions;
 import com.ajou.hertz.domain.instrument.dto.request.EffectorFilterConditions;
 import com.ajou.hertz.domain.instrument.dto.request.ElectricGuitarFilterConditions;
+import com.ajou.hertz.domain.instrument.entity.AcousticAndClassicGuitar;
+import com.ajou.hertz.domain.instrument.entity.Amplifier;
+import com.ajou.hertz.domain.instrument.entity.AudioEquipment;
+import com.ajou.hertz.domain.instrument.entity.BassGuitar;
+import com.ajou.hertz.domain.instrument.entity.Effector;
+import com.ajou.hertz.domain.instrument.entity.ElectricGuitar;
+import com.ajou.hertz.domain.instrument.entity.Instrument;
+import com.ajou.hertz.domain.instrument.exception.InstrumentNotFoundByIdException;
+import com.ajou.hertz.domain.instrument.mapper.InstrumentMapper;
 import com.ajou.hertz.domain.instrument.repository.InstrumentRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -29,6 +38,11 @@ import lombok.RequiredArgsConstructor;
 public class InstrumentQueryService {
 
 	private final InstrumentRepository instrumentRepository;
+
+	public InstrumentDto getInstrumentDtoById(Long id) {
+		Instrument instrument = getInstrumentById(id);
+		return InstrumentMapper.toDto(instrument);
+	}
 
 	public Page<InstrumentDto> findInstrumentDtos(int page, int pageSize, InstrumentSortOption sort) {
 		return instrumentRepository
@@ -100,5 +114,10 @@ public class InstrumentQueryService {
 		return instrumentRepository
 			.findAudioEquipments(page, pageSize, sort, filterConditions)
 			.map(AudioEquipmentDto::from);
+	}
+
+	private Instrument getInstrumentById(Long id) {
+		return instrumentRepository.findById(id)
+			.orElseThrow(() -> new InstrumentNotFoundByIdException(id));
 	}
 }

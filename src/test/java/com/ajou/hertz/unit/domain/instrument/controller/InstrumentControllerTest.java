@@ -96,6 +96,26 @@ class InstrumentControllerTest {
 	}
 
 	@Test
+	void id가_주어지고_id에_해당하는_악기를_조회한다() throws Exception {
+		// given
+		long instrumentId = 1L;
+		InstrumentDto expectedResult = createAmplifierDto(instrumentId, 2L);
+		given(instrumentQueryService.getInstrumentDtoById(instrumentId)).willReturn(expectedResult);
+
+		// when & then
+		mvc.perform(
+				get("/api/instruments/{instrumentId}", instrumentId)
+					.header(API_VERSION_HEADER_NAME, 1)
+			)
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.id").value(expectedResult.getId()))
+			.andExpect(jsonPath("$.sellerId").value(expectedResult.getSeller().getId()))
+			.andExpect(jsonPath("$.category").value(expectedResult.getCategory().name()));
+		then(instrumentQueryService).should().getInstrumentDtoById(instrumentId);
+		verifyEveryMocksShouldHaveNoMoreInteractions();
+	}
+
+	@Test
 	void 종류_상관_없이_전체_악기_매물_목록을_조회한다() throws Exception {
 		// given
 		long userId = 1L;

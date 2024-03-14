@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -24,6 +25,7 @@ import com.ajou.hertz.domain.instrument.dto.AudioEquipmentDto;
 import com.ajou.hertz.domain.instrument.dto.BassGuitarDto;
 import com.ajou.hertz.domain.instrument.dto.EffectorDto;
 import com.ajou.hertz.domain.instrument.dto.ElectricGuitarDto;
+import com.ajou.hertz.domain.instrument.dto.InstrumentDto;
 import com.ajou.hertz.domain.instrument.dto.request.AcousticAndClassicGuitarFilterConditions;
 import com.ajou.hertz.domain.instrument.dto.request.AmplifierFilterConditions;
 import com.ajou.hertz.domain.instrument.dto.request.AudioEquipmentFilterConditions;
@@ -42,7 +44,9 @@ import com.ajou.hertz.domain.instrument.dto.response.AudioEquipmentResponse;
 import com.ajou.hertz.domain.instrument.dto.response.BassGuitarResponse;
 import com.ajou.hertz.domain.instrument.dto.response.EffectorResponse;
 import com.ajou.hertz.domain.instrument.dto.response.ElectricGuitarResponse;
+import com.ajou.hertz.domain.instrument.dto.response.InstrumentResponse;
 import com.ajou.hertz.domain.instrument.dto.response.InstrumentSummaryResponse;
+import com.ajou.hertz.domain.instrument.mapper.InstrumentMapper;
 import com.ajou.hertz.domain.instrument.service.InstrumentCommandService;
 import com.ajou.hertz.domain.instrument.service.InstrumentQueryService;
 
@@ -61,6 +65,28 @@ public class InstrumentController {
 
 	private final InstrumentCommandService instrumentCommandService;
 	private final InstrumentQueryService instrumentQueryService;
+
+	@Operation(
+		summary = "악기 매물 상세 조회",
+		description = """
+			<p>매물의 상세 정보를 조회합니다.
+			<p>악기 종류별로 응답 데이터가 다를 수 있습니다.
+			<p>정확한 악기 종류별 응답 데이터는 페이지 하단의 <b>Schemas</b> 항목에서 아래 내용들을 참고해주세요.
+			<ul>
+				<li>일렉 기타 응답 데이터: <code>ElectricGuitarResponse</code></li>
+				<li>베이스 기타 응답 데이터: <code>BassGuitarResponse</code></li>
+				<li>어쿠스틱&클래식 기타 응답 데이터: <code>AcousticAndClassicGuitarResponse</code></li>
+				<li>이펙터 응답 데이터: <code>EffectorResponse</code></li>
+				<li>앰프 응답 데이터: <code>AmplifierResponse</code></li>
+				<li>음향 장비 응답 데이터: <code>AudioEquipmentResponse</code></li>
+			</ul>
+			"""
+	)
+	@GetMapping(value = "/{instrumentId}", headers = API_VERSION_HEADER_NAME + "=" + 1)
+	public InstrumentResponse getInstrumentByIdV1(@PathVariable Long instrumentId) {
+		InstrumentDto instrumentDto = instrumentQueryService.getInstrumentDtoById(instrumentId);
+		return InstrumentMapper.toResponse(instrumentDto);
+	}
 
 	@Operation(
 		summary = "전체 악기 매물 목록 조회",
