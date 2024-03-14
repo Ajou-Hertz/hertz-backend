@@ -6,6 +6,7 @@ import static org.mockito.BDDMockito.*;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import org.junit.jupiter.api.DisplayName;
@@ -58,6 +59,7 @@ import com.ajou.hertz.domain.instrument.entity.BassGuitar;
 import com.ajou.hertz.domain.instrument.entity.Effector;
 import com.ajou.hertz.domain.instrument.entity.ElectricGuitar;
 import com.ajou.hertz.domain.instrument.entity.Instrument;
+import com.ajou.hertz.domain.instrument.exception.InstrumentNotFoundByIdException;
 import com.ajou.hertz.domain.instrument.repository.InstrumentRepository;
 import com.ajou.hertz.domain.instrument.service.InstrumentQueryService;
 import com.ajou.hertz.domain.user.constant.Gender;
@@ -76,6 +78,39 @@ class InstrumentQueryServiceTest {
 	private InstrumentRepository instrumentRepository;
 
 	@Test
+	void id가_주어지고_주어진_id에_해당하는_악기를_조회한다() throws Exception {
+		// given
+		long instrumentId = 1L;
+		Instrument expectedResult = createAmplifier(instrumentId, createUser(2L));
+		given(instrumentRepository.findById(instrumentId)).willReturn(Optional.of(expectedResult));
+
+		// when
+		InstrumentDto actualResult = sut.getInstrumentDtoById(instrumentId);
+
+		// then
+		then(instrumentRepository).should().findById(instrumentId);
+		verifyEveryMocksShouldHaveNoMoreInteractions();
+		assertThat(actualResult)
+			.hasFieldOrPropertyWithValue("id", expectedResult.getId())
+			.hasFieldOrPropertyWithValue("category", InstrumentCategory.AMPLIFIER);
+	}
+
+	@Test
+	void 존재하지_않은_id가_주어지고_id에_해당하는_악기를_조회하면_예외가_발생한다() throws Exception {
+		// given
+		long instrumentId = 1L;
+		given(instrumentRepository.findById(instrumentId)).willReturn(Optional.empty());
+
+		// when
+		Throwable t = catchThrowable(() -> sut.getInstrumentDtoById(instrumentId));
+
+		// then
+		then(instrumentRepository).should().findById(instrumentId);
+		verifyEveryMocksShouldHaveNoMoreInteractions();
+		assertThat(t).isInstanceOf(InstrumentNotFoundByIdException.class);
+	}
+
+	@Test
 	void 종류_상관_없이_전체_악기_목록을_조회한다() throws Exception {
 		// given
 		int page = 0;
@@ -90,7 +125,7 @@ class InstrumentQueryServiceTest {
 		given(instrumentRepository.findAll(any(Pageable.class))).willReturn(expectedResult);
 
 		// when
-		Page<InstrumentDto> actualResult = sut.findInstruments(page, pageSize, sort);
+		Page<InstrumentDto> actualResult = sut.findInstrumentDtos(page, pageSize, sort);
 
 		// then
 		then(instrumentRepository).should().findAll(any(Pageable.class));
@@ -137,7 +172,7 @@ class InstrumentQueryServiceTest {
 			.willReturn(expectedResult);
 
 		// when
-		Page<ElectricGuitarDto> actualResult = sut.findElectricGuitars(page, pageSize, sort, filterConditions);
+		Page<ElectricGuitarDto> actualResult = sut.findElectricGuitarDtos(page, pageSize, sort, filterConditions);
 
 		// then
 		then(instrumentRepository).should().findElectricGuitars(page, pageSize, sort, filterConditions);
@@ -165,7 +200,7 @@ class InstrumentQueryServiceTest {
 		given(instrumentRepository.findBassGuitars(page, pageSize, sort, filterConditions)).willReturn(expectedResult);
 
 		// when
-		Page<BassGuitarDto> actualResult = sut.findBassGuitars(page, pageSize, sort, filterConditions);
+		Page<BassGuitarDto> actualResult = sut.findBassGuitarDtos(page, pageSize, sort, filterConditions);
 
 		// then
 		then(instrumentRepository).should().findBassGuitars(page, pageSize, sort, filterConditions);
@@ -196,7 +231,7 @@ class InstrumentQueryServiceTest {
 
 		// when
 		Page<AcousticAndClassicGuitarDto> actualResult =
-			sut.findAcousticAndClassicGuitars(page, pageSize, sort, filterConditions);
+			sut.findAcousticAndClassicGuitarDtos(page, pageSize, sort, filterConditions);
 
 		// then
 		then(instrumentRepository).should().findAcousticAndClassicGuitars(page, pageSize, sort, filterConditions);
@@ -224,7 +259,7 @@ class InstrumentQueryServiceTest {
 		given(instrumentRepository.findEffectors(page, pageSize, sort, filterConditions)).willReturn(expectedResult);
 
 		// when
-		Page<EffectorDto> actualResult = sut.findEffectors(page, pageSize, sort, filterConditions);
+		Page<EffectorDto> actualResult = sut.findEffectorDtos(page, pageSize, sort, filterConditions);
 
 		// then
 		then(instrumentRepository).should().findEffectors(page, pageSize, sort, filterConditions);
@@ -252,7 +287,7 @@ class InstrumentQueryServiceTest {
 		given(instrumentRepository.findAmplifiers(page, pageSize, sort, filterConditions)).willReturn(expectedResult);
 
 		// when
-		Page<AmplifierDto> actualResult = sut.findAmplifiers(page, pageSize, sort, filterConditions);
+		Page<AmplifierDto> actualResult = sut.findAmplifierDtos(page, pageSize, sort, filterConditions);
 
 		// then
 		then(instrumentRepository).should().findAmplifiers(page, pageSize, sort, filterConditions);
@@ -281,7 +316,7 @@ class InstrumentQueryServiceTest {
 			.willReturn(expectedResult);
 
 		// when
-		Page<AudioEquipmentDto> actualResult = sut.findAudioEquipments(page, pageSize, sort, filterConditions);
+		Page<AudioEquipmentDto> actualResult = sut.findAudioEquipmentDtos(page, pageSize, sort, filterConditions);
 
 		// then
 		then(instrumentRepository).should().findAudioEquipments(page, pageSize, sort, filterConditions);

@@ -47,13 +47,9 @@ public class EffectorResponse extends InstrumentResponse {
 		this.feature = feature;
 	}
 
-	private EffectorResponse(EffectorDto effectorDto) {
+	public EffectorResponse(EffectorDto effectorDto) {
 		super(effectorDto);
 		this.type = effectorDto.getType();
 		this.feature = effectorDto.getFeature();
-	}
-
-	public static EffectorResponse from(EffectorDto effectorDto) {
-		return new EffectorResponse(effectorDto);
 	}
 }

@@ -52,6 +52,7 @@ public class SecurityConfig {
 		AUTH_WHITE_LIST.put("/api/administrative-areas/sgg", GET);
 		AUTH_WHITE_LIST.put("/api/administrative-areas/emd", GET);
 		AUTH_WHITE_LIST.put("/api/instruments", GET);
+		AUTH_WHITE_LIST.put("/api/instruments/{instrumentId:\\d+}", GET);
 		AUTH_WHITE_LIST.put("/api/instruments/electric-guitars", GET);
 		AUTH_WHITE_LIST.put("/api/instruments/bass-guitars", GET);
 		AUTH_WHITE_LIST.put("/api/instruments/acoustic-and-classic-guitars", GET);

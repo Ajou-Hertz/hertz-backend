@@ -52,15 +52,11 @@ public class BassGuitarDto extends InstrumentDto {
 		this.color = color;
 	}
 
-	private BassGuitarDto(BassGuitar bassGuitar) {
+	public BassGuitarDto(BassGuitar bassGuitar) {
 		super(bassGuitar);
 		this.brand = bassGuitar.getBrand();
 		this.pickUp = bassGuitar.getPickUp();
 		this.preAmplifier = bassGuitar.getPreAmplifier();
 		this.color = bassGuitar.getColor();
-	}
-
-	public static BassGuitarDto from(BassGuitar bassGuitar) {
-		return new BassGuitarDto(bassGuitar);
 	}
 }

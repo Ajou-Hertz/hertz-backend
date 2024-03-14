@@ -48,14 +48,10 @@ public class AmplifierDto extends InstrumentDto {
 		this.usage = usage;
 	}
 
-	private AmplifierDto(Amplifier amplifier) {
+	public AmplifierDto(Amplifier amplifier) {
 		super(amplifier);
 		this.type = amplifier.getType();
 		this.brand = amplifier.getBrand();
 		this.usage = amplifier.getUsage();
-	}
-
-	public static AmplifierDto from(Amplifier amplifier) {
-		return new AmplifierDto(amplifier);
 	}
 }

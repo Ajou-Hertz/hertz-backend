@@ -19,6 +19,9 @@ import com.ajou.hertz.domain.instrument.dto.request.AudioEquipmentFilterConditio
 import com.ajou.hertz.domain.instrument.dto.request.BassGuitarFilterConditions;
 import com.ajou.hertz.domain.instrument.dto.request.EffectorFilterConditions;
 import com.ajou.hertz.domain.instrument.dto.request.ElectricGuitarFilterConditions;
+import com.ajou.hertz.domain.instrument.entity.Instrument;
+import com.ajou.hertz.domain.instrument.exception.InstrumentNotFoundByIdException;
+import com.ajou.hertz.domain.instrument.mapper.InstrumentMapper;
 import com.ajou.hertz.domain.instrument.repository.InstrumentRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -30,13 +33,18 @@ public class InstrumentQueryService {
 
 	private final InstrumentRepository instrumentRepository;
 
-	public Page<InstrumentDto> findInstruments(int page, int pageSize, InstrumentSortOption sort) {
-		return instrumentRepository
-			.findAll(PageRequest.of(page, pageSize, sort.toSort()))
-			.map(InstrumentDto::from);
+	public InstrumentDto getInstrumentDtoById(Long id) {
+		Instrument instrument = getInstrumentById(id);
+		return InstrumentMapper.toDto(instrument);
 	}
 
-	public Page<ElectricGuitarDto> findElectricGuitars(
+	public Page<InstrumentDto> findInstrumentDtos(int page, int pageSize, InstrumentSortOption sort) {
+		return instrumentRepository
+			.findAll(PageRequest.of(page, pageSize, sort.toSort()))
+			.map(InstrumentMapper::toDto);
+	}
+
+	public Page<ElectricGuitarDto> findElectricGuitarDtos(
 		int page,
 		int pageSize,
 		InstrumentSortOption sort,
@@ -44,10 +52,10 @@ public class InstrumentQueryService {
 	) {
 		return instrumentRepository
 			.findElectricGuitars(page, pageSize, sort, filterConditions)
-			.map(ElectricGuitarDto::from);
+			.map(InstrumentMapper::toElectricGuitarDto);
 	}
 
-	public Page<BassGuitarDto> findBassGuitars(
+	public Page<BassGuitarDto> findBassGuitarDtos(
 		int page,
 		int pageSize,
 		InstrumentSortOption sort,
@@ -55,10 +63,10 @@ public class InstrumentQueryService {
 	) {
 		return instrumentRepository
 			.findBassGuitars(page, pageSize, sort, filterConditions)
-			.map(BassGuitarDto::from);
+			.map(InstrumentMapper::toBassGuitarDto);
 	}
 
-	public Page<AcousticAndClassicGuitarDto> findAcousticAndClassicGuitars(
+	public Page<AcousticAndClassicGuitarDto> findAcousticAndClassicGuitarDtos(
 		int page,
 		int pageSize,
 		InstrumentSortOption sort,
@@ -66,10 +74,10 @@ public class InstrumentQueryService {
 	) {
 		return instrumentRepository
 			.findAcousticAndClassicGuitars(page, pageSize, sort, filterConditions)
-			.map(AcousticAndClassicGuitarDto::from);
+			.map(InstrumentMapper::toAcousticAndClassicGuitarDto);
 	}
 
-	public Page<EffectorDto> findEffectors(
+	public Page<EffectorDto> findEffectorDtos(
 		int page,
 		int pageSize,
 		InstrumentSortOption sort,
@@ -77,10 +85,10 @@ public class InstrumentQueryService {
 	) {
 		return instrumentRepository
 			.findEffectors(page, pageSize, sort, filterConditions)
-			.map(EffectorDto::from);
+			.map(InstrumentMapper::toEffectorDto);
 	}
 
-	public Page<AmplifierDto> findAmplifiers(
+	public Page<AmplifierDto> findAmplifierDtos(
 		int page,
 		int pageSize,
 		InstrumentSortOption sort,
@@ -88,10 +96,10 @@ public class InstrumentQueryService {
 	) {
 		return instrumentRepository
 			.findAmplifiers(page, pageSize, sort, filterConditions)
-			.map(AmplifierDto::from);
+			.map(InstrumentMapper::toAmplifierDto);
 	}
 
-	public Page<AudioEquipmentDto> findAudioEquipments(
+	public Page<AudioEquipmentDto> findAudioEquipmentDtos(
 		int page,
 		int pageSize,
 		InstrumentSortOption sort,
@@ -99,6 +107,11 @@ public class InstrumentQueryService {
 	) {
 		return instrumentRepository
 			.findAudioEquipments(page, pageSize, sort, filterConditions)
-			.map(AudioEquipmentDto::from);
+			.map(InstrumentMapper::toAmplifierDto);
+	}
+
+	private Instrument getInstrumentById(Long id) {
+		return instrumentRepository.findById(id)
+			.orElseThrow(() -> new InstrumentNotFoundByIdException(id));
 	}
 }

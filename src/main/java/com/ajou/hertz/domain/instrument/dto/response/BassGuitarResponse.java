@@ -59,15 +59,11 @@ public class BassGuitarResponse extends InstrumentResponse {
 		this.color = color;
 	}
 
-	private BassGuitarResponse(BassGuitarDto bassGuitarDto) {
+	public BassGuitarResponse(BassGuitarDto bassGuitarDto) {
 		super(bassGuitarDto);
 		this.brand = bassGuitarDto.getBrand();
 		this.pickUp = bassGuitarDto.getPickUp();
 		this.preAmplifier = bassGuitarDto.getPreAmplifier();
 		this.color = bassGuitarDto.getColor();
-	}
-
-	public static BassGuitarResponse from(BassGuitarDto bassGuitarDto) {
-		return new BassGuitarResponse(bassGuitarDto);
 	}
 }

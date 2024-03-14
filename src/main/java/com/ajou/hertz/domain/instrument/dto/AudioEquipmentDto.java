@@ -40,12 +40,8 @@ public class AudioEquipmentDto extends InstrumentDto {
 		this.type = type;
 	}
 
-	private AudioEquipmentDto(AudioEquipment audioEquipment) {
+	public AudioEquipmentDto(AudioEquipment audioEquipment) {
 		super(audioEquipment);
 		this.type = audioEquipment.getType();
-	}
-
-	public static AudioEquipmentDto from(AudioEquipment audioEquipment) {
-		return new AudioEquipmentDto(audioEquipment);
 	}
 }

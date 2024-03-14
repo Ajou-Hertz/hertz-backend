@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -24,6 +25,7 @@ import com.ajou.hertz.domain.instrument.dto.AudioEquipmentDto;
 import com.ajou.hertz.domain.instrument.dto.BassGuitarDto;
 import com.ajou.hertz.domain.instrument.dto.EffectorDto;
 import com.ajou.hertz.domain.instrument.dto.ElectricGuitarDto;
+import com.ajou.hertz.domain.instrument.dto.InstrumentDto;
 import com.ajou.hertz.domain.instrument.dto.request.AcousticAndClassicGuitarFilterConditions;
 import com.ajou.hertz.domain.instrument.dto.request.AmplifierFilterConditions;
 import com.ajou.hertz.domain.instrument.dto.request.AudioEquipmentFilterConditions;
@@ -42,7 +44,9 @@ import com.ajou.hertz.domain.instrument.dto.response.AudioEquipmentResponse;
 import com.ajou.hertz.domain.instrument.dto.response.BassGuitarResponse;
 import com.ajou.hertz.domain.instrument.dto.response.EffectorResponse;
 import com.ajou.hertz.domain.instrument.dto.response.ElectricGuitarResponse;
+import com.ajou.hertz.domain.instrument.dto.response.InstrumentResponse;
 import com.ajou.hertz.domain.instrument.dto.response.InstrumentSummaryResponse;
+import com.ajou.hertz.domain.instrument.mapper.InstrumentMapper;
 import com.ajou.hertz.domain.instrument.service.InstrumentCommandService;
 import com.ajou.hertz.domain.instrument.service.InstrumentQueryService;
 
@@ -63,6 +67,28 @@ public class InstrumentController {
 	private final InstrumentQueryService instrumentQueryService;
 
 	@Operation(
+		summary = "악기 매물 상세 조회",
+		description = """
+			<p>매물의 상세 정보를 조회합니다.
+			<p>악기 종류별로 응답 데이터가 다를 수 있습니다.
+			<p>정확한 악기 종류별 응답 데이터는 페이지 하단의 <b>Schemas</b> 항목에서 아래 내용들을 참고해주세요.
+			<ul>
+				<li>일렉 기타 응답 데이터: <code>ElectricGuitarResponse</code></li>
+				<li>베이스 기타 응답 데이터: <code>BassGuitarResponse</code></li>
+				<li>어쿠스틱&클래식 기타 응답 데이터: <code>AcousticAndClassicGuitarResponse</code></li>
+				<li>이펙터 응답 데이터: <code>EffectorResponse</code></li>
+				<li>앰프 응답 데이터: <code>AmplifierResponse</code></li>
+				<li>음향 장비 응답 데이터: <code>AudioEquipmentResponse</code></li>
+			</ul>
+			"""
+	)
+	@GetMapping(value = "/{instrumentId}", headers = API_VERSION_HEADER_NAME + "=" + 1)
+	public InstrumentResponse getInstrumentByIdV1(@PathVariable Long instrumentId) {
+		InstrumentDto instrumentDto = instrumentQueryService.getInstrumentDtoById(instrumentId);
+		return InstrumentMapper.toResponse(instrumentDto);
+	}
+
+	@Operation(
 		summary = "전체 악기 매물 목록 조회",
 		description = "악기 종류와 상관 없이 전체 매물 목록을 조회합니다."
 	)
@@ -81,8 +107,8 @@ public class InstrumentController {
 		) @RequestParam InstrumentSortOption sort
 	) {
 		return instrumentQueryService
-			.findInstruments(page, size, sort)
-			.map(InstrumentSummaryResponse::from);
+			.findInstrumentDtos(page, size, sort)
+			.map(InstrumentMapper::toInstrumentSummaryResponse);
 	}
 
 	@Operation(
@@ -105,8 +131,8 @@ public class InstrumentController {
 		@ParameterObject @Valid @ModelAttribute ElectricGuitarFilterConditions filterConditions
 	) {
 		return instrumentQueryService
-			.findElectricGuitars(page, size, sort, filterConditions)
-			.map(ElectricGuitarResponse::from);
+			.findElectricGuitarDtos(page, size, sort, filterConditions)
+			.map(InstrumentMapper::toElectricGuitarResponse);
 	}
 
 	@Operation(
@@ -129,8 +155,8 @@ public class InstrumentController {
 		@ParameterObject @Valid @ModelAttribute BassGuitarFilterConditions filterConditions
 	) {
 		return instrumentQueryService
-			.findBassGuitars(page, size, sort, filterConditions)
-			.map(BassGuitarResponse::from);
+			.findBassGuitarDtos(page, size, sort, filterConditions)
+			.map(InstrumentMapper::toBassGuitarResponse);
 	}
 
 	@Operation(
@@ -153,8 +179,8 @@ public class InstrumentController {
 		@ParameterObject @Valid @ModelAttribute AcousticAndClassicGuitarFilterConditions filterConditions
 	) {
 		return instrumentQueryService
-			.findAcousticAndClassicGuitars(page, size, sort, filterConditions)
-			.map(AcousticAndClassicGuitarResponse::from);
+			.findAcousticAndClassicGuitarDtos(page, size, sort, filterConditions)
+			.map(InstrumentMapper::toAcousticAndClassicGuitarResponse);
 	}
 
 	@Operation(
@@ -177,8 +203,8 @@ public class InstrumentController {
 		@ParameterObject @Valid @ModelAttribute EffectorFilterConditions filterConditions
 	) {
 		return instrumentQueryService
-			.findEffectors(page, size, sort, filterConditions)
-			.map(EffectorResponse::from);
+			.findEffectorDtos(page, size, sort, filterConditions)
+			.map(InstrumentMapper::toEffectorResponse);
 	}
 
 	@Operation(
@@ -201,8 +227,8 @@ public class InstrumentController {
 		@ParameterObject @Valid @ModelAttribute AmplifierFilterConditions filterConditions
 	) {
 		return instrumentQueryService
-			.findAmplifiers(page, size, sort, filterConditions)
-			.map(AmplifierResponse::from);
+			.findAmplifierDtos(page, size, sort, filterConditions)
+			.map(InstrumentMapper::toAmplifierResponse);
 	}
 
 	@Operation(
@@ -225,8 +251,8 @@ public class InstrumentController {
 		@ParameterObject @Valid @ModelAttribute AudioEquipmentFilterConditions filterConditions
 	) {
 		return instrumentQueryService
-			.findAudioEquipments(page, size, sort, filterConditions)
-			.map(AudioEquipmentResponse::from);
+			.findAudioEquipmentDtos(page, size, sort, filterConditions)
+			.map(InstrumentMapper::toAudioEquipmentResponse);
 	}
 
 	@Operation(
@@ -252,7 +278,7 @@ public class InstrumentController {
 		);
 		return ResponseEntity
 			.created(URI.create("/instruments/" + electricGuitar.getId()))
-			.body(ElectricGuitarResponse.from(electricGuitar));
+			.body(InstrumentMapper.toElectricGuitarResponse(electricGuitar));
 	}
 
 	@Operation(
@@ -278,7 +304,7 @@ public class InstrumentController {
 		);
 		return ResponseEntity
 			.created(URI.create("/instruments/" + bassGuitar.getId()))
-			.body(BassGuitarResponse.from(bassGuitar));
+			.body(InstrumentMapper.toBassGuitarResponse(bassGuitar));
 	}
 
 	@Operation(
@@ -305,7 +331,7 @@ public class InstrumentController {
 			);
 		return ResponseEntity
 			.created(URI.create("/instruments/" + acousticAndClassicGuitar.getId()))
-			.body(AcousticAndClassicGuitarResponse.from(acousticAndClassicGuitar));
+			.body(InstrumentMapper.toAcousticAndClassicGuitarResponse(acousticAndClassicGuitar));
 	}
 
 	@Operation(
@@ -331,7 +357,7 @@ public class InstrumentController {
 		);
 		return ResponseEntity
 			.created(URI.create("/instruments/" + effector.getId()))
-			.body(EffectorResponse.from(effector));
+			.body(InstrumentMapper.toEffectorResponse(effector));
 	}
 
 	@Operation(
@@ -357,7 +383,7 @@ public class InstrumentController {
 		);
 		return ResponseEntity
 			.created(URI.create("/instruments/" + amplifier.getId()))
-			.body(AmplifierResponse.from(amplifier));
+			.body(InstrumentMapper.toAmplifierResponse(amplifier));
 	}
 
 	@Operation(
@@ -383,6 +409,6 @@ public class InstrumentController {
 		);
 		return ResponseEntity
 			.created(URI.create("/instruments/" + audioEquipment.getId()))
-			.body(AudioEquipmentResponse.from(audioEquipment));
+			.body(InstrumentMapper.toAudioEquipmentResponse(audioEquipment));
 	}
 }
