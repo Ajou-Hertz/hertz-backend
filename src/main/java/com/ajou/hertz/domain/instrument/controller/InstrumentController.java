@@ -9,6 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -52,6 +53,9 @@ import com.ajou.hertz.domain.instrument.service.InstrumentQueryService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -410,5 +414,23 @@ public class InstrumentController {
 		return ResponseEntity
 			.created(URI.create("/instruments/" + audioEquipment.getId()))
 			.body(InstrumentMapper.toAudioEquipmentResponse(audioEquipment));
+	}
+
+	@Operation(
+		summary = "악기 매물 삭제",
+		description = "악기 매물을 삭제합니다. 매물 삭제는 판매자만 할 수 있습니다.",
+		security = @SecurityRequirement(name = "access-token")
+	)
+	@ApiResponses({
+		@ApiResponse(responseCode = "204"),
+		@ApiResponse(responseCode = "403", description = "[2601] 악기를 삭제하려는 유저가 판매자가 아닌 경우", content = @Content)
+	})
+	@DeleteMapping(value = "/{instrumentId}", headers = API_VERSION_HEADER_NAME + "=" + 1)
+	public ResponseEntity<Void> deleteInstrumentV1(
+		@AuthenticationPrincipal UserPrincipal userPrincipal,
+		@Parameter(description = "Id of instrument", example = "2") @PathVariable Long instrumentId
+	) {
+		instrumentCommandService.deleteInstrumentById(userPrincipal.getUserId(), instrumentId);
+		return ResponseEntity.noContent().build();
 	}
 }

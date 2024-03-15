@@ -51,8 +51,8 @@ public enum CustomExceptionType {
 	/**
 	 * 악기 관련 예외
 	 */
-	INSTRUMENT_NOT_FOUND_BY_ID(2600, "일치하는 매물 정보를 찾을 수 없습니다.")
-	;
+	INSTRUMENT_NOT_FOUND_BY_ID(2600, "일치하는 매물 정보를 찾을 수 없습니다."),
+	INSTRUMENT_DELETE_PERMISSION_DENIED(2601, "악기 매물을 삭제할 권한이 없습니다. 매물은 판매자 본인만 삭제할 수 있습니다.");
 
 	private final Integer code;
 	private final String message;
