@@ -663,6 +663,24 @@ class InstrumentControllerTest {
 		verifyEveryMocksShouldHaveNoMoreInteractions();
 	}
 
+	@Test
+	void 악기_id가_주어지고_해당하는_악기_매물을_삭제한다() throws Exception {
+		// given
+		long userId = 1L;
+		long instrumentId = 2L;
+		willDoNothing().given(instrumentCommandService).deleteInstrumentById(userId, instrumentId);
+
+		// when & then
+		mvc.perform(
+				delete("/api/instruments/{instrumentId}", instrumentId)
+					.header(API_VERSION_HEADER_NAME, 1)
+					.with(user(createTestUser(userId)))
+			)
+			.andExpect(status().isNoContent());
+		then(instrumentCommandService).should().deleteInstrumentById(userId, instrumentId);
+		verifyEveryMocksShouldHaveNoMoreInteractions();
+	}
+
 	private void verifyEveryMocksShouldHaveNoMoreInteractions() {
 		then(instrumentCommandService).shouldHaveNoMoreInteractions();
 		then(instrumentQueryService).shouldHaveNoMoreInteractions();

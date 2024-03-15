@@ -351,24 +351,6 @@ class InstrumentQueryServiceTest {
 		);
 	}
 
-	private Instrument createInstrument(long instrumentId, User seller) throws Exception {
-		return ReflectionUtils.createBassGuitar(
-			instrumentId,
-			seller,
-			"Test electric guitar",
-			InstrumentProgressStatus.SELLING,
-			createAddress(),
-			(short)3,
-			550000,
-			true,
-			"description",
-			BassGuitarBrand.FENDER,
-			BassGuitarPickUp.JAZZ,
-			BassGuitarPreAmplifier.ACTIVE,
-			GuitarColor.RED
-		);
-	}
-
 	private ElectricGuitar createElectricGuitar(long id, User seller) throws Exception {
 		return ReflectionUtils.createElectricGuitar(
 			id,
