@@ -15,7 +15,6 @@ import com.ajou.hertz.domain.user.dto.request.SignUpRequest;
 import com.ajou.hertz.domain.user.entity.User;
 import com.ajou.hertz.domain.user.exception.UserEmailDuplicationException;
 import com.ajou.hertz.domain.user.exception.UserKakaoUidDuplicationException;
-import com.ajou.hertz.domain.user.exception.UserNotFoundByIdException;
 import com.ajou.hertz.domain.user.exception.UserPhoneDuplicationException;
 import com.ajou.hertz.domain.user.repository.UserRepository;
 
@@ -136,11 +135,9 @@ public class UserCommandService {
 	 *
 	 * @param userId 유저 ID
 	 * @param contactLink 변경할 연락 수단
-	 * @throws UserNotFoundByIdException 해당하는 유저를 찾을 수 없는 경우
 	 */
 	public void updateContactLink(Long userId, String contactLink) {
-		User user = userRepository.findById(userId)
-			.orElseThrow(() -> new UserNotFoundByIdException(userId));
+		User user = userQueryService.getById(userId);
 		user.setContactLink(contactLink);
 	}
 

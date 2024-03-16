@@ -225,13 +225,13 @@ class UserControllerTest {
 		mvc.perform(
 				put("/api/users/me/contact-link")
 					.header(API_VERSION_HEADER_NAME, 1)
-					//.contentType(MediaType.APPLICATION_JSON)
-					.param("contactLink", newContactLink)
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(objectMapper.writeValueAsString(updateContactLinkRequest))
 					.with(user(userDetails))
 			)
 			.andExpect(status().isOk());
 
-		then(userCommandService).should().updateContactLink(userId, newContactLink);
+		then(userCommandService).should().updateContactLink(eq(userId), eq(newContactLink));
 		verifyEveryMocksShouldHaveNoMoreInteractions();
 	}
 
@@ -269,7 +269,7 @@ class UserControllerTest {
 			LocalDate.of(2024, 1, 1),
 			Gender.ETC,
 			"01012345678",
-			"https://contack-link",
+			"https://contact-link",
 			LocalDateTime.of(2024, 1, 1, 0, 0)
 		);
 	}
@@ -281,4 +281,5 @@ class UserControllerTest {
 	private UserDetails createTestUser(Long userId) throws Exception {
 		return new UserPrincipal(createUserDto(userId));
 	}
+
 }

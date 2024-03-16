@@ -5,7 +5,6 @@ import static org.junit.jupiter.params.provider.Arguments.*;
 import static org.mockito.BDDMockito.*;
 
 import java.time.LocalDate;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
 
@@ -179,13 +178,13 @@ class UserCommandServiceTest {
 		Long userId = 1L;
 		String contactLink = "https://contackLink";
 		User user = createUser(userId, "$2a$abc123", "12345");
-		given(userRepository.findById(userId)).willReturn(Optional.of(user));
+		given(userQueryService.getById(userId)).willReturn(user);
 
 		// when
 		sut.updateContactLink(userId, contactLink);
 
 		// then
-		then(userRepository).should().findById(userId);
+		then(userQueryService).should().getById(userId);
 		verifyEveryMocksShouldHaveNoMoreInteractions();
 		assertThat(user.getContactLink()).isEqualTo(contactLink);
 	}
@@ -195,13 +194,13 @@ class UserCommandServiceTest {
 		// given
 		Long userId = 1L;
 		String contactLink = "https://contackLink";
-		given(userRepository.findById(userId)).willReturn(Optional.empty());
+		given(userQueryService.getById(userId)).willThrow(UserNotFoundByIdException.class);
 
 		// when
 		Throwable t = catchThrowable(() -> sut.updateContactLink(userId, contactLink));
 
 		// then
-		then(userRepository).should().findById(userId);
+		then(userQueryService).should().getById(userId);
 		verifyEveryMocksShouldHaveNoMoreInteractions();
 		assertThat(t).isInstanceOf(UserNotFoundByIdException.class);
 	}
