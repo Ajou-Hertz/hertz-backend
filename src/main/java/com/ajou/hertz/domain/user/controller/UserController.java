@@ -9,6 +9,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -114,4 +115,21 @@ public class UserController {
 			.created(URI.create("/users/" + userCreated.getId()))
 			.body(UserResponse.from(userCreated));
 	}
+
+	@Operation(
+		summary = "연락 수단 변경",
+		description = "연락 수단을 변경합니다."
+	)
+	@PutMapping(value = "/me/contact-link", headers = API_VERSION_HEADER_NAME + "=" + 1)
+	public ResponseEntity<Void> updateContactLinkV1(
+		@Parameter(
+			description = "변경하고자 하는 연락 수단 링크를 입력합니다.",
+			example = "https://example.com/1234"
+		) @RequestParam @NotBlank String contactLink,
+		@AuthenticationPrincipal UserPrincipal userPrincipal
+	) {
+		userCommandService.updateContactLink(userPrincipal.getUserId(), contactLink);
+		return ResponseEntity.ok().build();
+	}
+
 }

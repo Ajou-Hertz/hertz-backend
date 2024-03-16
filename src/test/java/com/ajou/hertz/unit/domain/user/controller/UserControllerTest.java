@@ -35,6 +35,7 @@ import com.ajou.hertz.domain.user.constant.RoleType;
 import com.ajou.hertz.domain.user.controller.UserController;
 import com.ajou.hertz.domain.user.dto.UserDto;
 import com.ajou.hertz.domain.user.dto.request.SignUpRequest;
+import com.ajou.hertz.domain.user.dto.request.UpdateContactLinkRequest;
 import com.ajou.hertz.domain.user.service.UserCommandService;
 import com.ajou.hertz.domain.user.service.UserQueryService;
 import com.ajou.hertz.util.ReflectionUtils;
@@ -209,6 +210,28 @@ class UserControllerTest {
 					.content(objectMapper.writeValueAsString(signUpRequest))
 			)
 			.andExpect(status().isUnprocessableEntity());
+		verifyEveryMocksShouldHaveNoMoreInteractions();
+	}
+
+	@Test
+	void 주어진_연락수단을_새로운_연락수단으로_변경한다() throws Exception {
+		// given
+		long userId = 1L;
+		String newContactLink = "https://new-contact-link.com";
+		UpdateContactLinkRequest updateContactLinkRequest = new UpdateContactLinkRequest(newContactLink);
+		UserDetails userDetails = createTestUser(userId);
+
+		// when & then
+		mvc.perform(
+				put("/api/users/me/contact-link")
+					.header(API_VERSION_HEADER_NAME, 1)
+					//.contentType(MediaType.APPLICATION_JSON)
+					.param("contactLink", newContactLink)
+					.with(user(userDetails))
+			)
+			.andExpect(status().isOk());
+
+		then(userCommandService).should().updateContactLink(userId, newContactLink);
 		verifyEveryMocksShouldHaveNoMoreInteractions();
 	}
 
