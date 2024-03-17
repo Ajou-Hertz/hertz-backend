@@ -138,7 +138,7 @@ public class UserCommandService {
 	 */
 	public void updateContactLink(Long userId, String contactLink) {
 		User user = userQueryService.getById(userId);
-		user.setContactLink(contactLink);
+		user.changeContactLink(contactLink);
 	}
 
 }

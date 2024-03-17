@@ -101,7 +101,7 @@ public class User extends TimeTrackedBaseEntity {
 		);
 	}
 
-	public void setContactLink(String contactLink) {
+	public void changeContactLink(String contactLink) {
 		this.contactLink = contactLink;
 	}
 

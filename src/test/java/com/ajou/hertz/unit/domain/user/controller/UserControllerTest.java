@@ -220,6 +220,7 @@ class UserControllerTest {
 		String newContactLink = "https://new-contact-link.com";
 		UpdateContactLinkRequest updateContactLinkRequest = new UpdateContactLinkRequest(newContactLink);
 		UserDetails userDetails = createTestUser(userId);
+		willDoNothing().given(userCommandService).updateContactLink(userId, newContactLink);
 
 		// when & then
 		mvc.perform(
@@ -229,9 +230,11 @@ class UserControllerTest {
 					.content(objectMapper.writeValueAsString(updateContactLinkRequest))
 					.with(user(userDetails))
 			)
-			.andExpect(status().isOk());
+			.andExpect(status().isOk())
+			.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+			.andExpect(jsonPath("$.contactLink").value(newContactLink));
 
-		then(userCommandService).should().updateContactLink(eq(userId), eq(newContactLink));
+		then(userCommandService).should().updateContactLink(userId, newContactLink);
 		verifyEveryMocksShouldHaveNoMoreInteractions();
 	}
 

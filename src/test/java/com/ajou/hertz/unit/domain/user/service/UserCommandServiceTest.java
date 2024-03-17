@@ -176,7 +176,7 @@ class UserCommandServiceTest {
 	void 주어진_유저_ID와_연락_수단으로_연락_수단을_변경한다() throws Exception {
 		// given
 		Long userId = 1L;
-		String contactLink = "https://contackLink";
+		String contactLink = "https://new-contactLink";
 		User user = createUser(userId, "$2a$abc123", "12345");
 		given(userQueryService.getById(userId)).willReturn(user);
 
@@ -193,7 +193,7 @@ class UserCommandServiceTest {
 	void 주어진_유저_ID와_연락_수단으로_연락_수단을_변경한다_존재하지_않는_유저라면_예외가_발생한다() throws Exception {
 		// given
 		Long userId = 1L;
-		String contactLink = "https://contackLink";
+		String contactLink = "https://new-contactLink";
 		given(userQueryService.getById(userId)).willThrow(UserNotFoundByIdException.class);
 
 		// when
@@ -222,7 +222,7 @@ class UserCommandServiceTest {
 			LocalDate.of(2024, 1, 1),
 			gender,
 			"010-1234-5678",
-			"https://contackLink"
+			"https://contactLink"
 		);
 	}
 
