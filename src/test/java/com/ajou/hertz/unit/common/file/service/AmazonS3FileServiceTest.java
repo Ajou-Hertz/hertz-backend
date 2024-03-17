@@ -123,6 +123,20 @@ class AmazonS3FileServiceTest {
 		verifyEveryMocksShouldHaveNoMoreInteractions();
 	}
 
+	@Test
+	void S3에_저장된_파일의_이름이_주어지고_파일을_S3_버킷에서_삭제한다() throws Exception {
+		// given
+		String storedFileName = "stored-file-name";
+		willDoNothing().given(s3Client).deleteObject(any(DeleteObjectRequest.class));
+
+		// when
+		sut.deleteFile(storedFileName);
+
+		// then
+		then(s3Client).should().deleteObject(any(DeleteObjectRequest.class));
+		verifyEveryMocksShouldHaveNoMoreInteractions();
+	}
+
 	private void verifyEveryMocksShouldHaveNoMoreInteractions() {
 		then(s3Client).shouldHaveNoMoreInteractions();
 	}
