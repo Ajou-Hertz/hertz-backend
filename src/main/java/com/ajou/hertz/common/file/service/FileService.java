@@ -33,4 +33,11 @@ public interface FileService {
 	 * @param storedFileNames 삭제할 파일들의 이름 목록
 	 */
 	void deleteAll(Collection<String> storedFileNames);
+
+	/**
+	 * 파일을 삭제한다.
+	 *
+	 * @param storedFileName 삭제할 파일의 이름
+	 */
+	void deleteFile(String storedFileName);
 }
