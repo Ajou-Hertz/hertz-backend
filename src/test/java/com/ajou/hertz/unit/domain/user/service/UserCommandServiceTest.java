@@ -20,6 +20,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.event.annotation.BeforeTestMethod;
 
+import com.ajou.hertz.common.file.service.FileService;
 import com.ajou.hertz.common.kakao.dto.response.KakaoUserInfoResponse;
 import com.ajou.hertz.common.properties.HertzProperties;
 import com.ajou.hertz.domain.user.constant.Gender;
@@ -54,6 +55,9 @@ class UserCommandServiceTest {
 
 	@Mock
 	private HertzProperties hertzProperties;
+
+	@Mock
+	private FileService fileService;
 
 	@BeforeTestMethod
 	public void setUp() {
@@ -173,11 +177,12 @@ class UserCommandServiceTest {
 	}
 
 	@Test
-	void 주어진_id와_새_프로필_이미지로_프로필_이미지를_변경한다() throws Exception {
+	void 주어진_id와_새_프로필_이미지로_프로필_이미지를_변경하고_이전_프로필_이미지는_삭제한다() throws Exception {
 		// given
 		Long userId = 1L;
 		String newProfileImageUrl = "https://new-profile-image-url";
-		User user = createUser(userId, "$2a$abc123", "12345");
+		String oldProfileImageUrl = "https://user-default-profile-image-url";
+		User user = createUser(userId, "$2a$abc123", oldProfileImageUrl);
 		given(userQueryService.getById(userId)).willReturn(user);
 
 		// when
@@ -185,7 +190,8 @@ class UserCommandServiceTest {
 
 		// then
 		then(userQueryService).should().getById(userId);
-		verifyEveryMocksShouldHaveNoMoreInteractions();
+		then(fileService).should().deleteFile(oldProfileImageUrl);
+		verifyNoMoreInteractions(userQueryService, fileService);
 		assertThat(updatedUserDto.getProfileImageUrl()).isEqualTo(newProfileImageUrl);
 	}
 
@@ -209,6 +215,7 @@ class UserCommandServiceTest {
 		then(userQueryService).shouldHaveNoMoreInteractions();
 		then(userRepository).shouldHaveNoMoreInteractions();
 		then(passwordEncoder).shouldHaveNoMoreInteractions();
+		then(fileService).shouldHaveNoMoreInteractions();
 	}
 
 	private static User createUser(Long id, String password, String kakaoUid, Gender gender) throws Exception {

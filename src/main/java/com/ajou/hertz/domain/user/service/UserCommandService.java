@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import com.ajou.hertz.common.file.service.FileService;
 import com.ajou.hertz.common.kakao.dto.response.KakaoUserInfoResponse;
 import com.ajou.hertz.common.properties.HertzProperties;
 import com.ajou.hertz.domain.user.constant.Gender;
@@ -29,6 +30,7 @@ public class UserCommandService {
 	private final UserRepository userRepository;
 	private final PasswordEncoder passwordEncoder;
 	private final HertzProperties hertzProperties;
+	private final FileService fileService;
 
 	/**
 	 * 새로운 회원을 등록한다.
@@ -131,16 +133,18 @@ public class UserCommandService {
 	}
 
 	/**
-	 * 회원의 프로필 이미지를 변경한다.
+	 * 회원의 프로필 이미지를 변경하고, 이전 이미지를 삭제한다.
 	 *
-	 * @param userId   회원 id
-	 * @param profileImageUrl  변경할 프로필 이미지 url
+	 * @param userId 회원 id
+	 * @param profileImageUrl 변경할 프로필 이미지 url
 	 *
 	 * @return 변경된 회원 정보
 	 */
 	public UserDto updateProfileImageUrl(Long userId, String profileImageUrl) {
 		User user = userQueryService.getById(userId);
+		String oldProfileImageUrl = user.getProfileImageUrl();
 		user.changeProfileImageUrl(profileImageUrl);
+		fileService.deleteFile(oldProfileImageUrl);
 		return UserDto.from(user);
 	}
 
