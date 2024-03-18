@@ -35,6 +35,7 @@ import com.ajou.hertz.domain.user.constant.RoleType;
 import com.ajou.hertz.domain.user.controller.UserController;
 import com.ajou.hertz.domain.user.dto.UserDto;
 import com.ajou.hertz.domain.user.dto.request.SignUpRequest;
+import com.ajou.hertz.domain.user.dto.request.UpdateProfileImageUrlRequest;
 import com.ajou.hertz.domain.user.service.UserCommandService;
 import com.ajou.hertz.domain.user.service.UserQueryService;
 import com.ajou.hertz.util.ReflectionUtils;
@@ -209,6 +210,33 @@ class UserControllerTest {
 					.content(objectMapper.writeValueAsString(signUpRequest))
 			)
 			.andExpect(status().isUnprocessableEntity());
+		verifyEveryMocksShouldHaveNoMoreInteractions();
+	}
+
+	@Test
+	void 주어진_id와_새로운_프로필_이미지로_프로필_이미지를_변경한다() throws Exception {
+		// given
+		long userId = 1L;
+		String profileImageUrl = "https://example.com/new_profile_image.jpg";
+		UpdateProfileImageUrlRequest updateProfileImageUrlRequest = new UpdateProfileImageUrlRequest(profileImageUrl);
+		UserDetails userDetails = createTestUser(userId);
+		UserDto updatedUserDto = createUserDto(userId);
+		given(userCommandService.updateProfileImageUrl(userId, profileImageUrl)).willReturn(updatedUserDto);
+		given(userQueryService.getDtoById(userId)).willReturn(createUserDto(userId));
+
+		// when & then
+		mvc.perform(
+				put("/api/users/me/profile-image")
+					.header(API_VERSION_HEADER_NAME, 1)
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(objectMapper.writeValueAsString(updateProfileImageUrlRequest))
+					.with(user(userDetails))
+			)
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.profileImageUrl").value(updatedUserDto.getProfileImageUrl()));
+
+		then(userCommandService).should().updateProfileImageUrl(userId, profileImageUrl);
+		then(userQueryService).should().getDtoById(userId);
 		verifyEveryMocksShouldHaveNoMoreInteractions();
 	}
 

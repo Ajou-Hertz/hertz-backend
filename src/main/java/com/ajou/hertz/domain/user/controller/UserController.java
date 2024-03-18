@@ -9,6 +9,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -18,6 +19,7 @@ import com.ajou.hertz.common.auth.UserPrincipal;
 import com.ajou.hertz.common.validator.PhoneNumber;
 import com.ajou.hertz.domain.user.dto.UserDto;
 import com.ajou.hertz.domain.user.dto.request.SignUpRequest;
+import com.ajou.hertz.domain.user.dto.request.UpdateProfileImageUrlRequest;
 import com.ajou.hertz.domain.user.dto.response.UserEmailResponse;
 import com.ajou.hertz.domain.user.dto.response.UserExistenceResponse;
 import com.ajou.hertz.domain.user.dto.response.UserResponse;
@@ -114,4 +116,21 @@ public class UserController {
 			.created(URI.create("/users/" + userCreated.getId()))
 			.body(UserResponse.from(userCreated));
 	}
+
+	@Operation(
+		summary = "프로필 이미지 변경",
+		description = "프로필 이미지를 변경합니다.",
+		security = @SecurityRequirement(name = "access-token")
+	)
+	@PutMapping(value = "/me/profile-image", headers = API_VERSION_HEADER_NAME + "=" + 1)
+	public UserResponse updateProfileImageUrlV1(
+		@AuthenticationPrincipal UserPrincipal userPrincipal,
+		@RequestBody @Valid UpdateProfileImageUrlRequest updateProfileImageUrlRequest
+	) {
+		UserDto userUpdated = userCommandService.updateProfileImageUrl(userPrincipal.getUserId(),
+			updateProfileImageUrlRequest.getProfileImageUrl());
+		UserDto userDto = userQueryService.getDtoById(userPrincipal.getUserId());
+		return UserResponse.from(userUpdated);
+	}
+
 }

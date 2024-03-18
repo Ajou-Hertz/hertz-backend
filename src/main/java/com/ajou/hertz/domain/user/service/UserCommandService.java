@@ -129,4 +129,19 @@ public class UserCommandService {
 			.toString()
 			.substring(0, 16);
 	}
+
+	/**
+	 * 회원의 프로필 이미지를 변경한다.
+	 *
+	 * @param userId   회원 id
+	 * @param profileImageUrl  변경할 프로필 이미지 url
+	 *
+	 * @return 변경된 회원 정보
+	 */
+	public UserDto updateProfileImageUrl(Long userId, String profileImageUrl) {
+		User user = userQueryService.getById(userId);
+		user.changeProfileImageUrl(profileImageUrl);
+		return UserDto.from(user);
+	}
+
 }

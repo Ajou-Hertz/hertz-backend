@@ -100,4 +100,13 @@ public class User extends TimeTrackedBaseEntity {
 			profileImageUrl, birth, gender, phone, null
 		);
 	}
+
+	public void changeProfileImageUrl(String profileImageUrl) {
+		this.profileImageUrl = profileImageUrl;
+	}
+
+	public UserProfileImage getProfileImage() {
+		return UserProfileImage.of(profileImageUrl);
+	}
+
 }

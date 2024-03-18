@@ -29,6 +29,7 @@ import com.ajou.hertz.domain.user.dto.request.SignUpRequest;
 import com.ajou.hertz.domain.user.entity.User;
 import com.ajou.hertz.domain.user.exception.UserEmailDuplicationException;
 import com.ajou.hertz.domain.user.exception.UserKakaoUidDuplicationException;
+import com.ajou.hertz.domain.user.exception.UserNotFoundByIdException;
 import com.ajou.hertz.domain.user.exception.UserPhoneDuplicationException;
 import com.ajou.hertz.domain.user.repository.UserRepository;
 import com.ajou.hertz.domain.user.service.UserCommandService;
@@ -169,6 +170,39 @@ class UserCommandServiceTest {
 		then(userQueryService).should().existsByKakaoUid(kakaoUserInfo.id());
 		verifyEveryMocksShouldHaveNoMoreInteractions();
 		assertThat(t).isInstanceOf(UserKakaoUidDuplicationException.class);
+	}
+
+	@Test
+	void 주어진_id와_새_프로필_이미지로_프로필_이미지를_변경한다() throws Exception {
+		// given
+		Long userId = 1L;
+		String newProfileImageUrl = "https://new-profile-image-url";
+		User user = createUser(userId, "$2a$abc123", "12345");
+		given(userQueryService.getById(userId)).willReturn(user);
+
+		// when
+		UserDto updatedUserDto = sut.updateProfileImageUrl(userId, newProfileImageUrl);
+
+		// then
+		then(userQueryService).should().getById(userId);
+		verifyEveryMocksShouldHaveNoMoreInteractions();
+		assertThat(updatedUserDto.getProfileImageUrl()).isEqualTo(newProfileImageUrl);
+	}
+
+	@Test
+	void 주어진_유저_ID와_새로운_프로필_이미지로_기존의_프로필_이미지를_변경한다_존재하지_않는_유저라면_예외가_발생한다() throws Exception {
+		// given
+		Long userId = 1L;
+		String newProfileImageUrl = "https://new-profile-image-url";
+		given(userQueryService.getById(userId)).willThrow(UserNotFoundByIdException.class);
+
+		// when
+		Throwable t = catchThrowable(() -> sut.updateProfileImageUrl(userId, newProfileImageUrl));
+
+		// then
+		then(userQueryService).should().getById(userId);
+		verifyEveryMocksShouldHaveNoMoreInteractions();
+		assertThat(t).isInstanceOf(UserNotFoundByIdException.class);
 	}
 
 	private void verifyEveryMocksShouldHaveNoMoreInteractions() {

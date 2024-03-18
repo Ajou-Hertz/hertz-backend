@@ -33,4 +33,8 @@ public class UserProfileImage extends FileEntity {
 		this.id = id;
 		this.user = user;
 	}
+
+	public static UserProfileImage of(String profileImageUrl) {
+		return new UserProfileImage(null, null, null, null, profileImageUrl);
+	}
 }
