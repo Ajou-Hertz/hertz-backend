@@ -131,14 +131,17 @@ public class UserCommandService {
 	}
 
 	/**
-	 * 연락 수단을 변경합니다.
+	 *연락 수단을 변경합니다.
 	 *
-	 * @param userId 유저 ID
-	 * @param contactLink 변경할 연락 수단
+	 *@param userId 유저ID
+	 *@param contactLink 변경할 연락 수단
+	 *
+	 *@return 변경된 유저 정보
 	 */
-	public void updateContactLink(Long userId, String contactLink) {
+	public UserDto updateContactLink(Long userId, String contactLink) {
 		User user = userQueryService.getById(userId);
 		user.changeContactLink(contactLink);
+		return UserDto.from(user);
 	}
 
 }
