@@ -181,12 +181,12 @@ class UserCommandServiceTest {
 		given(userQueryService.getById(userId)).willReturn(user);
 
 		// when
-		sut.updateContactLink(userId, contactLink);
+		UserDto updatedUserDto = sut.updateContactLink(userId, contactLink);
 
 		// then
 		then(userQueryService).should().getById(userId);
 		verifyEveryMocksShouldHaveNoMoreInteractions();
-		assertThat(user.getContactLink()).isEqualTo(contactLink);
+		assertThat(updatedUserDto.getContactLink()).isEqualTo(contactLink);
 	}
 
 	@Test
