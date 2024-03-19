@@ -35,7 +35,6 @@ import com.ajou.hertz.domain.user.constant.RoleType;
 import com.ajou.hertz.domain.user.controller.UserController;
 import com.ajou.hertz.domain.user.dto.UserDto;
 import com.ajou.hertz.domain.user.dto.request.SignUpRequest;
-import com.ajou.hertz.domain.user.dto.request.UpdateContactLinkRequest;
 import com.ajou.hertz.domain.user.service.UserCommandService;
 import com.ajou.hertz.domain.user.service.UserQueryService;
 import com.ajou.hertz.util.ReflectionUtils;
@@ -218,26 +217,20 @@ class UserControllerTest {
 		// given
 		long userId = 1L;
 		String newContactLink = "https://new-contact-link.com";
-		UpdateContactLinkRequest updateContactLinkRequest = new UpdateContactLinkRequest(newContactLink);
-		UserDetails userDetails = createTestUser(userId);
-		UserDto updatedUserDto = createUserDto(userId);
-		given(userCommandService.updateContactLink(userId, newContactLink)).willReturn(updatedUserDto);
-		given(userQueryService.getDtoById(userId)).willReturn(updatedUserDto);
+		UserDto expectedResult = createUserDto(userId);
+		UserDetails testUser = createTestUser(userId);
+		given(userCommandService.updateContactLink(anyLong(), anyString())).willReturn(expectedResult);
 
 		// when & then
 		mvc.perform(
 				put("/api/users/me/contact-link")
 					.header(API_VERSION_HEADER_NAME, 1)
-					.contentType(MediaType.APPLICATION_JSON)
-					.content(objectMapper.writeValueAsString(updateContactLinkRequest))
-					.with(user(userDetails))
+					.param("contactLink", newContactLink)
+					.with(user(testUser))
 			)
 			.andExpect(status().isOk())
-			.andExpect(content().contentType(MediaType.APPLICATION_JSON))
-			.andExpect(jsonPath("$.contactLink").value(updatedUserDto.getContactLink()));
-
+			.andExpect(jsonPath("$.contactLink").value(expectedResult.getContactLink()));
 		then(userCommandService).should().updateContactLink(userId, newContactLink);
-		then(userQueryService).should().getDtoById(userId);
 		verifyEveryMocksShouldHaveNoMoreInteractions();
 	}
 
