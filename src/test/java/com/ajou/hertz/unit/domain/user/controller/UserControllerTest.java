@@ -219,18 +219,19 @@ class UserControllerTest {
 		String newContactLink = "https://new-contact-link.com";
 		UserDto expectedResult = createUserDto(userId);
 		UserDetails testUser = createTestUser(userId);
-		given(userCommandService.updateContactLink(anyLong(), anyString())).willReturn(expectedResult);
+		given(userCommandService.updateContactLink(anyLong(), anyLong(), anyString())).willReturn(expectedResult);
 
 		// when & then
 		mvc.perform(
 				put("/api/users/me/contact-link")
 					.header(API_VERSION_HEADER_NAME, 1)
-					.param("contactLink", newContactLink)
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(objectMapper.writeValueAsString(newContactLink))
 					.with(user(testUser))
 			)
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.contactLink").value(expectedResult.getContactLink()));
-		then(userCommandService).should().updateContactLink(userId, newContactLink);
+		then(userCommandService).should().updateContactLink(userId, userId, newContactLink);
 		verifyEveryMocksShouldHaveNoMoreInteractions();
 	}
 

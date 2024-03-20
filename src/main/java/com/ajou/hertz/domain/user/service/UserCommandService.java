@@ -14,6 +14,7 @@ import com.ajou.hertz.domain.user.dto.UserDto;
 import com.ajou.hertz.domain.user.dto.request.SignUpRequest;
 import com.ajou.hertz.domain.user.entity.User;
 import com.ajou.hertz.domain.user.exception.UserEmailDuplicationException;
+import com.ajou.hertz.domain.user.exception.UserIdForbiddenException;
 import com.ajou.hertz.domain.user.exception.UserKakaoUidDuplicationException;
 import com.ajou.hertz.domain.user.exception.UserPhoneDuplicationException;
 import com.ajou.hertz.domain.user.repository.UserRepository;
@@ -133,12 +134,18 @@ public class UserCommandService {
 	/**
 	 *연락 수단을 변경합니다.
 	 *
-	 *@param userId 유저ID
-	 *@param contactLink 변경할 연락 수단
+	 * @param loginUserId API를 호출한 유저의 ID
+	 * @param userId 변경하고자 하는 유저의 ID
+	 * @param contactLink 변경할 연락 수단
+	 *@throws UserIdForbiddenException 유저ID가 일치하지 않는 경우
 	 *
 	 *@return 변경된 유저 정보
 	 */
-	public UserDto updateContactLink(Long userId, String contactLink) {
+	public UserDto updateContactLink(Long loginUserId, Long userId, String contactLink) {
+		if (!loginUserId.equals(userId)) {
+			User user = userQueryService.getById(userId);
+			throw new UserIdForbiddenException(userId, loginUserId);
+		}
 		User user = userQueryService.getById(userId);
 		user.changeContactLink(contactLink);
 		return UserDto.from(user);

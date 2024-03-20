@@ -19,6 +19,7 @@ import com.ajou.hertz.common.auth.UserPrincipal;
 import com.ajou.hertz.common.validator.PhoneNumber;
 import com.ajou.hertz.domain.user.dto.UserDto;
 import com.ajou.hertz.domain.user.dto.request.SignUpRequest;
+import com.ajou.hertz.domain.user.dto.request.UpdateContactLinkRequest;
 import com.ajou.hertz.domain.user.dto.response.UserEmailResponse;
 import com.ajou.hertz.domain.user.dto.response.UserExistenceResponse;
 import com.ajou.hertz.domain.user.dto.response.UserResponse;
@@ -123,14 +124,11 @@ public class UserController {
 	)
 	@PutMapping(value = "/me/contact-link", headers = API_VERSION_HEADER_NAME + "=" + 1)
 	public UserResponse updateContactLinkV1(
-		@Parameter(
-			description = "변경하고자 하는 연락 수단",
-			example = "https://example.com/1234"
-		) @RequestParam String contactLink,
+		@RequestBody @Valid UpdateContactLinkRequest updateContactLinkRequest,
 		@AuthenticationPrincipal UserPrincipal userPrincipal
 	) {
-		Long userId = userPrincipal.getUserId();
-		UserDto userUpdated = userCommandService.updateContactLink(userId, contactLink);
+		UserDto userUpdated = userCommandService.updateContactLink(userPrincipal.getUserId(), userPrincipal.getUserId(),
+			updateContactLinkRequest.getContactLink());
 		return UserResponse.from(userUpdated);
 	}
 }

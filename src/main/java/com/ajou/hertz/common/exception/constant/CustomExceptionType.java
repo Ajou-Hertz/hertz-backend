@@ -40,6 +40,7 @@ public enum CustomExceptionType {
 	USER_KAKAO_UID_DUPLICATION(2204, "이미 가입한 계정입니다."),
 	USER_NOT_FOUND_BY_KAKAO_UID(2205, "일치하는 회원을 찾을 수 없습니다."),
 	USER_NOT_FOUND_BY_PHONE(2206, "일치하는 회원을 찾을 수 없습니다."),
+	USER_ID_FORBIDDEN(2207, "해당 유저는 접근이 금지되었습니다."),
 
 	KAKAO_CLIENT(10000, "카카오 서버와의 통신 중 오류가 발생했습니다."),
 
@@ -51,8 +52,7 @@ public enum CustomExceptionType {
 	/**
 	 * 악기 관련 예외
 	 */
-	INSTRUMENT_NOT_FOUND_BY_ID(2600, "일치하는 매물 정보를 찾을 수 없습니다.")
-	;
+	INSTRUMENT_NOT_FOUND_BY_ID(2600, "일치하는 매물 정보를 찾을 수 없습니다.");
 
 	private final Integer code;
 	private final String message;
