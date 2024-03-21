@@ -241,6 +241,29 @@ class UserControllerTest {
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.profileImageUrl").value(expectedResult.getProfileImageUrl()));
 		then(userCommandService).should().updateProfileImageUrl(userId, profileImage);
+    verifyEveryMocksShouldHaveNoMoreInteractions();
+	}
+  
+  
+	void 주어진_연락수단을_새로운_연락수단으로_변경한다() throws Exception {
+		// given
+		long userId = 1L;
+		String newContactLink = "https://new-contact-link.com";
+		UserDto expectedResult = createUserDto(userId);
+		UserDetails testUser = createTestUser(userId);
+		given(userCommandService.updateContactLink(userId, newContactLink)).willReturn(expectedResult);
+
+		// when & then
+		mvc.perform(
+				put("/api/users/me/contact-link")
+					.header(API_VERSION_HEADER_NAME, 1)
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(objectMapper.writeValueAsString(newContactLink))
+					.with(user(testUser))
+			)
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.contactLink").value(expectedResult.getContactLink()));
+		then(userCommandService).should().updateContactLink(userId, newContactLink);
 		verifyEveryMocksShouldHaveNoMoreInteractions();
 	}
 
@@ -278,7 +301,7 @@ class UserControllerTest {
 			LocalDate.of(2024, 1, 1),
 			Gender.ETC,
 			"01012345678",
-			"https://contack-link",
+			"https://contact-link",
 			LocalDateTime.of(2024, 1, 1, 0, 0)
 		);
 	}
@@ -290,4 +313,5 @@ class UserControllerTest {
 	private UserDetails createTestUser(Long userId) throws Exception {
 		return new UserPrincipal(createUserDto(userId));
 	}
+
 }

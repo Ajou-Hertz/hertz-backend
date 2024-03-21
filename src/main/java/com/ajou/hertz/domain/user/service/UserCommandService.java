@@ -137,8 +137,9 @@ public class UserCommandService {
 	/**
 	 * 유저의 프로필 이미지를 업데이트한다.
 	 *
-	 * @param userId         유저 id
+	 * @param userId 유저 id
 	 * @param newProfileImage 새로운 프로필 이미지
+   *
 	 * @return 업데이트된 유저 정보
 	 */
 	public UserDto updateProfileImageUrl(Long userId, MultipartFile newProfileImage) {
@@ -155,6 +156,20 @@ public class UserCommandService {
 		fileService.deleteFile(fullPathToDelete);
 
 		user.changeProfileImageUrl(newProfileImageUrl);
+    return UserDto.from(user);
+   }
+
+  /**
+	 *연락 수단을 변경합니다.
+	 *
+	 * @param userId 유저의 ID
+	 * @param contactLink 변경할 연락 수단
+	 *
+	 *@return 변경된 유저 정보
+	 */
+	public UserDto updateContactLink(Long userId, String contactLink) {
+		User user = userQueryService.getById(userId);
+		user.changeContactLink(contactLink);
 		return UserDto.from(user);
 	}
 
