@@ -219,7 +219,7 @@ class UserControllerTest {
 		String newContactLink = "https://new-contact-link.com";
 		UserDto expectedResult = createUserDto(userId);
 		UserDetails testUser = createTestUser(userId);
-		given(userCommandService.updateContactLink(anyLong(), anyString())).willReturn(expectedResult);
+		given(userCommandService.updateContactLink(userId, newContactLink)).willReturn(expectedResult);
 
 		// when & then
 		mvc.perform(
