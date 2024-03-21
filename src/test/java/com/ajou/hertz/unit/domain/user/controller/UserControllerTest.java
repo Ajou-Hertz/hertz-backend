@@ -18,6 +18,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.test.context.event.annotation.BeforeTestMethod;
 import org.springframework.test.web.servlet.MockMvc;
@@ -35,7 +36,6 @@ import com.ajou.hertz.domain.user.constant.RoleType;
 import com.ajou.hertz.domain.user.controller.UserController;
 import com.ajou.hertz.domain.user.dto.UserDto;
 import com.ajou.hertz.domain.user.dto.request.SignUpRequest;
-import com.ajou.hertz.domain.user.dto.request.UpdateProfileImageUrlRequest;
 import com.ajou.hertz.domain.user.service.UserCommandService;
 import com.ajou.hertz.domain.user.service.UserQueryService;
 import com.ajou.hertz.util.ReflectionUtils;
@@ -217,26 +217,30 @@ class UserControllerTest {
 	void 주어진_id와_새로운_프로필_이미지로_프로필_이미지를_변경한다() throws Exception {
 		// given
 		long userId = 1L;
-		String profileImageUrl = "https://example.com/new_profile_image.jpg";
-		UpdateProfileImageUrlRequest updateProfileImageUrlRequest = new UpdateProfileImageUrlRequest(profileImageUrl);
+		MockMultipartFile profileImage = new MockMultipartFile(
+			"profileImage",
+			"test.jpg",
+			"image/jpeg",
+			"test".getBytes()
+		);
 		UserDetails userDetails = createTestUser(userId);
-		UserDto updatedUserDto = createUserDto(userId);
-		given(userCommandService.updateProfileImageUrl(userId, profileImageUrl)).willReturn(updatedUserDto);
-		given(userQueryService.getDtoById(userId)).willReturn(createUserDto(userId));
+		UserDto expectedResult = createUserDto(userId);
+		given(userCommandService.updateProfileImageUrl(userId, profileImage)).willReturn(expectedResult);
 
 		// when & then
 		mvc.perform(
-				put("/api/users/me/profile-image")
+				multipart("/api/users/me/profile-image")
+					.file(profileImage)
 					.header(API_VERSION_HEADER_NAME, 1)
-					.contentType(MediaType.APPLICATION_JSON)
-					.content(objectMapper.writeValueAsString(updateProfileImageUrlRequest))
 					.with(user(userDetails))
+					.with(request -> {
+						request.setMethod("PUT");
+						return request;
+					})
 			)
 			.andExpect(status().isOk())
-			.andExpect(jsonPath("$.profileImageUrl").value(updatedUserDto.getProfileImageUrl()));
-
-		then(userCommandService).should().updateProfileImageUrl(userId, profileImageUrl);
-		then(userQueryService).should().getDtoById(userId);
+			.andExpect(jsonPath("$.profileImageUrl").value(expectedResult.getProfileImageUrl()));
+		then(userCommandService).should().updateProfileImageUrl(userId, profileImage);
 		verifyEveryMocksShouldHaveNoMoreInteractions();
 	}
 

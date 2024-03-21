@@ -17,9 +17,11 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.event.annotation.BeforeTestMethod;
 
+import com.ajou.hertz.common.file.dto.FileDto;
 import com.ajou.hertz.common.file.service.FileService;
 import com.ajou.hertz.common.kakao.dto.response.KakaoUserInfoResponse;
 import com.ajou.hertz.common.properties.HertzProperties;
@@ -178,32 +180,44 @@ class UserCommandServiceTest {
 
 	@Test
 	void 주어진_id와_새_프로필_이미지로_프로필_이미지를_변경하고_이전_프로필_이미지는_삭제한다() throws Exception {
-		// given
 		Long userId = 1L;
-		String newProfileImageUrl = "https://new-profile-image-url";
-		String oldProfileImageUrl = "https://user-default-profile-image-url";
-		User user = createUser(userId, "$2a$abc123", oldProfileImageUrl);
+		MockMultipartFile newProfileImage = new MockMultipartFile(
+			"profileImage",
+			"test.jpg",
+			"image/jpeg",
+			"test".getBytes()
+		);
+		User user = createUser(userId, "password", null, Gender.MALE);
 		given(userQueryService.getById(userId)).willReturn(user);
+		given(fileService.uploadFile(any(), anyString())).willReturn(
+			FileDto.create("new_profile_image.jpg", "new_profile_image.jpg",
+				"https://example.com/user-profile-images"));
 
-		// when
-		UserDto updatedUserDto = sut.updateProfileImageUrl(userId, newProfileImageUrl);
+		// When
+		UserDto updatedUser = sut.updateProfileImageUrl(userId, newProfileImage);
 
-		// then
+		// Then
 		then(userQueryService).should().getById(userId);
-		then(fileService).should().deleteFile(oldProfileImageUrl);
-		verifyNoMoreInteractions(userQueryService, fileService);
-		assertThat(updatedUserDto.getProfileImageUrl()).isEqualTo(newProfileImageUrl);
+		then(fileService).should().uploadFile(eq(newProfileImage), anyString());
+		then(fileService).should().deleteFile(anyString());
+		verifyEveryMocksShouldHaveNoMoreInteractions();
+		assertThat(updatedUser).hasFieldOrPropertyWithValue("profileImageUrl", user.getProfileImageUrl());
 	}
 
 	@Test
 	void 주어진_유저_ID와_새로운_프로필_이미지로_기존의_프로필_이미지를_변경한다_존재하지_않는_유저라면_예외가_발생한다() throws Exception {
 		// given
 		Long userId = 1L;
-		String newProfileImageUrl = "https://new-profile-image-url";
+		MockMultipartFile newProfileImage = new MockMultipartFile(
+			"profileImage",
+			"test.jpg",
+			"image/jpeg",
+			"test".getBytes()
+		);
 		given(userQueryService.getById(userId)).willThrow(UserNotFoundByIdException.class);
 
 		// when
-		Throwable t = catchThrowable(() -> sut.updateProfileImageUrl(userId, newProfileImageUrl));
+		Throwable t = catchThrowable(() -> sut.updateProfileImageUrl(userId, newProfileImage));
 
 		// then
 		then(userQueryService).should().getById(userId);

@@ -4,6 +4,7 @@ import static com.ajou.hertz.common.constant.GlobalConstants.*;
 
 import java.net.URI;
 
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
@@ -14,12 +15,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.ajou.hertz.common.auth.UserPrincipal;
 import com.ajou.hertz.common.validator.PhoneNumber;
 import com.ajou.hertz.domain.user.dto.UserDto;
 import com.ajou.hertz.domain.user.dto.request.SignUpRequest;
-import com.ajou.hertz.domain.user.dto.request.UpdateProfileImageUrlRequest;
 import com.ajou.hertz.domain.user.dto.response.UserEmailResponse;
 import com.ajou.hertz.domain.user.dto.response.UserExistenceResponse;
 import com.ajou.hertz.domain.user.dto.response.UserResponse;
@@ -122,15 +123,16 @@ public class UserController {
 		description = "프로필 이미지를 변경합니다.",
 		security = @SecurityRequirement(name = "access-token")
 	)
-	@PutMapping(value = "/me/profile-image", headers = API_VERSION_HEADER_NAME + "=" + 1)
+	@PutMapping(
+		value = "/me/profile-image",
+		headers = API_VERSION_HEADER_NAME + "=" + 1,
+		consumes = MediaType.MULTIPART_FORM_DATA_VALUE
+	)
 	public UserResponse updateProfileImageUrlV1(
 		@AuthenticationPrincipal UserPrincipal userPrincipal,
-		@RequestBody @Valid UpdateProfileImageUrlRequest updateProfileImageUrlRequest
+		@RequestParam("profileImage") MultipartFile profileImage
 	) {
-		UserDto userUpdated = userCommandService.updateProfileImageUrl(userPrincipal.getUserId(),
-			updateProfileImageUrlRequest.getProfileImageUrl());
-		UserDto userDto = userQueryService.getDtoById(userPrincipal.getUserId());
+		UserDto userUpdated = userCommandService.updateProfileImageUrl(userPrincipal.getUserId(), profileImage);
 		return UserResponse.from(userUpdated);
 	}
-
 }

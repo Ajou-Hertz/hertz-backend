@@ -6,7 +6,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 
+import com.ajou.hertz.common.file.dto.FileDto;
 import com.ajou.hertz.common.file.service.FileService;
 import com.ajou.hertz.common.kakao.dto.response.KakaoUserInfoResponse;
 import com.ajou.hertz.common.properties.HertzProperties;
@@ -133,18 +135,26 @@ public class UserCommandService {
 	}
 
 	/**
-	 * 회원의 프로필 이미지를 변경하고, 이전 이미지를 삭제한다.
+	 * 유저의 프로필 이미지를 업데이트한다.
 	 *
-	 * @param userId 회원 id
-	 * @param profileImageUrl 변경할 프로필 이미지 url
-	 *
-	 * @return 변경된 회원 정보
+	 * @param userId         유저 id
+	 * @param newProfileImage 새로운 프로필 이미지
+	 * @return 업데이트된 유저 정보
 	 */
-	public UserDto updateProfileImageUrl(Long userId, String profileImageUrl) {
+	public UserDto updateProfileImageUrl(Long userId, MultipartFile newProfileImage) {
 		User user = userQueryService.getById(userId);
+		String uploadPath = "user-profile-image/";
+
+		FileDto uploadedFile = fileService.uploadFile(newProfileImage, uploadPath);
+		String newProfileImageUrl = uploadedFile.getStoredFileUrl();
+
 		String oldProfileImageUrl = user.getProfileImageUrl();
-		user.changeProfileImageUrl(profileImageUrl);
-		fileService.deleteFile(oldProfileImageUrl);
+
+		String oldFileName = oldProfileImageUrl.substring(oldProfileImageUrl.lastIndexOf('/') + 1);
+		String fullPathToDelete = uploadPath + oldFileName;
+		fileService.deleteFile(fullPathToDelete);
+
+		user.changeProfileImageUrl(newProfileImageUrl);
 		return UserDto.from(user);
 	}
 

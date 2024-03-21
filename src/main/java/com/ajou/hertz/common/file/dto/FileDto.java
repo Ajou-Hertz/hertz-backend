@@ -21,4 +21,9 @@ public class FileDto {
 	) {
 		return new FileDto(originalName, storedName, url);
 	}
+
+	public String getStoredFileUrl() {
+		return url + "/" + storedName;
+	}
+
 }
