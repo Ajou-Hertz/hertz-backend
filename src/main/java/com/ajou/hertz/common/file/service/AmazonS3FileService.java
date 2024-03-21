@@ -3,6 +3,7 @@ package com.ajou.hertz.common.file.service;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
@@ -15,6 +16,7 @@ import com.ajou.hertz.common.file.dto.FileDto;
 import com.ajou.hertz.common.properties.AWSProperties;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
+import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 
@@ -56,8 +58,16 @@ public class AmazonS3FileService implements FileService {
 	}
 
 	// TODO: 추후 서버 성능 테스트와 함께 @Async 사용한 비동기 로직으로 변경 검토
+
+	/**
+	 * 파일(MultipartFile)들을 전달받아 모두 s3 bucket에 업로드한다.
+	 *
+	 * @param multipartFiles 업로드할 파일들
+	 * @param uploadPath     파일들을 업로드할 경로
+	 * @return AWS S3에 저장된 파일들의 정보가 담긴 dto list
+	 */
 	@Override
-	public List<FileDto> uploadFiles(List<MultipartFile> multipartFiles, String uploadPath) {
+	public List<FileDto> uploadFiles(Iterable<MultipartFile> multipartFiles, String uploadPath) {
 		List<FileDto> result = new ArrayList<>();
 		multipartFiles.forEach(multipartFile -> {
 			FileDto fileUploaded = uploadFile(multipartFile, uploadPath);
@@ -67,10 +77,22 @@ public class AmazonS3FileService implements FileService {
 	}
 
 	/**
+	 * S3 bucket에서 파일들을 삭제한다.
+	 *
+	 * @param storedFileNames 삭제할 파일들의 이름 목록 (keys of bucket object)
+	 */
+	@Override
+	public void deleteAll(Collection<String> storedFileNames) {
+		storedFileNames.forEach(storedFileName -> s3Client.deleteObject(
+			new DeleteObjectRequest(awsProperties.s3().bucketName(), storedFileName)
+		));
+	}
+
+	/**
 	 * S3 Bucket에 업로드할 고유한 파일 이름을 생성한다.
 	 *
 	 * @param originalFilename 파일의 원래 이름.
-	 * @param uploadPath          업로드 경로
+	 * @param uploadPath       업로드 경로
 	 * @return 생성된 고유한 파일 이름
 	 */
 	private String createFileNameToStore(String originalFilename, String uploadPath) {

@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.ajou.hertz.common.file.service.FileService;
 import com.ajou.hertz.domain.instrument.dto.AcousticAndClassicGuitarDto;
 import com.ajou.hertz.domain.instrument.dto.AmplifierDto;
 import com.ajou.hertz.domain.instrument.dto.AudioEquipmentDto;
@@ -29,9 +28,9 @@ import com.ajou.hertz.domain.instrument.entity.ElectricGuitar;
 import com.ajou.hertz.domain.instrument.entity.Instrument;
 import com.ajou.hertz.domain.instrument.entity.InstrumentHashtag;
 import com.ajou.hertz.domain.instrument.entity.InstrumentImage;
+import com.ajou.hertz.domain.instrument.exception.InstrumentDeletePermissionDeniedException;
 import com.ajou.hertz.domain.instrument.mapper.InstrumentMapper;
 import com.ajou.hertz.domain.instrument.repository.InstrumentHashtagRepository;
-import com.ajou.hertz.domain.instrument.repository.InstrumentImageRepository;
 import com.ajou.hertz.domain.instrument.repository.InstrumentRepository;
 import com.ajou.hertz.domain.instrument.strategy.AcousticAndClassicGuitarCreationStrategy;
 import com.ajou.hertz.domain.instrument.strategy.AmplifierCreationStrategy;
@@ -50,13 +49,11 @@ import lombok.RequiredArgsConstructor;
 @Service
 public class InstrumentCommandService {
 
-	private static final String INSTRUMENT_IMAGE_UPLOAD_PATH = "instrument-image/";
-
 	private final UserQueryService userQueryService;
-	private final FileService fileService;
+	private final InstrumentQueryService instrumentQueryService;
+	private final InstrumentImageCommandService instrumentImageCommandService;
 	private final InstrumentRepository instrumentRepository;
 	private final InstrumentHashtagRepository instrumentHashtagRepository;
-	private final InstrumentImageRepository instrumentImageRepository;
 
 	/**
 	 * 신규 일렉 기타 매물을 생성 및 저장한다.
@@ -138,6 +135,23 @@ public class InstrumentCommandService {
 	}
 
 	/**
+	 * 악기 매물을 삭제한다.
+	 *
+	 * @param userId       악기 매물을 삭제하려는 유저의 id
+	 * @param instrumentId 삭제할 악기 매물의 id
+	 * @throws InstrumentDeletePermissionDeniedException 악기를 삭제하려는 유저가 판매자가 아닌 경우
+	 */
+	public void deleteInstrumentById(Long userId, Long instrumentId) {
+		Instrument instrument = instrumentQueryService.getInstrumentById(instrumentId);
+		if (!userId.equals(instrument.getSeller().getId())) {
+			throw new InstrumentDeletePermissionDeniedException();
+		}
+		instrumentImageCommandService.deleteAllByInstrumentId(instrumentId);
+		instrumentHashtagRepository.deleteAllByInstrument(instrument);
+		instrumentRepository.delete(instrument);
+	}
+
+	/**
 	 * 신규 악기 매물을 생성하여 저장한다.
 	 *
 	 * @param sellerId                   악기 판매자의 id
@@ -164,16 +178,7 @@ public class InstrumentCommandService {
 	 * @param images     image list
 	 */
 	private void registerInstrumentImages(Instrument instrument, List<MultipartFile> images) {
-		List<InstrumentImage> instrumentImages = fileService
-			.uploadFiles(images, INSTRUMENT_IMAGE_UPLOAD_PATH)
-			.stream()
-			.map(fileDto -> InstrumentImage.create(
-				instrument,
-				fileDto.getOriginalName(),
-				fileDto.getStoredName(),
-				fileDto.getUrl()
-			)).toList();
-		List<InstrumentImage> savedInstrumentImages = instrumentImageRepository.saveAll(instrumentImages);
+		List<InstrumentImage> savedInstrumentImages = instrumentImageCommandService.saveImages(instrument, images);
 		instrument.getImages().addAll(savedInstrumentImages);
 	}
 
