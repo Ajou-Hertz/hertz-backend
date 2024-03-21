@@ -218,14 +218,14 @@ class UserCommandServiceTest {
 
 		// when
 		Throwable t = catchThrowable(() -> sut.updateProfileImageUrl(userId, newProfileImage));
-    
-    // then
+
+		// then
 		then(userQueryService).should().getById(userId);
 		verifyEveryMocksShouldHaveNoMoreInteractions();
 		assertThat(t).isInstanceOf(UserNotFoundByIdException.class);
 	}
-  
-  
+
+	@Test
 	void 주어진_유저_ID와_연락_수단으로_연락_수단을_변경한다() throws Exception {
 		// given
 		Long userId = 1L;

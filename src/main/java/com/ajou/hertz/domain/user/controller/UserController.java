@@ -136,8 +136,7 @@ public class UserController {
 		UserDto userUpdated = userCommandService.updateProfileImageUrl(userPrincipal.getUserId(), profileImage);
 		return UserResponse.from(userUpdated);
 	}
-}
-                
+
 	@Operation(
 		summary = "연락 수단 변경",
 		description = "연락 수단을 변경합니다.",

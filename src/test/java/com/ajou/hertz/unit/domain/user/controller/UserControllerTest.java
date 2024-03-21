@@ -241,10 +241,10 @@ class UserControllerTest {
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.profileImageUrl").value(expectedResult.getProfileImageUrl()));
 		then(userCommandService).should().updateProfileImageUrl(userId, profileImage);
-    verifyEveryMocksShouldHaveNoMoreInteractions();
+		verifyEveryMocksShouldHaveNoMoreInteractions();
 	}
-  
-  
+
+	@Test
 	void 주어진_연락수단을_새로운_연락수단으로_변경한다() throws Exception {
 		// given
 		long userId = 1L;
