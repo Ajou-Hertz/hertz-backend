@@ -127,7 +127,7 @@ public class UserController {
 		@RequestBody @Valid UpdateContactLinkRequest updateContactLinkRequest,
 		@AuthenticationPrincipal UserPrincipal userPrincipal
 	) {
-		UserDto userUpdated = userCommandService.updateContactLink(userPrincipal.getUserId(), userPrincipal.getUserId(),
+		UserDto userUpdated = userCommandService.updateContactLink(userPrincipal.getUserId(),
 			updateContactLinkRequest.getContactLink());
 		return UserResponse.from(userUpdated);
 	}

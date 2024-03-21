@@ -28,7 +28,6 @@ import com.ajou.hertz.domain.user.dto.UserDto;
 import com.ajou.hertz.domain.user.dto.request.SignUpRequest;
 import com.ajou.hertz.domain.user.entity.User;
 import com.ajou.hertz.domain.user.exception.UserEmailDuplicationException;
-import com.ajou.hertz.domain.user.exception.UserIdForbiddenException;
 import com.ajou.hertz.domain.user.exception.UserKakaoUidDuplicationException;
 import com.ajou.hertz.domain.user.exception.UserNotFoundByIdException;
 import com.ajou.hertz.domain.user.exception.UserPhoneDuplicationException;
@@ -182,7 +181,7 @@ class UserCommandServiceTest {
 		given(userQueryService.getById(userId)).willReturn(user);
 
 		// when
-		UserDto updatedUserDto = sut.updateContactLink(userId, userId, contactLink);
+		UserDto updatedUserDto = sut.updateContactLink(userId, contactLink);
 
 		// then
 		then(userQueryService).should().getById(userId);
@@ -198,30 +197,12 @@ class UserCommandServiceTest {
 		given(userQueryService.getById(userId)).willThrow(UserNotFoundByIdException.class);
 
 		// when
-		Throwable t = catchThrowable(() -> sut.updateContactLink(userId, userId, contactLink));
+		Throwable t = catchThrowable(() -> sut.updateContactLink(userId, contactLink));
 
 		// then
 		then(userQueryService).should().getById(userId);
 		verifyEveryMocksShouldHaveNoMoreInteractions();
 		assertThat(t).isInstanceOf(UserNotFoundByIdException.class);
-	}
-
-	@Test
-	void 주어진_유저_ID가_API를_호출한_유저의_ID와_일치하지_않는다면_에러가_발생한다() throws Exception {
-		// given
-		Long loginUserId = 1L;
-		Long userId = 2L;
-		String contactLink = "https://new-contactLink";
-		User user = createUser(userId, "$2a$abc123", "12345");
-		given(userQueryService.getById(userId)).willReturn(user);
-
-		// when
-		Throwable t = catchThrowable(() -> sut.updateContactLink(loginUserId, userId, contactLink));
-
-		// then
-		assertThat(t).isInstanceOf(UserIdForbiddenException.class);
-		then(userQueryService).should().getById(userId);
-		verifyEveryMocksShouldHaveNoMoreInteractions();
 	}
 
 	private void verifyEveryMocksShouldHaveNoMoreInteractions() {
