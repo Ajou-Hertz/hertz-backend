@@ -100,4 +100,9 @@ public class User extends TimeTrackedBaseEntity {
 			profileImageUrl, birth, gender, phone, null
 		);
 	}
+
+	public void changeContactLink(String contactLink) {
+		this.contactLink = contactLink;
+	}
+
 }

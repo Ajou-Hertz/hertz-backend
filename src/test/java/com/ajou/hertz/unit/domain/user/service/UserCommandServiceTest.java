@@ -29,6 +29,7 @@ import com.ajou.hertz.domain.user.dto.request.SignUpRequest;
 import com.ajou.hertz.domain.user.entity.User;
 import com.ajou.hertz.domain.user.exception.UserEmailDuplicationException;
 import com.ajou.hertz.domain.user.exception.UserKakaoUidDuplicationException;
+import com.ajou.hertz.domain.user.exception.UserNotFoundByIdException;
 import com.ajou.hertz.domain.user.exception.UserPhoneDuplicationException;
 import com.ajou.hertz.domain.user.repository.UserRepository;
 import com.ajou.hertz.domain.user.service.UserCommandService;
@@ -171,6 +172,39 @@ class UserCommandServiceTest {
 		assertThat(t).isInstanceOf(UserKakaoUidDuplicationException.class);
 	}
 
+	@Test
+	void 주어진_유저_ID와_연락_수단으로_연락_수단을_변경한다() throws Exception {
+		// given
+		Long userId = 1L;
+		String contactLink = "https://new-contactLink";
+		User user = createUser(userId, "$2a$abc123", "12345");
+		given(userQueryService.getById(userId)).willReturn(user);
+
+		// when
+		UserDto updatedUserDto = sut.updateContactLink(userId, contactLink);
+
+		// then
+		then(userQueryService).should().getById(userId);
+		verifyEveryMocksShouldHaveNoMoreInteractions();
+		assertThat(updatedUserDto.getContactLink()).isEqualTo(contactLink);
+	}
+
+	@Test
+	void 주어진_유저_ID와_연락_수단으로_연락_수단을_변경한다_존재하지_않는_유저라면_예외가_발생한다() throws Exception {
+		// given
+		Long userId = 1L;
+		String contactLink = "https://new-contactLink";
+		given(userQueryService.getById(userId)).willThrow(UserNotFoundByIdException.class);
+
+		// when
+		Throwable t = catchThrowable(() -> sut.updateContactLink(userId, contactLink));
+
+		// then
+		then(userQueryService).should().getById(userId);
+		verifyEveryMocksShouldHaveNoMoreInteractions();
+		assertThat(t).isInstanceOf(UserNotFoundByIdException.class);
+	}
+
 	private void verifyEveryMocksShouldHaveNoMoreInteractions() {
 		then(userQueryService).shouldHaveNoMoreInteractions();
 		then(userRepository).shouldHaveNoMoreInteractions();
@@ -188,7 +222,7 @@ class UserCommandServiceTest {
 			LocalDate.of(2024, 1, 1),
 			gender,
 			"010-1234-5678",
-			null
+			"https://contactLink"
 		);
 	}
 

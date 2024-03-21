@@ -129,4 +129,19 @@ public class UserCommandService {
 			.toString()
 			.substring(0, 16);
 	}
+
+	/**
+	 *연락 수단을 변경합니다.
+	 *
+	 * @param userId 유저의 ID
+	 * @param contactLink 변경할 연락 수단
+	 *
+	 *@return 변경된 유저 정보
+	 */
+	public UserDto updateContactLink(Long userId, String contactLink) {
+		User user = userQueryService.getById(userId);
+		user.changeContactLink(contactLink);
+		return UserDto.from(user);
+	}
+
 }
