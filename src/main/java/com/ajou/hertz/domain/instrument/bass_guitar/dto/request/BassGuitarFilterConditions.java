@@ -1,10 +1,11 @@
-package com.ajou.hertz.domain.instrument.dto.request;
+package com.ajou.hertz.domain.instrument.bass_guitar.dto.request;
 
-import com.ajou.hertz.domain.instrument.constant.BassGuitarBrand;
-import com.ajou.hertz.domain.instrument.constant.BassGuitarPickUp;
-import com.ajou.hertz.domain.instrument.constant.BassGuitarPreAmplifier;
+import com.ajou.hertz.domain.instrument.bass_guitar.constant.BassGuitarBrand;
+import com.ajou.hertz.domain.instrument.bass_guitar.constant.BassGuitarPickUp;
+import com.ajou.hertz.domain.instrument.bass_guitar.constant.BassGuitarPreAmplifier;
 import com.ajou.hertz.domain.instrument.constant.GuitarColor;
 import com.ajou.hertz.domain.instrument.constant.InstrumentProgressStatus;
+import com.ajou.hertz.domain.instrument.dto.request.InstrumentFilterConditions;
 
 import lombok.AccessLevel;
 import lombok.Getter;

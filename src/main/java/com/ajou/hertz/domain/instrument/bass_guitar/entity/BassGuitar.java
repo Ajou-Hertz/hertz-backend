@@ -1,11 +1,12 @@
-package com.ajou.hertz.domain.instrument.entity;
+package com.ajou.hertz.domain.instrument.bass_guitar.entity;
 
 import com.ajou.hertz.common.entity.Address;
-import com.ajou.hertz.domain.instrument.constant.BassGuitarBrand;
-import com.ajou.hertz.domain.instrument.constant.BassGuitarPickUp;
-import com.ajou.hertz.domain.instrument.constant.BassGuitarPreAmplifier;
+import com.ajou.hertz.domain.instrument.bass_guitar.constant.BassGuitarBrand;
+import com.ajou.hertz.domain.instrument.bass_guitar.constant.BassGuitarPickUp;
+import com.ajou.hertz.domain.instrument.bass_guitar.constant.BassGuitarPreAmplifier;
 import com.ajou.hertz.domain.instrument.constant.GuitarColor;
 import com.ajou.hertz.domain.instrument.constant.InstrumentProgressStatus;
+import com.ajou.hertz.domain.instrument.entity.Instrument;
 import com.ajou.hertz.domain.user.entity.User;
 
 import jakarta.persistence.Column;

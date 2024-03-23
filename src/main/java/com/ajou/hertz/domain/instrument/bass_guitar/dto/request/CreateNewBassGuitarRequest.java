@@ -1,16 +1,17 @@
-package com.ajou.hertz.domain.instrument.dto.request;
+package com.ajou.hertz.domain.instrument.bass_guitar.dto.request;
 
 import java.util.List;
 
 import org.springframework.web.multipart.MultipartFile;
 
 import com.ajou.hertz.common.dto.request.AddressRequest;
-import com.ajou.hertz.domain.instrument.constant.BassGuitarBrand;
-import com.ajou.hertz.domain.instrument.constant.BassGuitarPickUp;
-import com.ajou.hertz.domain.instrument.constant.BassGuitarPreAmplifier;
+import com.ajou.hertz.domain.instrument.bass_guitar.constant.BassGuitarBrand;
+import com.ajou.hertz.domain.instrument.bass_guitar.constant.BassGuitarPickUp;
+import com.ajou.hertz.domain.instrument.bass_guitar.constant.BassGuitarPreAmplifier;
 import com.ajou.hertz.domain.instrument.constant.GuitarColor;
 import com.ajou.hertz.domain.instrument.constant.InstrumentProgressStatus;
-import com.ajou.hertz.domain.instrument.entity.BassGuitar;
+import com.ajou.hertz.domain.instrument.dto.request.CreateNewInstrumentRequest;
+import com.ajou.hertz.domain.instrument.bass_guitar.entity.BassGuitar;
 import com.ajou.hertz.domain.user.entity.User;
 
 import jakarta.validation.constraints.NotNull;
