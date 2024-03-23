@@ -1,15 +1,16 @@
-package com.ajou.hertz.domain.instrument.dto.request;
+package com.ajou.hertz.domain.instrument.amplifier.dto.request;
 
 import java.util.List;
 
 import org.springframework.web.multipart.MultipartFile;
 
 import com.ajou.hertz.common.dto.request.AddressRequest;
-import com.ajou.hertz.domain.instrument.constant.AmplifierBrand;
-import com.ajou.hertz.domain.instrument.constant.AmplifierType;
-import com.ajou.hertz.domain.instrument.constant.AmplifierUsage;
+import com.ajou.hertz.domain.instrument.amplifier.constant.AmplifierBrand;
+import com.ajou.hertz.domain.instrument.amplifier.constant.AmplifierType;
+import com.ajou.hertz.domain.instrument.amplifier.constant.AmplifierUsage;
 import com.ajou.hertz.domain.instrument.constant.InstrumentProgressStatus;
-import com.ajou.hertz.domain.instrument.entity.Amplifier;
+import com.ajou.hertz.domain.instrument.dto.request.CreateNewInstrumentRequest;
+import com.ajou.hertz.domain.instrument.amplifier.entity.Amplifier;
 import com.ajou.hertz.domain.user.entity.User;
 
 import jakarta.validation.constraints.NotNull;

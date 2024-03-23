@@ -1,10 +1,11 @@
-package com.ajou.hertz.domain.instrument.entity;
+package com.ajou.hertz.domain.instrument.amplifier.entity;
 
 import com.ajou.hertz.common.entity.Address;
-import com.ajou.hertz.domain.instrument.constant.AmplifierBrand;
-import com.ajou.hertz.domain.instrument.constant.AmplifierType;
-import com.ajou.hertz.domain.instrument.constant.AmplifierUsage;
+import com.ajou.hertz.domain.instrument.amplifier.constant.AmplifierBrand;
+import com.ajou.hertz.domain.instrument.amplifier.constant.AmplifierType;
+import com.ajou.hertz.domain.instrument.amplifier.constant.AmplifierUsage;
 import com.ajou.hertz.domain.instrument.constant.InstrumentProgressStatus;
+import com.ajou.hertz.domain.instrument.entity.Instrument;
 import com.ajou.hertz.domain.user.entity.User;
 
 import jakarta.persistence.Column;

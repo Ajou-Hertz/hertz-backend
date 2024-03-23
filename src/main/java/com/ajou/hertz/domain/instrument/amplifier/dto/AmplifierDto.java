@@ -1,14 +1,16 @@
-package com.ajou.hertz.domain.instrument.dto;
+package com.ajou.hertz.domain.instrument.amplifier.dto;
 
 import java.util.List;
 
 import com.ajou.hertz.common.dto.AddressDto;
-import com.ajou.hertz.domain.instrument.constant.AmplifierBrand;
-import com.ajou.hertz.domain.instrument.constant.AmplifierType;
-import com.ajou.hertz.domain.instrument.constant.AmplifierUsage;
+import com.ajou.hertz.domain.instrument.amplifier.constant.AmplifierBrand;
+import com.ajou.hertz.domain.instrument.amplifier.constant.AmplifierType;
+import com.ajou.hertz.domain.instrument.amplifier.constant.AmplifierUsage;
 import com.ajou.hertz.domain.instrument.constant.InstrumentCategory;
 import com.ajou.hertz.domain.instrument.constant.InstrumentProgressStatus;
-import com.ajou.hertz.domain.instrument.entity.Amplifier;
+import com.ajou.hertz.domain.instrument.dto.InstrumentDto;
+import com.ajou.hertz.domain.instrument.dto.InstrumentImageDto;
+import com.ajou.hertz.domain.instrument.amplifier.entity.Amplifier;
 import com.ajou.hertz.domain.user.dto.UserDto;
 
 import lombok.AccessLevel;

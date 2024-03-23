@@ -1,9 +1,10 @@
-package com.ajou.hertz.domain.instrument.dto.request;
+package com.ajou.hertz.domain.instrument.amplifier.dto.request;
 
-import com.ajou.hertz.domain.instrument.constant.AmplifierBrand;
-import com.ajou.hertz.domain.instrument.constant.AmplifierType;
-import com.ajou.hertz.domain.instrument.constant.AmplifierUsage;
+import com.ajou.hertz.domain.instrument.amplifier.constant.AmplifierBrand;
+import com.ajou.hertz.domain.instrument.amplifier.constant.AmplifierType;
+import com.ajou.hertz.domain.instrument.amplifier.constant.AmplifierUsage;
 import com.ajou.hertz.domain.instrument.constant.InstrumentProgressStatus;
+import com.ajou.hertz.domain.instrument.dto.request.InstrumentFilterConditions;
 
 import lombok.AccessLevel;
 import lombok.Getter;
