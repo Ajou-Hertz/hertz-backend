@@ -14,10 +14,12 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.ajou.hertz.common.auth.UserPrincipal;
+import com.ajou.hertz.common.file.dto.FileDto;
 import com.ajou.hertz.common.validator.PhoneNumber;
 import com.ajou.hertz.domain.user.dto.UserDto;
 import com.ajou.hertz.domain.user.dto.request.SignUpRequest;
@@ -27,6 +29,7 @@ import com.ajou.hertz.domain.user.dto.response.UserExistenceResponse;
 import com.ajou.hertz.domain.user.dto.response.UserResponse;
 import com.ajou.hertz.domain.user.dto.response.UserWithLinkedAccountInfoResponse;
 import com.ajou.hertz.domain.user.service.UserCommandService;
+import com.ajou.hertz.domain.user.service.UserProfileImageCommandService;
 import com.ajou.hertz.domain.user.service.UserQueryService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -49,6 +52,7 @@ import lombok.RequiredArgsConstructor;
 public class UserController {
 
 	private final UserCommandService userCommandService;
+	private final UserProfileImageCommandService userProfileImageCommandService;
 	private final UserQueryService userQueryService;
 
 	@Operation(
@@ -125,15 +129,17 @@ public class UserController {
 		security = @SecurityRequirement(name = "access-token")
 	)
 	@PutMapping(
-		value = "/me/profile-image",
+		value = "/me/profile-images",
 		headers = API_VERSION_HEADER_NAME + "=" + 1,
 		consumes = MediaType.MULTIPART_FORM_DATA_VALUE
 	)
-	public UserResponse updateProfileImageUrlV1(
+	public UserResponse updateProfileImageV1(
 		@AuthenticationPrincipal UserPrincipal userPrincipal,
-		@RequestParam("profileImage") MultipartFile profileImage
+		@RequestPart("profileImage") MultipartFile profileImage
 	) {
-		UserDto userUpdated = userCommandService.updateProfileImageUrl(userPrincipal.getUserId(), profileImage);
+		FileDto uploadedFile = userProfileImageCommandService.uploadProfileImage(userPrincipal.getUserId(),
+			profileImage);
+		UserDto userUpdated = userCommandService.updateProfileImage(userPrincipal.getUserId(), uploadedFile);
 		return UserResponse.from(userUpdated);
 	}
 

@@ -17,7 +17,6 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.event.annotation.BeforeTestMethod;
 
@@ -178,46 +177,79 @@ class UserCommandServiceTest {
 		assertThat(t).isInstanceOf(UserKakaoUidDuplicationException.class);
 	}
 
+	// @Test
+	// void 주어진_id와_새_프로필_이미지로_프로필_이미지를_변경하고_이전_프로필_이미지는_삭제한다() throws Exception {
+	// 	Long userId = 1L;
+	// 	MockMultipartFile newProfileImage = new MockMultipartFile(
+	// 		"profileImage",
+	// 		"test.jpg",
+	// 		"image/jpeg",
+	// 		"test".getBytes()
+	// 	);
+	// 	User user = createUser(userId, "password", null, Gender.MALE);
+	// 	given(userQueryService.getById(userId)).willReturn(user);
+	// 	given(fileService.uploadFile(any(), anyString())).willReturn(
+	// 		FileDto.create("new_profile_image.jpg", "new_profile_image.jpg",
+	// 			"https://example.com/user-profile-images"));
+	//
+	// 	// When
+	// 	UserDto updatedUser = sut.updateProfileImageUrl(userId, newProfileImage);
+	//
+	// 	// Then
+	// 	then(userQueryService).should().getById(userId);
+	// 	then(fileService).should().uploadFile(eq(newProfileImage), anyString());
+	// 	then(fileService).should().deleteFile(anyString());
+	// 	verifyEveryMocksShouldHaveNoMoreInteractions();
+	// 	assertThat(updatedUser).hasFieldOrPropertyWithValue("profileImageUrl", user.getProfileImageUrl());
+	// }
+	//
+	// @Test
+	// void 주어진_유저_ID와_새로운_프로필_이미지로_기존의_프로필_이미지를_변경한다_존재하지_않는_유저라면_예외가_발생한다() throws Exception {
+	// 	// given
+	// 	Long userId = 1L;
+	// 	MockMultipartFile newProfileImage = new MockMultipartFile(
+	// 		"profileImage",
+	// 		"test.jpg",
+	// 		"image/jpeg",
+	// 		"test".getBytes()
+	// 	);
+	// 	given(userQueryService.getById(userId)).willThrow(UserNotFoundByIdException.class);
+	//
+	// 	// when
+	// 	Throwable t = catchThrowable(() -> sut.updateProfileImageUrl(userId, newProfileImage));
+	//
+	// 	// then
+	// 	then(userQueryService).should().getById(userId);
+	// 	verifyEveryMocksShouldHaveNoMoreInteractions();
+	// 	assertThat(t).isInstanceOf(UserNotFoundByIdException.class);
+	// }
+
 	@Test
-	void 주어진_id와_새_프로필_이미지로_프로필_이미지를_변경하고_이전_프로필_이미지는_삭제한다() throws Exception {
+	void 주어진_유저_ID와_저장된_이미지로_프로필_이미지_URL을_변경한다() throws Exception {
+		// given
 		Long userId = 1L;
-		MockMultipartFile newProfileImage = new MockMultipartFile(
-			"profileImage",
-			"test.jpg",
-			"image/jpeg",
-			"test".getBytes()
-		);
-		User user = createUser(userId, "password", null, Gender.MALE);
+		User user = createUser(userId, "$2a$abc123", "12345");
+		FileDto uploadedFile = createFileDto();
 		given(userQueryService.getById(userId)).willReturn(user);
-		given(fileService.uploadFile(any(), anyString())).willReturn(
-			FileDto.create("new_profile_image.jpg", "new_profile_image.jpg",
-				"https://example.com/user-profile-images"));
 
-		// When
-		UserDto updatedUser = sut.updateProfileImageUrl(userId, newProfileImage);
+		// when
+		UserDto updatedUserDto = sut.updateProfileImage(userId, uploadedFile);
 
-		// Then
+		// then
 		then(userQueryService).should().getById(userId);
-		then(fileService).should().uploadFile(eq(newProfileImage), anyString());
-		then(fileService).should().deleteFile(anyString());
 		verifyEveryMocksShouldHaveNoMoreInteractions();
-		assertThat(updatedUser).hasFieldOrPropertyWithValue("profileImageUrl", user.getProfileImageUrl());
+		assertThat(updatedUserDto.getProfileImageUrl()).isEqualTo(uploadedFile.getUrl());
 	}
 
 	@Test
-	void 주어진_유저_ID와_새로운_프로필_이미지로_기존의_프로필_이미지를_변경한다_존재하지_않는_유저라면_예외가_발생한다() throws Exception {
+	void 주어진_유저_ID와_저장된_이미지로_프로필_이미지를_변경한다_존재하지_않는_유저라면_예외가_발생한다() throws Exception {
 		// given
 		Long userId = 1L;
-		MockMultipartFile newProfileImage = new MockMultipartFile(
-			"profileImage",
-			"test.jpg",
-			"image/jpeg",
-			"test".getBytes()
-		);
+		FileDto uploadedFile = createFileDto();
 		given(userQueryService.getById(userId)).willThrow(UserNotFoundByIdException.class);
 
 		// when
-		Throwable t = catchThrowable(() -> sut.updateProfileImageUrl(userId, newProfileImage));
+		Throwable t = catchThrowable(() -> sut.updateProfileImage(userId, uploadedFile));
 
 		// then
 		then(userQueryService).should().getById(userId);
@@ -330,5 +362,12 @@ class UserCommandServiceTest {
 
 	private static KakaoUserInfoResponse createKakaoUserInfoResponse() {
 		return createKakaoUserInfoResponse("male");
+	}
+
+	private FileDto createFileDto() throws Exception {
+		return ReflectionUtils.createFileDto(
+			"test.jpg",
+			"test-stored.jpg",
+			"https://new-contactLink");
 	}
 }

@@ -31,12 +31,14 @@ import com.ajou.hertz.common.auth.JwtExceptionFilter;
 import com.ajou.hertz.common.auth.JwtTokenProvider;
 import com.ajou.hertz.common.auth.UserPrincipal;
 import com.ajou.hertz.common.config.SecurityConfig;
+import com.ajou.hertz.common.file.dto.FileDto;
 import com.ajou.hertz.domain.user.constant.Gender;
 import com.ajou.hertz.domain.user.constant.RoleType;
 import com.ajou.hertz.domain.user.controller.UserController;
 import com.ajou.hertz.domain.user.dto.UserDto;
 import com.ajou.hertz.domain.user.dto.request.SignUpRequest;
 import com.ajou.hertz.domain.user.service.UserCommandService;
+import com.ajou.hertz.domain.user.service.UserProfileImageCommandService;
 import com.ajou.hertz.domain.user.service.UserQueryService;
 import com.ajou.hertz.util.ReflectionUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -60,6 +62,9 @@ class UserControllerTest {
 
 	@MockBean
 	private UserQueryService userQueryService;
+
+	@MockBean
+	private UserProfileImageCommandService userProfileImageCommandService;
 
 	private final MockMvc mvc;
 
@@ -224,12 +229,16 @@ class UserControllerTest {
 			"test".getBytes()
 		);
 		UserDetails userDetails = createTestUser(userId);
+		FileDto uploadedFile = createFileDto();
 		UserDto expectedResult = createUserDto(userId);
-		given(userCommandService.updateProfileImageUrl(userId, profileImage)).willReturn(expectedResult);
+
+		given(userProfileImageCommandService.uploadProfileImage(userId, profileImage)).willReturn(
+			uploadedFile);
+		given(userCommandService.updateProfileImage(userId, uploadedFile)).willReturn(expectedResult);
 
 		// when & then
 		mvc.perform(
-				multipart("/api/users/me/profile-image")
+				multipart("/api/users/me/profile-images")
 					.file(profileImage)
 					.header(API_VERSION_HEADER_NAME, 1)
 					.with(user(userDetails))
@@ -240,7 +249,8 @@ class UserControllerTest {
 			)
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.profileImageUrl").value(expectedResult.getProfileImageUrl()));
-		then(userCommandService).should().updateProfileImageUrl(userId, profileImage);
+		then(userProfileImageCommandService).should().uploadProfileImage(userId, profileImage);
+		then(userCommandService).should().updateProfileImage(userId, uploadedFile);
 		verifyEveryMocksShouldHaveNoMoreInteractions();
 	}
 
@@ -270,6 +280,7 @@ class UserControllerTest {
 	private void verifyEveryMocksShouldHaveNoMoreInteractions() {
 		then(userCommandService).shouldHaveNoMoreInteractions();
 		then(userQueryService).shouldHaveNoMoreInteractions();
+		then(userProfileImageCommandService).shouldHaveNoMoreInteractions();
 	}
 
 	private SignUpRequest createSignUpRequest(String email, String password, String phone) throws Exception {
@@ -312,6 +323,13 @@ class UserControllerTest {
 
 	private UserDetails createTestUser(Long userId) throws Exception {
 		return new UserPrincipal(createUserDto(userId));
+	}
+
+	private FileDto createFileDto() throws Exception {
+		return ReflectionUtils.createFileDto(
+			"test.jpg",
+			"test-stored.jpg",
+			"https://example.com/user-profile-images/storedFileName.jpg");
 	}
 
 }

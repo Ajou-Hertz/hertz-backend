@@ -6,10 +6,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.ajou.hertz.common.file.dto.FileDto;
-import com.ajou.hertz.common.file.service.FileService;
 import com.ajou.hertz.common.kakao.dto.response.KakaoUserInfoResponse;
 import com.ajou.hertz.common.properties.HertzProperties;
 import com.ajou.hertz.domain.user.constant.Gender;
@@ -19,6 +17,7 @@ import com.ajou.hertz.domain.user.entity.User;
 import com.ajou.hertz.domain.user.exception.UserEmailDuplicationException;
 import com.ajou.hertz.domain.user.exception.UserKakaoUidDuplicationException;
 import com.ajou.hertz.domain.user.exception.UserPhoneDuplicationException;
+import com.ajou.hertz.domain.user.repository.UserProfileImageRepository;
 import com.ajou.hertz.domain.user.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -32,7 +31,7 @@ public class UserCommandService {
 	private final UserRepository userRepository;
 	private final PasswordEncoder passwordEncoder;
 	private final HertzProperties hertzProperties;
-	private final FileService fileService;
+	private final UserProfileImageRepository userProfileImageRepository;
 
 	/**
 	 * 새로운 회원을 등록한다.
@@ -135,31 +134,21 @@ public class UserCommandService {
 	}
 
 	/**
-	 * 유저의 프로필 이미지를 업데이트한다.
+	 * 전달된 이미지로 프로필 이미지 url을 변경한다.
 	 *
-	 * @param userId 유저 id
-	 * @param newProfileImage 새로운 프로필 이미지
-   *
-	 * @return 업데이트된 유저 정보
+	 * @param userId 유저의 ID
+	 * @param uploadedFile 변경할 이미지 파일
+	 *
+	 * @return 변경된 유저 정보
 	 */
-	public UserDto updateProfileImageUrl(Long userId, MultipartFile newProfileImage) {
+	public UserDto updateProfileImage(Long userId, FileDto uploadedFile) {
 		User user = userQueryService.getById(userId);
-		String uploadPath = "user-profile-image/";
-
-		FileDto uploadedFile = fileService.uploadFile(newProfileImage, uploadPath);
 		String newProfileImageUrl = uploadedFile.getStoredFileUrl();
-
-		String oldProfileImageUrl = user.getProfileImageUrl();
-
-		String oldFileName = oldProfileImageUrl.substring(oldProfileImageUrl.lastIndexOf('/') + 1);
-		String fullPathToDelete = uploadPath + oldFileName;
-		fileService.deleteFile(fullPathToDelete);
-
 		user.changeProfileImageUrl(newProfileImageUrl);
-    return UserDto.from(user);
-   }
+		return UserDto.from(user);
+	}
 
-  /**
+	/**
 	 *연락 수단을 변경합니다.
 	 *
 	 * @param userId 유저의 ID

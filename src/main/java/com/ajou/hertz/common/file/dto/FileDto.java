@@ -23,7 +23,6 @@ public class FileDto {
 	}
 
 	public String getStoredFileUrl() {
-		return url + "/" + storedName;
+		return url;
 	}
-
 }
