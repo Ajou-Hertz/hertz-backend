@@ -1,4 +1,4 @@
-package com.ajou.hertz.domain.instrument.constant;
+package com.ajou.hertz.domain.instrument.acoustic_and_classic_guitar.constant;
 
 import lombok.AllArgsConstructor;
 

@@ -1,16 +1,17 @@
-package com.ajou.hertz.domain.instrument.dto.request;
+package com.ajou.hertz.domain.instrument.acoustic_and_classic_guitar.dto.request;
 
 import java.util.List;
 
 import org.springframework.web.multipart.MultipartFile;
 
 import com.ajou.hertz.common.dto.request.AddressRequest;
-import com.ajou.hertz.domain.instrument.constant.AcousticAndClassicGuitarBrand;
-import com.ajou.hertz.domain.instrument.constant.AcousticAndClassicGuitarModel;
-import com.ajou.hertz.domain.instrument.constant.AcousticAndClassicGuitarPickUp;
-import com.ajou.hertz.domain.instrument.constant.AcousticAndClassicGuitarWood;
+import com.ajou.hertz.domain.instrument.acoustic_and_classic_guitar.constant.AcousticAndClassicGuitarBrand;
+import com.ajou.hertz.domain.instrument.acoustic_and_classic_guitar.constant.AcousticAndClassicGuitarModel;
+import com.ajou.hertz.domain.instrument.acoustic_and_classic_guitar.constant.AcousticAndClassicGuitarPickUp;
+import com.ajou.hertz.domain.instrument.acoustic_and_classic_guitar.constant.AcousticAndClassicGuitarWood;
 import com.ajou.hertz.domain.instrument.constant.InstrumentProgressStatus;
-import com.ajou.hertz.domain.instrument.entity.AcousticAndClassicGuitar;
+import com.ajou.hertz.domain.instrument.dto.request.CreateNewInstrumentRequest;
+import com.ajou.hertz.domain.instrument.acoustic_and_classic_guitar.entity.AcousticAndClassicGuitar;
 import com.ajou.hertz.domain.user.entity.User;
 
 import jakarta.validation.constraints.NotNull;

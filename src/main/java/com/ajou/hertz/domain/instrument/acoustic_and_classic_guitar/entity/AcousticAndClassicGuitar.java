@@ -1,11 +1,12 @@
-package com.ajou.hertz.domain.instrument.entity;
+package com.ajou.hertz.domain.instrument.acoustic_and_classic_guitar.entity;
 
 import com.ajou.hertz.common.entity.Address;
-import com.ajou.hertz.domain.instrument.constant.AcousticAndClassicGuitarBrand;
-import com.ajou.hertz.domain.instrument.constant.AcousticAndClassicGuitarModel;
-import com.ajou.hertz.domain.instrument.constant.AcousticAndClassicGuitarPickUp;
-import com.ajou.hertz.domain.instrument.constant.AcousticAndClassicGuitarWood;
+import com.ajou.hertz.domain.instrument.acoustic_and_classic_guitar.constant.AcousticAndClassicGuitarBrand;
+import com.ajou.hertz.domain.instrument.acoustic_and_classic_guitar.constant.AcousticAndClassicGuitarModel;
+import com.ajou.hertz.domain.instrument.acoustic_and_classic_guitar.constant.AcousticAndClassicGuitarPickUp;
+import com.ajou.hertz.domain.instrument.acoustic_and_classic_guitar.constant.AcousticAndClassicGuitarWood;
 import com.ajou.hertz.domain.instrument.constant.InstrumentProgressStatus;
+import com.ajou.hertz.domain.instrument.entity.Instrument;
 import com.ajou.hertz.domain.user.entity.User;
 
 import jakarta.persistence.Column;

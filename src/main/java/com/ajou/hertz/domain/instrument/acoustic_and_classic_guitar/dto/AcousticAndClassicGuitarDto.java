@@ -1,15 +1,17 @@
-package com.ajou.hertz.domain.instrument.dto;
+package com.ajou.hertz.domain.instrument.acoustic_and_classic_guitar.dto;
 
 import java.util.List;
 
 import com.ajou.hertz.common.dto.AddressDto;
-import com.ajou.hertz.domain.instrument.constant.AcousticAndClassicGuitarBrand;
-import com.ajou.hertz.domain.instrument.constant.AcousticAndClassicGuitarModel;
-import com.ajou.hertz.domain.instrument.constant.AcousticAndClassicGuitarPickUp;
-import com.ajou.hertz.domain.instrument.constant.AcousticAndClassicGuitarWood;
+import com.ajou.hertz.domain.instrument.acoustic_and_classic_guitar.constant.AcousticAndClassicGuitarBrand;
+import com.ajou.hertz.domain.instrument.acoustic_and_classic_guitar.constant.AcousticAndClassicGuitarModel;
+import com.ajou.hertz.domain.instrument.acoustic_and_classic_guitar.constant.AcousticAndClassicGuitarPickUp;
+import com.ajou.hertz.domain.instrument.acoustic_and_classic_guitar.constant.AcousticAndClassicGuitarWood;
 import com.ajou.hertz.domain.instrument.constant.InstrumentCategory;
 import com.ajou.hertz.domain.instrument.constant.InstrumentProgressStatus;
-import com.ajou.hertz.domain.instrument.entity.AcousticAndClassicGuitar;
+import com.ajou.hertz.domain.instrument.dto.InstrumentDto;
+import com.ajou.hertz.domain.instrument.dto.InstrumentImageDto;
+import com.ajou.hertz.domain.instrument.acoustic_and_classic_guitar.entity.AcousticAndClassicGuitar;
 import com.ajou.hertz.domain.user.dto.UserDto;
 
 import lombok.AccessLevel;
