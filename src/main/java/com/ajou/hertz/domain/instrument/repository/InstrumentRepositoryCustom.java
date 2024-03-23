@@ -3,18 +3,18 @@ package com.ajou.hertz.domain.instrument.repository;
 import org.springframework.data.domain.Page;
 
 import com.ajou.hertz.domain.instrument.constant.InstrumentSortOption;
-import com.ajou.hertz.domain.instrument.dto.request.AcousticAndClassicGuitarFilterConditions;
-import com.ajou.hertz.domain.instrument.dto.request.AmplifierFilterConditions;
-import com.ajou.hertz.domain.instrument.dto.request.AudioEquipmentFilterConditions;
-import com.ajou.hertz.domain.instrument.dto.request.BassGuitarFilterConditions;
-import com.ajou.hertz.domain.instrument.dto.request.EffectorFilterConditions;
-import com.ajou.hertz.domain.instrument.dto.request.ElectricGuitarFilterConditions;
-import com.ajou.hertz.domain.instrument.entity.AcousticAndClassicGuitar;
-import com.ajou.hertz.domain.instrument.entity.Amplifier;
-import com.ajou.hertz.domain.instrument.entity.AudioEquipment;
-import com.ajou.hertz.domain.instrument.entity.BassGuitar;
-import com.ajou.hertz.domain.instrument.entity.Effector;
-import com.ajou.hertz.domain.instrument.entity.ElectricGuitar;
+import com.ajou.hertz.domain.instrument.acoustic_and_classic_guitar.dto.request.AcousticAndClassicGuitarFilterConditions;
+import com.ajou.hertz.domain.instrument.amplifier.dto.request.AmplifierFilterConditions;
+import com.ajou.hertz.domain.instrument.audio_equipment.dto.request.AudioEquipmentFilterConditions;
+import com.ajou.hertz.domain.instrument.bass_guitar.dto.request.BassGuitarFilterConditions;
+import com.ajou.hertz.domain.instrument.effector.dto.request.EffectorFilterConditions;
+import com.ajou.hertz.domain.instrument.electric_guitar.dto.request.ElectricGuitarFilterConditions;
+import com.ajou.hertz.domain.instrument.acoustic_and_classic_guitar.entity.AcousticAndClassicGuitar;
+import com.ajou.hertz.domain.instrument.amplifier.entity.Amplifier;
+import com.ajou.hertz.domain.instrument.audio_equipment.entity.AudioEquipment;
+import com.ajou.hertz.domain.instrument.bass_guitar.entity.BassGuitar;
+import com.ajou.hertz.domain.instrument.effector.entity.Effector;
+import com.ajou.hertz.domain.instrument.electric_guitar.entity.ElectricGuitar;
 
 public interface InstrumentRepositoryCustom {
 
