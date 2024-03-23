@@ -1,7 +1,8 @@
-package com.ajou.hertz.domain.instrument.strategy;
+package com.ajou.hertz.domain.instrument.audio_equipment.strategy;
 
-import com.ajou.hertz.domain.instrument.dto.request.CreateNewAudioEquipmentRequest;
-import com.ajou.hertz.domain.instrument.entity.AudioEquipment;
+import com.ajou.hertz.domain.instrument.audio_equipment.dto.request.CreateNewAudioEquipmentRequest;
+import com.ajou.hertz.domain.instrument.audio_equipment.entity.AudioEquipment;
+import com.ajou.hertz.domain.instrument.strategy.InstrumentCreationStrategy;
 import com.ajou.hertz.domain.user.entity.User;
 
 public class AudioEquipmentCreationStrategy

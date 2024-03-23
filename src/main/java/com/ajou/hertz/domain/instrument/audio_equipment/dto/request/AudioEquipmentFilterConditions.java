@@ -1,7 +1,8 @@
-package com.ajou.hertz.domain.instrument.dto.request;
+package com.ajou.hertz.domain.instrument.audio_equipment.dto.request;
 
-import com.ajou.hertz.domain.instrument.constant.AudioEquipmentType;
+import com.ajou.hertz.domain.instrument.audio_equipment.constant.AudioEquipmentType;
 import com.ajou.hertz.domain.instrument.constant.InstrumentProgressStatus;
+import com.ajou.hertz.domain.instrument.dto.request.InstrumentFilterConditions;
 
 import lombok.AccessLevel;
 import lombok.Getter;

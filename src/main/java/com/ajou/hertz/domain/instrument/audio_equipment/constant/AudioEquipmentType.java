@@ -1,4 +1,4 @@
-package com.ajou.hertz.domain.instrument.constant;
+package com.ajou.hertz.domain.instrument.audio_equipment.constant;
 
 public enum AudioEquipmentType {
 

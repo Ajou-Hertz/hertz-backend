@@ -1,13 +1,14 @@
-package com.ajou.hertz.domain.instrument.dto.request;
+package com.ajou.hertz.domain.instrument.audio_equipment.dto.request;
 
 import java.util.List;
 
 import org.springframework.web.multipart.MultipartFile;
 
 import com.ajou.hertz.common.dto.request.AddressRequest;
-import com.ajou.hertz.domain.instrument.constant.AudioEquipmentType;
+import com.ajou.hertz.domain.instrument.audio_equipment.constant.AudioEquipmentType;
 import com.ajou.hertz.domain.instrument.constant.InstrumentProgressStatus;
-import com.ajou.hertz.domain.instrument.entity.AudioEquipment;
+import com.ajou.hertz.domain.instrument.dto.request.CreateNewInstrumentRequest;
+import com.ajou.hertz.domain.instrument.audio_equipment.entity.AudioEquipment;
 import com.ajou.hertz.domain.user.entity.User;
 
 import jakarta.validation.constraints.NotNull;

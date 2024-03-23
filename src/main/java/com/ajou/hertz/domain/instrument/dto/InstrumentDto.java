@@ -8,7 +8,7 @@ import com.ajou.hertz.domain.instrument.constant.InstrumentCategory;
 import com.ajou.hertz.domain.instrument.constant.InstrumentProgressStatus;
 import com.ajou.hertz.domain.instrument.acoustic_and_classic_guitar.entity.AcousticAndClassicGuitar;
 import com.ajou.hertz.domain.instrument.amplifier.entity.Amplifier;
-import com.ajou.hertz.domain.instrument.entity.AudioEquipment;
+import com.ajou.hertz.domain.instrument.audio_equipment.entity.AudioEquipment;
 import com.ajou.hertz.domain.instrument.bass_guitar.entity.BassGuitar;
 import com.ajou.hertz.domain.instrument.effector.entity.Effector;
 import com.ajou.hertz.domain.instrument.electric_guitar.entity.ElectricGuitar;

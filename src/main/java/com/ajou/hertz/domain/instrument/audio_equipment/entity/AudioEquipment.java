@@ -1,8 +1,9 @@
-package com.ajou.hertz.domain.instrument.entity;
+package com.ajou.hertz.domain.instrument.audio_equipment.entity;
 
 import com.ajou.hertz.common.entity.Address;
-import com.ajou.hertz.domain.instrument.constant.AudioEquipmentType;
+import com.ajou.hertz.domain.instrument.audio_equipment.constant.AudioEquipmentType;
 import com.ajou.hertz.domain.instrument.constant.InstrumentProgressStatus;
+import com.ajou.hertz.domain.instrument.entity.Instrument;
 import com.ajou.hertz.domain.user.entity.User;
 
 import jakarta.persistence.Column;
