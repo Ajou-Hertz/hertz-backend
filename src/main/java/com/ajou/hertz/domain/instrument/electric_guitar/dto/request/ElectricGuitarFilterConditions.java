@@ -1,7 +1,8 @@
-package com.ajou.hertz.domain.instrument.dto.request;
+package com.ajou.hertz.domain.instrument.electric_guitar.dto.request;
 
-import com.ajou.hertz.domain.instrument.constant.ElectricGuitarBrand;
-import com.ajou.hertz.domain.instrument.constant.ElectricGuitarModel;
+import com.ajou.hertz.domain.instrument.dto.request.InstrumentFilterConditions;
+import com.ajou.hertz.domain.instrument.electric_guitar.constant.ElectricGuitarBrand;
+import com.ajou.hertz.domain.instrument.electric_guitar.constant.ElectricGuitarModel;
 import com.ajou.hertz.domain.instrument.constant.GuitarColor;
 import com.ajou.hertz.domain.instrument.constant.InstrumentProgressStatus;
 

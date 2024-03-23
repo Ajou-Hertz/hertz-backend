@@ -1,4 +1,4 @@
-package com.ajou.hertz.domain.instrument.constant;
+package com.ajou.hertz.domain.instrument.electric_guitar.constant;
 
 public enum ElectricGuitarBrand {
 

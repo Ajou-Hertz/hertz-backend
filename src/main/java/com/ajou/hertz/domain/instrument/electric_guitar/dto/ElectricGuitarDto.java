@@ -1,14 +1,16 @@
-package com.ajou.hertz.domain.instrument.dto;
+package com.ajou.hertz.domain.instrument.electric_guitar.dto;
 
 import java.util.List;
 
 import com.ajou.hertz.common.dto.AddressDto;
-import com.ajou.hertz.domain.instrument.constant.ElectricGuitarBrand;
-import com.ajou.hertz.domain.instrument.constant.ElectricGuitarModel;
+import com.ajou.hertz.domain.instrument.dto.InstrumentDto;
+import com.ajou.hertz.domain.instrument.dto.InstrumentImageDto;
+import com.ajou.hertz.domain.instrument.electric_guitar.constant.ElectricGuitarBrand;
+import com.ajou.hertz.domain.instrument.electric_guitar.constant.ElectricGuitarModel;
 import com.ajou.hertz.domain.instrument.constant.GuitarColor;
 import com.ajou.hertz.domain.instrument.constant.InstrumentCategory;
 import com.ajou.hertz.domain.instrument.constant.InstrumentProgressStatus;
-import com.ajou.hertz.domain.instrument.entity.ElectricGuitar;
+import com.ajou.hertz.domain.instrument.electric_guitar.entity.ElectricGuitar;
 import com.ajou.hertz.domain.user.dto.UserDto;
 
 import lombok.AccessLevel;
