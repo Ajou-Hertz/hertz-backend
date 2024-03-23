@@ -10,7 +10,7 @@ import com.ajou.hertz.domain.instrument.acoustic_and_classic_guitar.entity.Acous
 import com.ajou.hertz.domain.instrument.entity.Amplifier;
 import com.ajou.hertz.domain.instrument.entity.AudioEquipment;
 import com.ajou.hertz.domain.instrument.bass_guitar.entity.BassGuitar;
-import com.ajou.hertz.domain.instrument.entity.Effector;
+import com.ajou.hertz.domain.instrument.effector.entity.Effector;
 import com.ajou.hertz.domain.instrument.electric_guitar.entity.ElectricGuitar;
 import com.ajou.hertz.domain.instrument.entity.Instrument;
 import com.ajou.hertz.domain.user.dto.UserDto;

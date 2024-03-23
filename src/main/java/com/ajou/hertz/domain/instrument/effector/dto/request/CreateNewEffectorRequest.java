@@ -1,14 +1,15 @@
-package com.ajou.hertz.domain.instrument.dto.request;
+package com.ajou.hertz.domain.instrument.effector.dto.request;
 
 import java.util.List;
 
 import org.springframework.web.multipart.MultipartFile;
 
 import com.ajou.hertz.common.dto.request.AddressRequest;
-import com.ajou.hertz.domain.instrument.constant.EffectorFeature;
-import com.ajou.hertz.domain.instrument.constant.EffectorType;
+import com.ajou.hertz.domain.instrument.dto.request.CreateNewInstrumentRequest;
+import com.ajou.hertz.domain.instrument.effector.constant.EffectorFeature;
+import com.ajou.hertz.domain.instrument.effector.constant.EffectorType;
 import com.ajou.hertz.domain.instrument.constant.InstrumentProgressStatus;
-import com.ajou.hertz.domain.instrument.entity.Effector;
+import com.ajou.hertz.domain.instrument.effector.entity.Effector;
 import com.ajou.hertz.domain.user.entity.User;
 
 import jakarta.validation.constraints.NotNull;

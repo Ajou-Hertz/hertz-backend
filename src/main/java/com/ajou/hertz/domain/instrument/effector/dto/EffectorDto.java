@@ -1,13 +1,15 @@
-package com.ajou.hertz.domain.instrument.dto;
+package com.ajou.hertz.domain.instrument.effector.dto;
 
 import java.util.List;
 
 import com.ajou.hertz.common.dto.AddressDto;
-import com.ajou.hertz.domain.instrument.constant.EffectorFeature;
-import com.ajou.hertz.domain.instrument.constant.EffectorType;
+import com.ajou.hertz.domain.instrument.dto.InstrumentDto;
+import com.ajou.hertz.domain.instrument.dto.InstrumentImageDto;
+import com.ajou.hertz.domain.instrument.effector.constant.EffectorFeature;
+import com.ajou.hertz.domain.instrument.effector.constant.EffectorType;
 import com.ajou.hertz.domain.instrument.constant.InstrumentCategory;
 import com.ajou.hertz.domain.instrument.constant.InstrumentProgressStatus;
-import com.ajou.hertz.domain.instrument.entity.Effector;
+import com.ajou.hertz.domain.instrument.effector.entity.Effector;
 import com.ajou.hertz.domain.user.dto.UserDto;
 
 import lombok.AccessLevel;

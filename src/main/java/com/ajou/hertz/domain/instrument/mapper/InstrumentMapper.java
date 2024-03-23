@@ -5,14 +5,14 @@ import com.ajou.hertz.domain.instrument.acoustic_and_classic_guitar.dto.Acoustic
 import com.ajou.hertz.domain.instrument.dto.AmplifierDto;
 import com.ajou.hertz.domain.instrument.dto.AudioEquipmentDto;
 import com.ajou.hertz.domain.instrument.bass_guitar.dto.BassGuitarDto;
-import com.ajou.hertz.domain.instrument.dto.EffectorDto;
+import com.ajou.hertz.domain.instrument.effector.dto.EffectorDto;
 import com.ajou.hertz.domain.instrument.electric_guitar.dto.ElectricGuitarDto;
 import com.ajou.hertz.domain.instrument.dto.InstrumentDto;
 import com.ajou.hertz.domain.instrument.acoustic_and_classic_guitar.dto.response.AcousticAndClassicGuitarResponse;
 import com.ajou.hertz.domain.instrument.dto.response.AmplifierResponse;
 import com.ajou.hertz.domain.instrument.dto.response.AudioEquipmentResponse;
 import com.ajou.hertz.domain.instrument.bass_guitar.dto.response.BassGuitarResponse;
-import com.ajou.hertz.domain.instrument.dto.response.EffectorResponse;
+import com.ajou.hertz.domain.instrument.effector.dto.response.EffectorResponse;
 import com.ajou.hertz.domain.instrument.electric_guitar.dto.response.ElectricGuitarResponse;
 import com.ajou.hertz.domain.instrument.dto.response.InstrumentImageResponse;
 import com.ajou.hertz.domain.instrument.dto.response.InstrumentResponse;
@@ -21,7 +21,7 @@ import com.ajou.hertz.domain.instrument.acoustic_and_classic_guitar.entity.Acous
 import com.ajou.hertz.domain.instrument.entity.Amplifier;
 import com.ajou.hertz.domain.instrument.entity.AudioEquipment;
 import com.ajou.hertz.domain.instrument.bass_guitar.entity.BassGuitar;
-import com.ajou.hertz.domain.instrument.entity.Effector;
+import com.ajou.hertz.domain.instrument.effector.entity.Effector;
 import com.ajou.hertz.domain.instrument.electric_guitar.entity.ElectricGuitar;
 import com.ajou.hertz.domain.instrument.entity.Instrument;
 

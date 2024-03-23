@@ -1,13 +1,15 @@
-package com.ajou.hertz.domain.instrument.dto.response;
+package com.ajou.hertz.domain.instrument.effector.dto.response;
 
 import java.util.List;
 
 import com.ajou.hertz.common.dto.response.AddressResponse;
-import com.ajou.hertz.domain.instrument.constant.EffectorFeature;
-import com.ajou.hertz.domain.instrument.constant.EffectorType;
+import com.ajou.hertz.domain.instrument.dto.response.InstrumentImageResponse;
+import com.ajou.hertz.domain.instrument.dto.response.InstrumentResponse;
+import com.ajou.hertz.domain.instrument.effector.constant.EffectorFeature;
+import com.ajou.hertz.domain.instrument.effector.constant.EffectorType;
 import com.ajou.hertz.domain.instrument.constant.InstrumentCategory;
 import com.ajou.hertz.domain.instrument.constant.InstrumentProgressStatus;
-import com.ajou.hertz.domain.instrument.dto.EffectorDto;
+import com.ajou.hertz.domain.instrument.effector.dto.EffectorDto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AccessLevel;

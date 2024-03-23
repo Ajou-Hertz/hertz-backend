@@ -1,7 +1,8 @@
-package com.ajou.hertz.domain.instrument.dto.request;
+package com.ajou.hertz.domain.instrument.effector.dto.request;
 
-import com.ajou.hertz.domain.instrument.constant.EffectorFeature;
-import com.ajou.hertz.domain.instrument.constant.EffectorType;
+import com.ajou.hertz.domain.instrument.dto.request.InstrumentFilterConditions;
+import com.ajou.hertz.domain.instrument.effector.constant.EffectorFeature;
+import com.ajou.hertz.domain.instrument.effector.constant.EffectorType;
 import com.ajou.hertz.domain.instrument.constant.InstrumentProgressStatus;
 
 import lombok.AccessLevel;

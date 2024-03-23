@@ -24,7 +24,7 @@ import com.ajou.hertz.domain.instrument.acoustic_and_classic_guitar.dto.Acoustic
 import com.ajou.hertz.domain.instrument.dto.AmplifierDto;
 import com.ajou.hertz.domain.instrument.dto.AudioEquipmentDto;
 import com.ajou.hertz.domain.instrument.bass_guitar.dto.BassGuitarDto;
-import com.ajou.hertz.domain.instrument.dto.EffectorDto;
+import com.ajou.hertz.domain.instrument.effector.dto.EffectorDto;
 import com.ajou.hertz.domain.instrument.electric_guitar.dto.ElectricGuitarDto;
 import com.ajou.hertz.domain.instrument.dto.InstrumentDto;
 import com.ajou.hertz.domain.instrument.acoustic_and_classic_guitar.dto.request.AcousticAndClassicGuitarFilterConditions;
@@ -35,15 +35,15 @@ import com.ajou.hertz.domain.instrument.acoustic_and_classic_guitar.dto.request.
 import com.ajou.hertz.domain.instrument.dto.request.CreateNewAmplifierRequest;
 import com.ajou.hertz.domain.instrument.dto.request.CreateNewAudioEquipmentRequest;
 import com.ajou.hertz.domain.instrument.bass_guitar.dto.request.CreateNewBassGuitarRequest;
-import com.ajou.hertz.domain.instrument.dto.request.CreateNewEffectorRequest;
+import com.ajou.hertz.domain.instrument.effector.dto.request.CreateNewEffectorRequest;
 import com.ajou.hertz.domain.instrument.electric_guitar.dto.request.CreateNewElectricGuitarRequest;
-import com.ajou.hertz.domain.instrument.dto.request.EffectorFilterConditions;
+import com.ajou.hertz.domain.instrument.effector.dto.request.EffectorFilterConditions;
 import com.ajou.hertz.domain.instrument.electric_guitar.dto.request.ElectricGuitarFilterConditions;
 import com.ajou.hertz.domain.instrument.acoustic_and_classic_guitar.dto.response.AcousticAndClassicGuitarResponse;
 import com.ajou.hertz.domain.instrument.dto.response.AmplifierResponse;
 import com.ajou.hertz.domain.instrument.dto.response.AudioEquipmentResponse;
 import com.ajou.hertz.domain.instrument.bass_guitar.dto.response.BassGuitarResponse;
-import com.ajou.hertz.domain.instrument.dto.response.EffectorResponse;
+import com.ajou.hertz.domain.instrument.effector.dto.response.EffectorResponse;
 import com.ajou.hertz.domain.instrument.electric_guitar.dto.response.ElectricGuitarResponse;
 import com.ajou.hertz.domain.instrument.dto.response.InstrumentResponse;
 import com.ajou.hertz.domain.instrument.dto.response.InstrumentSummaryResponse;

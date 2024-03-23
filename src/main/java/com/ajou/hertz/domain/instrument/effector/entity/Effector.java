@@ -1,9 +1,10 @@
-package com.ajou.hertz.domain.instrument.entity;
+package com.ajou.hertz.domain.instrument.effector.entity;
 
 import com.ajou.hertz.common.entity.Address;
-import com.ajou.hertz.domain.instrument.constant.EffectorFeature;
-import com.ajou.hertz.domain.instrument.constant.EffectorType;
+import com.ajou.hertz.domain.instrument.effector.constant.EffectorFeature;
+import com.ajou.hertz.domain.instrument.effector.constant.EffectorType;
 import com.ajou.hertz.domain.instrument.constant.InstrumentProgressStatus;
+import com.ajou.hertz.domain.instrument.entity.Instrument;
 import com.ajou.hertz.domain.user.entity.User;
 
 import jakarta.persistence.Column;

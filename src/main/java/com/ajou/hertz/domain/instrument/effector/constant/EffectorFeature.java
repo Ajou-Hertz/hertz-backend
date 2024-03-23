@@ -1,6 +1,6 @@
-package com.ajou.hertz.domain.instrument.constant;
+package com.ajou.hertz.domain.instrument.effector.constant;
 
-import static com.ajou.hertz.domain.instrument.constant.EffectorType.*;
+import static com.ajou.hertz.domain.instrument.effector.constant.EffectorType.*;
 
 import lombok.AllArgsConstructor;
 

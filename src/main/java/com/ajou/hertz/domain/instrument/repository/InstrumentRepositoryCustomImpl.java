@@ -4,7 +4,7 @@ import static com.ajou.hertz.domain.instrument.acoustic_and_classic_guitar.entit
 import static com.ajou.hertz.domain.instrument.entity.QAmplifier.*;
 import static com.ajou.hertz.domain.instrument.entity.QAudioEquipment.*;
 import static com.ajou.hertz.domain.instrument.bass_guitar.entity.QBassGuitar.*;
-import static com.ajou.hertz.domain.instrument.entity.QEffector.*;
+import static com.ajou.hertz.domain.instrument.effector.entity.QEffector.*;
 import static com.ajou.hertz.domain.instrument.electric_guitar.entity.QElectricGuitar.*;
 import static com.ajou.hertz.domain.user.entity.QUser.*;
 
@@ -24,14 +24,14 @@ import com.ajou.hertz.domain.instrument.acoustic_and_classic_guitar.dto.request.
 import com.ajou.hertz.domain.instrument.dto.request.AmplifierFilterConditions;
 import com.ajou.hertz.domain.instrument.dto.request.AudioEquipmentFilterConditions;
 import com.ajou.hertz.domain.instrument.bass_guitar.dto.request.BassGuitarFilterConditions;
-import com.ajou.hertz.domain.instrument.dto.request.EffectorFilterConditions;
+import com.ajou.hertz.domain.instrument.effector.dto.request.EffectorFilterConditions;
 import com.ajou.hertz.domain.instrument.electric_guitar.dto.request.ElectricGuitarFilterConditions;
 import com.ajou.hertz.domain.instrument.dto.request.InstrumentFilterConditions;
 import com.ajou.hertz.domain.instrument.acoustic_and_classic_guitar.entity.AcousticAndClassicGuitar;
 import com.ajou.hertz.domain.instrument.entity.Amplifier;
 import com.ajou.hertz.domain.instrument.entity.AudioEquipment;
 import com.ajou.hertz.domain.instrument.bass_guitar.entity.BassGuitar;
-import com.ajou.hertz.domain.instrument.entity.Effector;
+import com.ajou.hertz.domain.instrument.effector.entity.Effector;
 import com.ajou.hertz.domain.instrument.electric_guitar.entity.ElectricGuitar;
 import com.ajou.hertz.domain.instrument.entity.Instrument;
 import com.ajou.hertz.domain.user.entity.User;
