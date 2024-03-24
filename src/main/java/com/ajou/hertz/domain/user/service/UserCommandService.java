@@ -6,8 +6,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 
-import com.ajou.hertz.common.file.dto.FileDto;
 import com.ajou.hertz.common.kakao.dto.response.KakaoUserInfoResponse;
 import com.ajou.hertz.common.properties.HertzProperties;
 import com.ajou.hertz.domain.user.constant.Gender;
@@ -32,6 +32,7 @@ public class UserCommandService {
 	private final PasswordEncoder passwordEncoder;
 	private final HertzProperties hertzProperties;
 	private final UserProfileImageRepository userProfileImageRepository;
+	private final UserProfileImageCommandService userProfileImageCommandService;
 
 	/**
 	 * 새로운 회원을 등록한다.
@@ -134,18 +135,15 @@ public class UserCommandService {
 	}
 
 	/**
-	 * 전달된 이미지로 프로필 이미지 url을 변경한다.
+	 * 유저의 프로필 이미지를 업데이트합니다.
 	 *
 	 * @param userId 유저의 ID
-	 * @param uploadedFile 변경할 이미지 파일
+	 * @param profileImage 변경할 프로필 이미지
 	 *
 	 * @return 변경된 유저 정보
 	 */
-	public UserDto updateProfileImage(Long userId, FileDto uploadedFile) {
-		User user = userQueryService.getById(userId);
-		String newProfileImageUrl = uploadedFile.getStoredFileUrl();
-		user.changeProfileImageUrl(newProfileImageUrl);
-		return UserDto.from(user);
+	public UserDto updateUserProfileImage(Long userId, MultipartFile profileImage) {
+		return userProfileImageCommandService.updateProfileImage(userId, profileImage);
 	}
 
 	/**
@@ -154,7 +152,7 @@ public class UserCommandService {
 	 * @param userId 유저의 ID
 	 * @param contactLink 변경할 연락 수단
 	 *
-	 *@return 변경된 유저 정보
+	 * @return 변경된 유저 정보
 	 */
 	public UserDto updateContactLink(Long userId, String contactLink) {
 		User user = userQueryService.getById(userId);

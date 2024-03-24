@@ -8,6 +8,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.ajou.hertz.common.file.dto.FileDto;
 import com.ajou.hertz.common.file.service.FileService;
+import com.ajou.hertz.domain.user.dto.UserDto;
 import com.ajou.hertz.domain.user.entity.User;
 import com.ajou.hertz.domain.user.entity.UserProfileImage;
 import com.ajou.hertz.domain.user.repository.UserProfileImageRepository;
@@ -29,12 +30,16 @@ public class UserProfileImageCommandService {
 	 * @param userId 유저 id
 	 * @param newProfileImage 새로운 프로필 이미지
 	 *
-	 * @return 업로드된 파일 정보가 담긴 dto
+	 * @return 업데이트된 유저 정보
 	 */
-	public FileDto uploadProfileImage(Long userId, MultipartFile newProfileImage) {
-		User user = userQueryService.getById(userId);
+	public UserDto updateProfileImage(Long userId, MultipartFile newProfileImage) {
 
+		User user = userQueryService.getById(userId);
 		Optional<UserProfileImage> optionalOldProfileImage = userProfileImageRepository.findById(userId);
+
+		String uploadPath = "user-profile-images/";
+		FileDto uploadedFile = fileService.uploadFile(newProfileImage, uploadPath);
+		String newProfileImageUrl = uploadedFile.getUrl();
 		if (optionalOldProfileImage.isPresent()) {
 			UserProfileImage oldProfileImage = optionalOldProfileImage.get();
 			userProfileImageRepository.delete(oldProfileImage);
@@ -42,13 +47,11 @@ public class UserProfileImageCommandService {
 			fileService.deleteFile(oldProfileImage.getStoredName());
 		}
 
-		String uploadPath = "user-profile-images/";
-		FileDto uploadedFile = fileService.uploadFile(newProfileImage, uploadPath);
-
-		UserProfileImage newUserProfileImage = UserProfileImage.create(
-			user, uploadedFile.getOriginalName(), uploadedFile.getStoredName(), uploadedFile.getStoredFileUrl());
+		UserProfileImage newUserProfileImage = UserProfileImage.create(user, uploadedFile.getOriginalName(),
+			uploadedFile.getStoredName(), newProfileImageUrl);
 		userProfileImageRepository.save(newUserProfileImage);
 
-		return uploadedFile;
+		user.changeProfileImageUrl(newProfileImageUrl);
+		return UserDto.from(user);
 	}
 }

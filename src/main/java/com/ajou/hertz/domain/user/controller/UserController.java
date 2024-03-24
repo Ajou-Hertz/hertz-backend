@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.ajou.hertz.common.auth.UserPrincipal;
-import com.ajou.hertz.common.file.dto.FileDto;
 import com.ajou.hertz.common.validator.PhoneNumber;
 import com.ajou.hertz.domain.user.dto.UserDto;
 import com.ajou.hertz.domain.user.dto.request.SignUpRequest;
@@ -137,9 +136,7 @@ public class UserController {
 		@AuthenticationPrincipal UserPrincipal userPrincipal,
 		@RequestPart("profileImage") MultipartFile profileImage
 	) {
-		FileDto uploadedFile = userProfileImageCommandService.uploadProfileImage(userPrincipal.getUserId(),
-			profileImage);
-		UserDto userUpdated = userCommandService.updateProfileImage(userPrincipal.getUserId(), uploadedFile);
+		UserDto userUpdated = userCommandService.updateUserProfileImage(userPrincipal.getUserId(), profileImage);
 		return UserResponse.from(userUpdated);
 	}
 

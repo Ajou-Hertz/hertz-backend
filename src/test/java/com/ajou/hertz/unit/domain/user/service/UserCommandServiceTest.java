@@ -19,6 +19,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.event.annotation.BeforeTestMethod;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.ajou.hertz.common.file.dto.FileDto;
 import com.ajou.hertz.common.file.service.FileService;
@@ -35,6 +36,7 @@ import com.ajou.hertz.domain.user.exception.UserNotFoundByIdException;
 import com.ajou.hertz.domain.user.exception.UserPhoneDuplicationException;
 import com.ajou.hertz.domain.user.repository.UserRepository;
 import com.ajou.hertz.domain.user.service.UserCommandService;
+import com.ajou.hertz.domain.user.service.UserProfileImageCommandService;
 import com.ajou.hertz.domain.user.service.UserQueryService;
 import com.ajou.hertz.util.ReflectionUtils;
 
@@ -59,6 +61,9 @@ class UserCommandServiceTest {
 
 	@Mock
 	private FileService fileService;
+
+	@Mock
+	private UserProfileImageCommandService userProfileImageCommandService;
 
 	@BeforeTestMethod
 	public void setUp() {
@@ -177,84 +182,23 @@ class UserCommandServiceTest {
 		assertThat(t).isInstanceOf(UserKakaoUidDuplicationException.class);
 	}
 
-	// @Test
-	// void 주어진_id와_새_프로필_이미지로_프로필_이미지를_변경하고_이전_프로필_이미지는_삭제한다() throws Exception {
-	// 	Long userId = 1L;
-	// 	MockMultipartFile newProfileImage = new MockMultipartFile(
-	// 		"profileImage",
-	// 		"test.jpg",
-	// 		"image/jpeg",
-	// 		"test".getBytes()
-	// 	);
-	// 	User user = createUser(userId, "password", null, Gender.MALE);
-	// 	given(userQueryService.getById(userId)).willReturn(user);
-	// 	given(fileService.uploadFile(any(), anyString())).willReturn(
-	// 		FileDto.create("new_profile_image.jpg", "new_profile_image.jpg",
-	// 			"https://example.com/user-profile-images"));
-	//
-	// 	// When
-	// 	UserDto updatedUser = sut.updateProfileImageUrl(userId, newProfileImage);
-	//
-	// 	// Then
-	// 	then(userQueryService).should().getById(userId);
-	// 	then(fileService).should().uploadFile(eq(newProfileImage), anyString());
-	// 	then(fileService).should().deleteFile(anyString());
-	// 	verifyEveryMocksShouldHaveNoMoreInteractions();
-	// 	assertThat(updatedUser).hasFieldOrPropertyWithValue("profileImageUrl", user.getProfileImageUrl());
-	// }
-	//
-	// @Test
-	// void 주어진_유저_ID와_새로운_프로필_이미지로_기존의_프로필_이미지를_변경한다_존재하지_않는_유저라면_예외가_발생한다() throws Exception {
-	// 	// given
-	// 	Long userId = 1L;
-	// 	MockMultipartFile newProfileImage = new MockMultipartFile(
-	// 		"profileImage",
-	// 		"test.jpg",
-	// 		"image/jpeg",
-	// 		"test".getBytes()
-	// 	);
-	// 	given(userQueryService.getById(userId)).willThrow(UserNotFoundByIdException.class);
-	//
-	// 	// when
-	// 	Throwable t = catchThrowable(() -> sut.updateProfileImageUrl(userId, newProfileImage));
-	//
-	// 	// then
-	// 	then(userQueryService).should().getById(userId);
-	// 	verifyEveryMocksShouldHaveNoMoreInteractions();
-	// 	assertThat(t).isInstanceOf(UserNotFoundByIdException.class);
-	// }
-
 	@Test
-	void 주어진_유저_ID와_저장된_이미지로_프로필_이미지_URL을_변경한다() throws Exception {
-		// given
+	void 프로필_이미지_변경_시_uploadProfileImage가_잘_호출되는지_확인한다() throws Exception {
+		// Given
 		Long userId = 1L;
-		User user = createUser(userId, "$2a$abc123", "12345");
-		FileDto uploadedFile = createFileDto();
-		given(userQueryService.getById(userId)).willReturn(user);
+		MultipartFile profileImage = org.mockito.Mockito.mock(MultipartFile.class);
+		User testUser = createUser(userId, "password", "kakaoUid");
+		UserDto expectedUserDto = UserDto.from(testUser);
+		given(userProfileImageCommandService.updateProfileImage(userId, profileImage)).willReturn(expectedUserDto);
 
-		// when
-		UserDto updatedUserDto = sut.updateProfileImage(userId, uploadedFile);
+		// When
+		UserDto result = sut.updateUserProfileImage(userId, profileImage);
 
-		// then
-		then(userQueryService).should().getById(userId);
+		// Then
+		then(userProfileImageCommandService).should().updateProfileImage(userId, profileImage);
+		assertThat(result).isEqualTo(expectedUserDto);
+
 		verifyEveryMocksShouldHaveNoMoreInteractions();
-		assertThat(updatedUserDto.getProfileImageUrl()).isEqualTo(uploadedFile.getUrl());
-	}
-
-	@Test
-	void 주어진_유저_ID와_저장된_이미지로_프로필_이미지를_변경한다_존재하지_않는_유저라면_예외가_발생한다() throws Exception {
-		// given
-		Long userId = 1L;
-		FileDto uploadedFile = createFileDto();
-		given(userQueryService.getById(userId)).willThrow(UserNotFoundByIdException.class);
-
-		// when
-		Throwable t = catchThrowable(() -> sut.updateProfileImage(userId, uploadedFile));
-
-		// then
-		then(userQueryService).should().getById(userId);
-		verifyEveryMocksShouldHaveNoMoreInteractions();
-		assertThat(t).isInstanceOf(UserNotFoundByIdException.class);
 	}
 
 	@Test
@@ -295,6 +239,7 @@ class UserCommandServiceTest {
 		then(userRepository).shouldHaveNoMoreInteractions();
 		then(passwordEncoder).shouldHaveNoMoreInteractions();
 		then(fileService).shouldHaveNoMoreInteractions();
+		then(userProfileImageCommandService).shouldHaveNoMoreInteractions();
 	}
 
 	private static User createUser(Long id, String password, String kakaoUid, Gender gender) throws Exception {

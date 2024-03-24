@@ -31,7 +31,6 @@ import com.ajou.hertz.common.auth.JwtExceptionFilter;
 import com.ajou.hertz.common.auth.JwtTokenProvider;
 import com.ajou.hertz.common.auth.UserPrincipal;
 import com.ajou.hertz.common.config.SecurityConfig;
-import com.ajou.hertz.common.file.dto.FileDto;
 import com.ajou.hertz.domain.user.constant.Gender;
 import com.ajou.hertz.domain.user.constant.RoleType;
 import com.ajou.hertz.domain.user.controller.UserController;
@@ -219,7 +218,7 @@ class UserControllerTest {
 	}
 
 	@Test
-	void 주어진_id와_새로운_프로필_이미지로_프로필_이미지를_변경한다() throws Exception {
+	void 주어진_id와_변경할_프로필_이미지로_프로필_이미지를_변경한다() throws Exception {
 		// given
 		long userId = 1L;
 		MockMultipartFile profileImage = new MockMultipartFile(
@@ -229,12 +228,9 @@ class UserControllerTest {
 			"test".getBytes()
 		);
 		UserDetails userDetails = createTestUser(userId);
-		FileDto uploadedFile = createFileDto();
 		UserDto expectedResult = createUserDto(userId);
 
-		given(userProfileImageCommandService.uploadProfileImage(userId, profileImage)).willReturn(
-			uploadedFile);
-		given(userCommandService.updateProfileImage(userId, uploadedFile)).willReturn(expectedResult);
+		given(userCommandService.updateUserProfileImage(userId, profileImage)).willReturn(expectedResult);
 
 		// when & then
 		mvc.perform(
@@ -249,8 +245,7 @@ class UserControllerTest {
 			)
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.profileImageUrl").value(expectedResult.getProfileImageUrl()));
-		then(userProfileImageCommandService).should().uploadProfileImage(userId, profileImage);
-		then(userCommandService).should().updateProfileImage(userId, uploadedFile);
+		then(userCommandService).should().updateUserProfileImage(userId, profileImage);
 		verifyEveryMocksShouldHaveNoMoreInteractions();
 	}
 
@@ -324,12 +319,4 @@ class UserControllerTest {
 	private UserDetails createTestUser(Long userId) throws Exception {
 		return new UserPrincipal(createUserDto(userId));
 	}
-
-	private FileDto createFileDto() throws Exception {
-		return ReflectionUtils.createFileDto(
-			"test.jpg",
-			"test-stored.jpg",
-			"https://example.com/user-profile-images/storedFileName.jpg");
-	}
-
 }
