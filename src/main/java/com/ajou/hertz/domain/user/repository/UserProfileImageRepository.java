@@ -7,5 +7,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import com.ajou.hertz.domain.user.entity.UserProfileImage;
 
 public interface UserProfileImageRepository extends JpaRepository<UserProfileImage, Long> {
-	Optional<UserProfileImage> findById(Long userId);
+	Optional<UserProfileImage> findByUser_Id(Long userId);
 }

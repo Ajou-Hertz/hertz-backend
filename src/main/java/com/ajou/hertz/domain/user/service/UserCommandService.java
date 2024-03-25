@@ -17,7 +17,6 @@ import com.ajou.hertz.domain.user.entity.User;
 import com.ajou.hertz.domain.user.exception.UserEmailDuplicationException;
 import com.ajou.hertz.domain.user.exception.UserKakaoUidDuplicationException;
 import com.ajou.hertz.domain.user.exception.UserPhoneDuplicationException;
-import com.ajou.hertz.domain.user.repository.UserProfileImageRepository;
 import com.ajou.hertz.domain.user.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -31,7 +30,6 @@ public class UserCommandService {
 	private final UserRepository userRepository;
 	private final PasswordEncoder passwordEncoder;
 	private final HertzProperties hertzProperties;
-	private final UserProfileImageRepository userProfileImageRepository;
 	private final UserProfileImageCommandService userProfileImageCommandService;
 
 	/**
@@ -143,7 +141,10 @@ public class UserCommandService {
 	 * @return 변경된 유저 정보
 	 */
 	public UserDto updateUserProfileImage(Long userId, MultipartFile profileImage) {
-		return userProfileImageCommandService.updateProfileImage(userId, profileImage);
+		User user = userQueryService.getById(userId);
+		String newProfileImageUrl = userProfileImageCommandService.updateProfileImage(user, profileImage);
+		user.changeProfileImageUrl(newProfileImageUrl);
+		return UserDto.from(user);
 	}
 
 	/**

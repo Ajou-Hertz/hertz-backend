@@ -28,7 +28,6 @@ import com.ajou.hertz.domain.user.dto.response.UserExistenceResponse;
 import com.ajou.hertz.domain.user.dto.response.UserResponse;
 import com.ajou.hertz.domain.user.dto.response.UserWithLinkedAccountInfoResponse;
 import com.ajou.hertz.domain.user.service.UserCommandService;
-import com.ajou.hertz.domain.user.service.UserProfileImageCommandService;
 import com.ajou.hertz.domain.user.service.UserQueryService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -51,7 +50,6 @@ import lombok.RequiredArgsConstructor;
 public class UserController {
 
 	private final UserCommandService userCommandService;
-	private final UserProfileImageCommandService userProfileImageCommandService;
 	private final UserQueryService userQueryService;
 
 	@Operation(
@@ -134,7 +132,7 @@ public class UserController {
 	)
 	public UserResponse updateProfileImageV1(
 		@AuthenticationPrincipal UserPrincipal userPrincipal,
-		@RequestPart("profileImage") MultipartFile profileImage
+		@RequestPart MultipartFile profileImage
 	) {
 		UserDto userUpdated = userCommandService.updateUserProfileImage(userPrincipal.getUserId(), profileImage);
 		return UserResponse.from(userUpdated);
