@@ -1,6 +1,5 @@
 package com.ajou.hertz.unit.domain.user.service;
 
-import static org.assertj.core.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
 
 import java.time.LocalDate;
@@ -25,7 +24,6 @@ import com.ajou.hertz.domain.user.constant.Gender;
 import com.ajou.hertz.domain.user.constant.RoleType;
 import com.ajou.hertz.domain.user.entity.User;
 import com.ajou.hertz.domain.user.entity.UserProfileImage;
-import com.ajou.hertz.domain.user.exception.UserNotFoundByIdException;
 import com.ajou.hertz.domain.user.repository.UserProfileImageRepository;
 import com.ajou.hertz.domain.user.repository.UserRepository;
 import com.ajou.hertz.domain.user.service.UserProfileImageCommandService;
@@ -66,7 +64,6 @@ public class UserProfileImageCommandServiceTest {
 		// given
 		Long userId = 1L;
 		User user = createUser(userId, "password", "kakaoUid");
-		given(userQueryService.getById(userId)).willReturn(user);
 
 		MultipartFile newProfileImage = new MockMultipartFile(
 			"profileImage",
@@ -80,10 +77,9 @@ public class UserProfileImageCommandServiceTest {
 		given(fileService.uploadFile(newProfileImage, uploadPath)).willReturn(uploadedFile);
 
 		//  when
-		sut.updateProfileImage(userId, newProfileImage);
+		sut.updateProfileImage(user, newProfileImage);
 
 		// then
-		then(userQueryService).should().getById(userId);
 		then(fileService).should().uploadFile(newProfileImage, uploadPath);
 		then(userProfileImageRepository).should().save(any(UserProfileImage.class));
 		verifyEveryMocksShouldHaveNoMoreInteractions();
@@ -94,11 +90,10 @@ public class UserProfileImageCommandServiceTest {
 		// given
 		Long userId = 1L;
 		User user = createUser(userId, "password", "kakaoUid");
-		given(userQueryService.getById(userId)).willReturn(user);
 
 		UserProfileImage oldProfileImage = createUserProfileImage(user, "oldOriginalName.jpg", "oldStoredName.jpg",
 			"https://example.com/old-image-url");
-		given(userProfileImageRepository.findById(userId)).willReturn(Optional.of(oldProfileImage));
+		given(userProfileImageRepository.findByUser_Id(userId)).willReturn(Optional.of(oldProfileImage));
 
 		MultipartFile newProfileImage = new MockMultipartFile(
 			"profileImage",
@@ -110,40 +105,17 @@ public class UserProfileImageCommandServiceTest {
 		String uploadPath = "user-profile-images/";
 		FileDto uploadedFile = createFileDto();
 
-		given(fileService.uploadFile(eq(newProfileImage), eq(uploadPath))).willReturn(uploadedFile);
+		given(fileService.uploadFile(newProfileImage, uploadPath)).willReturn(uploadedFile);
 
 		// when
-		sut.updateProfileImage(userId, newProfileImage);
+		sut.updateProfileImage(user, newProfileImage);
 
 		// then
-		then(userQueryService).should().getById(userId);
-		then(userProfileImageRepository).should().findById(userId);
-		then(userProfileImageRepository).should().delete(any(UserProfileImage.class));
-		then(fileService).should().deleteFile(anyString());
-		then(fileService).should().uploadFile(eq(newProfileImage), eq(uploadPath));
+		then(userProfileImageRepository).should().findByUser_Id(userId);
+		then(userProfileImageRepository).should().delete(oldProfileImage);
+		then(fileService).should().deleteFile(oldProfileImage.getStoredName());
+		then(fileService).should().uploadFile(newProfileImage, uploadPath);
 		then(userProfileImageRepository).should().save(any(UserProfileImage.class));
-		verifyEveryMocksShouldHaveNoMoreInteractions();
-	}
-
-	@Test
-	void 프로필_이미지_변경_시_존재하지_않는_유저라면_예외를_반환한다() throws Exception {
-		// given
-		Long userId = 1L;
-		given(userQueryService.getById(userId)).willThrow(UserNotFoundByIdException.class);
-
-		MultipartFile newProfileImage = new MockMultipartFile(
-			"profileImage",
-			"newProfile.jpg",
-			"image/jpeg",
-			"new image content".getBytes()
-		);
-
-		// when
-		Throwable t = catchThrowable(() -> sut.updateProfileImage(userId, newProfileImage));
-
-		// then
-		assertThat(t).isInstanceOf(UserNotFoundByIdException.class);
-		then(userQueryService).should().getById(userId);
 		verifyEveryMocksShouldHaveNoMoreInteractions();
 	}
 

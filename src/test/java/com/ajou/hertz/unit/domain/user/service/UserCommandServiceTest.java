@@ -17,11 +17,11 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.event.annotation.BeforeTestMethod;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.ajou.hertz.common.file.dto.FileDto;
 import com.ajou.hertz.common.file.service.FileService;
 import com.ajou.hertz.common.kakao.dto.response.KakaoUserInfoResponse;
 import com.ajou.hertz.common.properties.HertzProperties;
@@ -183,22 +183,45 @@ class UserCommandServiceTest {
 	}
 
 	@Test
-	void 프로필_이미지_변경_시_uploadProfileImage가_잘_호출되는지_확인한다() throws Exception {
+	void 주어진_유저_ID와_이미지_URL로_유저의_프로필_이미지를_업데이트한다() throws Exception {
 		// Given
 		Long userId = 1L;
-		MultipartFile profileImage = org.mockito.Mockito.mock(MultipartFile.class);
-		User testUser = createUser(userId, "password", "kakaoUid");
-		UserDto expectedUserDto = UserDto.from(testUser);
-		given(userProfileImageCommandService.updateProfileImage(userId, profileImage)).willReturn(expectedUserDto);
+		User user = createUser(userId, "password", "kakaoUid");
+		String newProfileImageUrl = "https://new-profile-image-url";
+
+		MultipartFile profileImage = new MockMultipartFile("file", "test.jpg", "image/jpeg",
+			"test image content".getBytes());
+
+		given(userQueryService.getById(userId)).willReturn(user);
+		given(userProfileImageCommandService.updateProfileImage(user, profileImage)).willReturn(
+			newProfileImageUrl);
 
 		// When
 		UserDto result = sut.updateUserProfileImage(userId, profileImage);
 
 		// Then
-		then(userProfileImageCommandService).should().updateProfileImage(userId, profileImage);
-		assertThat(result).isEqualTo(expectedUserDto);
-
+		then(userQueryService).should().getById(userId);
+		then(userProfileImageCommandService).should().updateProfileImage(user, profileImage);
+		assertThat(result.getProfileImageUrl()).isEqualTo(newProfileImageUrl);
 		verifyEveryMocksShouldHaveNoMoreInteractions();
+	}
+
+	@Test
+	void 주어진_유저_ID와_이미지_URL로_유저의_프로필_이미지를_업데이트한다_존재하지_않는_유저라면_예외가_발생한다() throws Exception {
+		// Given
+		Long userId = 1L;
+		MultipartFile profileImage = new MockMultipartFile("file", "test.jpg", "image/jpeg",
+			"test image content".getBytes());
+
+		given(userQueryService.getById(userId)).willThrow(UserNotFoundByIdException.class);
+
+		// When
+		Throwable t = catchThrowable(() -> sut.updateUserProfileImage(userId, profileImage));
+
+		// Then
+		then(userQueryService).should().getById(userId);
+		verifyEveryMocksShouldHaveNoMoreInteractions();
+		assertThat(t).isInstanceOf(UserNotFoundByIdException.class);
 	}
 
 	@Test
@@ -307,12 +330,5 @@ class UserCommandServiceTest {
 
 	private static KakaoUserInfoResponse createKakaoUserInfoResponse() {
 		return createKakaoUserInfoResponse("male");
-	}
-
-	private FileDto createFileDto() throws Exception {
-		return ReflectionUtils.createFileDto(
-			"test.jpg",
-			"test-stored.jpg",
-			"https://new-contactLink");
 	}
 }

@@ -37,7 +37,6 @@ import com.ajou.hertz.domain.user.controller.UserController;
 import com.ajou.hertz.domain.user.dto.UserDto;
 import com.ajou.hertz.domain.user.dto.request.SignUpRequest;
 import com.ajou.hertz.domain.user.service.UserCommandService;
-import com.ajou.hertz.domain.user.service.UserProfileImageCommandService;
 import com.ajou.hertz.domain.user.service.UserQueryService;
 import com.ajou.hertz.util.ReflectionUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -61,9 +60,6 @@ class UserControllerTest {
 
 	@MockBean
 	private UserQueryService userQueryService;
-
-	@MockBean
-	private UserProfileImageCommandService userProfileImageCommandService;
 
 	private final MockMvc mvc;
 
@@ -275,7 +271,6 @@ class UserControllerTest {
 	private void verifyEveryMocksShouldHaveNoMoreInteractions() {
 		then(userCommandService).shouldHaveNoMoreInteractions();
 		then(userQueryService).shouldHaveNoMoreInteractions();
-		then(userProfileImageCommandService).shouldHaveNoMoreInteractions();
 	}
 
 	private SignUpRequest createSignUpRequest(String email, String password, String phone) throws Exception {
