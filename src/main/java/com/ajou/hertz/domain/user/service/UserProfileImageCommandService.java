@@ -34,6 +34,7 @@ public class UserProfileImageCommandService {
 	 */
 	public String updateProfileImage(User user, MultipartFile newProfileImage) {
 		deleteOldProfileImage(user.getId());
+		userProfileImageRepository.flush();
 		UserProfileImage newUserProfileImage = uploadNewProfileImage(user, newProfileImage);
 		return newUserProfileImage.getUrl();
 	}
@@ -48,7 +49,6 @@ public class UserProfileImageCommandService {
 		if (optionalOldProfileImage.isPresent()) {
 			UserProfileImage oldProfileImage = optionalOldProfileImage.get();
 			userProfileImageRepository.delete(oldProfileImage);
-			userProfileImageRepository.flush();
 			fileService.deleteFile(oldProfileImage.getStoredName());
 		}
 	}
