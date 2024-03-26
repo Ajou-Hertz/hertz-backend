@@ -161,4 +161,18 @@ public class UserCommandService {
 		return UserDto.from(user);
 	}
 
+	/**
+	 * 유저의 비밀번호를 변경합니다.
+	 *
+	 * @param userId 유저의 ID
+	 * @param password 변경할 비밀번호
+	 *
+	 * @return 변경된 유저 정보
+	 */
+	public UserDto updatePassword(Long userId, String password) {
+		User user = userQueryService.getById(userId);
+		user.changePassword(passwordEncoder.encode(password));
+		return UserDto.from(user);
+	}
+
 }
