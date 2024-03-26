@@ -5,20 +5,21 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.ajou.hertz.domain.instrument.constant.InstrumentSortOption;
 import com.ajou.hertz.domain.instrument.acoustic_and_classic_guitar.dto.AcousticAndClassicGuitarDto;
-import com.ajou.hertz.domain.instrument.amplifier.dto.AmplifierDto;
-import com.ajou.hertz.domain.instrument.audio_equipment.dto.AudioEquipmentDto;
-import com.ajou.hertz.domain.instrument.bass_guitar.dto.BassGuitarDto;
-import com.ajou.hertz.domain.instrument.effector.dto.EffectorDto;
-import com.ajou.hertz.domain.instrument.electric_guitar.dto.ElectricGuitarDto;
-import com.ajou.hertz.domain.instrument.dto.InstrumentDto;
 import com.ajou.hertz.domain.instrument.acoustic_and_classic_guitar.dto.request.AcousticAndClassicGuitarFilterConditions;
+import com.ajou.hertz.domain.instrument.amplifier.dto.AmplifierDto;
 import com.ajou.hertz.domain.instrument.amplifier.dto.request.AmplifierFilterConditions;
+import com.ajou.hertz.domain.instrument.audio_equipment.dto.AudioEquipmentDto;
 import com.ajou.hertz.domain.instrument.audio_equipment.dto.request.AudioEquipmentFilterConditions;
+import com.ajou.hertz.domain.instrument.bass_guitar.dto.BassGuitarDto;
 import com.ajou.hertz.domain.instrument.bass_guitar.dto.request.BassGuitarFilterConditions;
+import com.ajou.hertz.domain.instrument.constant.InstrumentSortOption;
+import com.ajou.hertz.domain.instrument.dto.InstrumentDto;
+import com.ajou.hertz.domain.instrument.effector.dto.EffectorDto;
 import com.ajou.hertz.domain.instrument.effector.dto.request.EffectorFilterConditions;
+import com.ajou.hertz.domain.instrument.electric_guitar.dto.ElectricGuitarDto;
 import com.ajou.hertz.domain.instrument.electric_guitar.dto.request.ElectricGuitarFilterConditions;
+import com.ajou.hertz.domain.instrument.electric_guitar.entity.ElectricGuitar;
 import com.ajou.hertz.domain.instrument.entity.Instrument;
 import com.ajou.hertz.domain.instrument.exception.InstrumentNotFoundByIdException;
 import com.ajou.hertz.domain.instrument.mapper.InstrumentMapper;
@@ -41,6 +42,17 @@ public class InstrumentQueryService {
 	 */
 	public Instrument getInstrumentById(Long id) {
 		return instrumentRepository.findById(id)
+			.orElseThrow(() -> new InstrumentNotFoundByIdException(id));
+	}
+
+	/**
+	 * Id로 일렉 기타를 조회한다.
+	 *
+	 * @param id 조회하고자 하는 일렉 기타 entity의 id
+	 * @return 조회된 일렉 기타 entity
+	 */
+	public ElectricGuitar getElectricGuitarById(Long id) {
+		return instrumentRepository.findElectricGuitarById(id)
 			.orElseThrow(() -> new InstrumentNotFoundByIdException(id));
 	}
 

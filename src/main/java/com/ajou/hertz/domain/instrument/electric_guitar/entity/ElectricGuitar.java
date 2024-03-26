@@ -3,8 +3,10 @@ package com.ajou.hertz.domain.instrument.electric_guitar.entity;
 import com.ajou.hertz.common.entity.Address;
 import com.ajou.hertz.domain.instrument.constant.GuitarColor;
 import com.ajou.hertz.domain.instrument.constant.InstrumentProgressStatus;
+import com.ajou.hertz.domain.instrument.dto.request.InstrumentUpdateRequest;
 import com.ajou.hertz.domain.instrument.electric_guitar.constant.ElectricGuitarBrand;
 import com.ajou.hertz.domain.instrument.electric_guitar.constant.ElectricGuitarModel;
+import com.ajou.hertz.domain.instrument.electric_guitar.dto.request.ElectricGuitarUpdateRequest;
 import com.ajou.hertz.domain.instrument.entity.Instrument;
 import com.ajou.hertz.domain.user.entity.User;
 
@@ -78,5 +80,14 @@ public class ElectricGuitar extends Instrument {
 			null, seller, title, progressStatus, tradeAddress, qualityStatus,
 			price, hasAnomaly, description, brand, model, productionYear, color
 		);
+	}
+
+	public void update(InstrumentUpdateRequest updateRequest) {
+		ElectricGuitarUpdateRequest electricGuitarUpdateRequest = (ElectricGuitarUpdateRequest)updateRequest;
+		super.update(updateRequest);
+		this.brand = electricGuitarUpdateRequest.getBrand();
+		this.model = electricGuitarUpdateRequest.getModel();
+		this.productionYear = electricGuitarUpdateRequest.getProductionYear();
+		this.color = electricGuitarUpdateRequest.getColor();
 	}
 }

@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
 
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -24,9 +25,9 @@ import com.ajou.hertz.common.file.service.FileService;
 import com.ajou.hertz.domain.instrument.bass_guitar.constant.BassGuitarBrand;
 import com.ajou.hertz.domain.instrument.bass_guitar.constant.BassGuitarPickUp;
 import com.ajou.hertz.domain.instrument.bass_guitar.constant.BassGuitarPreAmplifier;
+import com.ajou.hertz.domain.instrument.bass_guitar.entity.BassGuitar;
 import com.ajou.hertz.domain.instrument.constant.GuitarColor;
 import com.ajou.hertz.domain.instrument.constant.InstrumentProgressStatus;
-import com.ajou.hertz.domain.instrument.bass_guitar.entity.BassGuitar;
 import com.ajou.hertz.domain.instrument.entity.Instrument;
 import com.ajou.hertz.domain.instrument.entity.InstrumentImage;
 import com.ajou.hertz.domain.instrument.repository.InstrumentImageRepository;
@@ -108,6 +109,33 @@ class InstrumentImageCommandServiceTest {
 		then(fileService).should().deleteAll(storedImageNames);
 		then(instrumentImageRepository).should().deleteAll(instrumentImagesToDelete);
 		verifyEveryMocksShouldHaveNoMoreInteractions();
+	}
+
+	@Test
+	void 삭제할_악기_이미지들의_id_리스트가_주어지고_주어진_id_리스트에_포함된_이미지를_전부_삭제한다() throws Exception {
+		// given
+		List<Long> deleteImageIds = List.of(1L, 2L, 3L);
+		BassGuitar bassGuitar = createBassGuitar(4L, createUser(5L));
+		List<InstrumentImage> deleteImages = List.of(
+			createInstrumentImage(deleteImageIds.get(0), bassGuitar),
+			createInstrumentImage(deleteImageIds.get(1), bassGuitar),
+			createInstrumentImage(deleteImageIds.get(2), bassGuitar)
+		);
+		Collection<String> deleteImageStoredNames = deleteImages.stream()
+			.map(InstrumentImage::getStoredName)
+			.toList();
+		given(instrumentImageRepository.findAllByIdIn(deleteImageIds))
+			.willReturn(deleteImages);
+		willDoNothing().given(instrumentImageRepository).deleteAllInBatch(deleteImages);
+		willDoNothing().given(fileService).deleteAll(deleteImageStoredNames);
+
+		// when
+		sut.deleteAllByIds(deleteImageIds);
+
+		// then
+		then(instrumentImageRepository).should().findAllByIdIn(deleteImageIds);
+		then(instrumentImageRepository).should().deleteAllInBatch(deleteImages);
+		then(fileService).should().deleteAll(deleteImageStoredNames);
 	}
 
 	private void verifyEveryMocksShouldHaveNoMoreInteractions() {

@@ -12,6 +12,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,34 +20,35 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ajou.hertz.common.auth.UserPrincipal;
-import com.ajou.hertz.domain.instrument.constant.InstrumentSortOption;
 import com.ajou.hertz.domain.instrument.acoustic_and_classic_guitar.dto.AcousticAndClassicGuitarDto;
-import com.ajou.hertz.domain.instrument.amplifier.dto.AmplifierDto;
-import com.ajou.hertz.domain.instrument.audio_equipment.dto.AudioEquipmentDto;
-import com.ajou.hertz.domain.instrument.bass_guitar.dto.BassGuitarDto;
-import com.ajou.hertz.domain.instrument.effector.dto.EffectorDto;
-import com.ajou.hertz.domain.instrument.electric_guitar.dto.ElectricGuitarDto;
-import com.ajou.hertz.domain.instrument.dto.InstrumentDto;
 import com.ajou.hertz.domain.instrument.acoustic_and_classic_guitar.dto.request.AcousticAndClassicGuitarFilterConditions;
-import com.ajou.hertz.domain.instrument.amplifier.dto.request.AmplifierFilterConditions;
-import com.ajou.hertz.domain.instrument.audio_equipment.dto.request.AudioEquipmentFilterConditions;
-import com.ajou.hertz.domain.instrument.bass_guitar.dto.request.BassGuitarFilterConditions;
 import com.ajou.hertz.domain.instrument.acoustic_and_classic_guitar.dto.request.CreateNewAcousticAndClassicGuitarRequest;
-import com.ajou.hertz.domain.instrument.amplifier.dto.request.CreateNewAmplifierRequest;
-import com.ajou.hertz.domain.instrument.audio_equipment.dto.request.CreateNewAudioEquipmentRequest;
-import com.ajou.hertz.domain.instrument.bass_guitar.dto.request.CreateNewBassGuitarRequest;
-import com.ajou.hertz.domain.instrument.effector.dto.request.CreateNewEffectorRequest;
-import com.ajou.hertz.domain.instrument.electric_guitar.dto.request.CreateNewElectricGuitarRequest;
-import com.ajou.hertz.domain.instrument.effector.dto.request.EffectorFilterConditions;
-import com.ajou.hertz.domain.instrument.electric_guitar.dto.request.ElectricGuitarFilterConditions;
 import com.ajou.hertz.domain.instrument.acoustic_and_classic_guitar.dto.response.AcousticAndClassicGuitarResponse;
+import com.ajou.hertz.domain.instrument.amplifier.dto.AmplifierDto;
+import com.ajou.hertz.domain.instrument.amplifier.dto.request.AmplifierFilterConditions;
+import com.ajou.hertz.domain.instrument.amplifier.dto.request.CreateNewAmplifierRequest;
 import com.ajou.hertz.domain.instrument.amplifier.dto.response.AmplifierResponse;
+import com.ajou.hertz.domain.instrument.audio_equipment.dto.AudioEquipmentDto;
+import com.ajou.hertz.domain.instrument.audio_equipment.dto.request.AudioEquipmentFilterConditions;
+import com.ajou.hertz.domain.instrument.audio_equipment.dto.request.CreateNewAudioEquipmentRequest;
 import com.ajou.hertz.domain.instrument.audio_equipment.dto.response.AudioEquipmentResponse;
+import com.ajou.hertz.domain.instrument.bass_guitar.dto.BassGuitarDto;
+import com.ajou.hertz.domain.instrument.bass_guitar.dto.request.BassGuitarFilterConditions;
+import com.ajou.hertz.domain.instrument.bass_guitar.dto.request.CreateNewBassGuitarRequest;
 import com.ajou.hertz.domain.instrument.bass_guitar.dto.response.BassGuitarResponse;
-import com.ajou.hertz.domain.instrument.effector.dto.response.EffectorResponse;
-import com.ajou.hertz.domain.instrument.electric_guitar.dto.response.ElectricGuitarResponse;
+import com.ajou.hertz.domain.instrument.constant.InstrumentSortOption;
+import com.ajou.hertz.domain.instrument.dto.InstrumentDto;
 import com.ajou.hertz.domain.instrument.dto.response.InstrumentResponse;
 import com.ajou.hertz.domain.instrument.dto.response.InstrumentSummaryResponse;
+import com.ajou.hertz.domain.instrument.effector.dto.EffectorDto;
+import com.ajou.hertz.domain.instrument.effector.dto.request.CreateNewEffectorRequest;
+import com.ajou.hertz.domain.instrument.effector.dto.request.EffectorFilterConditions;
+import com.ajou.hertz.domain.instrument.effector.dto.response.EffectorResponse;
+import com.ajou.hertz.domain.instrument.electric_guitar.dto.ElectricGuitarDto;
+import com.ajou.hertz.domain.instrument.electric_guitar.dto.request.CreateNewElectricGuitarRequest;
+import com.ajou.hertz.domain.instrument.electric_guitar.dto.request.ElectricGuitarFilterConditions;
+import com.ajou.hertz.domain.instrument.electric_guitar.dto.request.ElectricGuitarUpdateRequest;
+import com.ajou.hertz.domain.instrument.electric_guitar.dto.response.ElectricGuitarResponse;
 import com.ajou.hertz.domain.instrument.mapper.InstrumentMapper;
 import com.ajou.hertz.domain.instrument.service.InstrumentCommandService;
 import com.ajou.hertz.domain.instrument.service.InstrumentQueryService;
@@ -414,6 +416,29 @@ public class InstrumentController {
 		return ResponseEntity
 			.created(URI.create("/instruments/" + audioEquipment.getId()))
 			.body(InstrumentMapper.toAudioEquipmentResponse(audioEquipment));
+	}
+
+	@Operation(
+		summary = "일렉 기타 매물 수정",
+		description = """
+			<p>일렉 기타 매물 정보를 수정합니다.
+			<p>요청 시 <strong>multipart/form-data</strong> content-type으로 요쳥해야 합니다.
+			<p>변경하고자 하는 매물 정보만 request body에 담아 요청하면 됩니다. 요청 시 보내지 않은 필드는 수정하지 않습니다.
+			""",
+		security = @SecurityRequirement(name = "access-token")
+	)
+	@PatchMapping("/electric-guitars/{electricGuitarId}")
+	public ElectricGuitarResponse updateElectricGuitarV1(
+		@AuthenticationPrincipal UserPrincipal userPrincipal,
+		@Parameter(description = "수정하고자 하는 악기 매물의 id", example = "2") @PathVariable Long electricGuitarId,
+		@ParameterObject @ModelAttribute @Valid ElectricGuitarUpdateRequest updateRequest
+	) {
+		ElectricGuitarDto electricGuitarDto = instrumentCommandService.updateElectricGuitar(
+			userPrincipal.getUserId(),
+			electricGuitarId,
+			updateRequest
+		);
+		return InstrumentMapper.toElectricGuitarResponse(electricGuitarDto);
 	}
 
 	@Operation(

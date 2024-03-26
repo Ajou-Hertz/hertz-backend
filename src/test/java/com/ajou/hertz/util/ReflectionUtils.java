@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 
+import org.springframework.lang.Nullable;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.ajou.hertz.common.auth.dto.request.KakaoLoginRequest;
@@ -22,44 +23,45 @@ import com.ajou.hertz.domain.instrument.acoustic_and_classic_guitar.constant.Aco
 import com.ajou.hertz.domain.instrument.acoustic_and_classic_guitar.constant.AcousticAndClassicGuitarModel;
 import com.ajou.hertz.domain.instrument.acoustic_and_classic_guitar.constant.AcousticAndClassicGuitarPickUp;
 import com.ajou.hertz.domain.instrument.acoustic_and_classic_guitar.constant.AcousticAndClassicGuitarWood;
+import com.ajou.hertz.domain.instrument.acoustic_and_classic_guitar.dto.AcousticAndClassicGuitarDto;
+import com.ajou.hertz.domain.instrument.acoustic_and_classic_guitar.dto.request.AcousticAndClassicGuitarFilterConditions;
+import com.ajou.hertz.domain.instrument.acoustic_and_classic_guitar.dto.request.CreateNewAcousticAndClassicGuitarRequest;
+import com.ajou.hertz.domain.instrument.acoustic_and_classic_guitar.entity.AcousticAndClassicGuitar;
 import com.ajou.hertz.domain.instrument.amplifier.constant.AmplifierBrand;
 import com.ajou.hertz.domain.instrument.amplifier.constant.AmplifierType;
 import com.ajou.hertz.domain.instrument.amplifier.constant.AmplifierUsage;
+import com.ajou.hertz.domain.instrument.amplifier.dto.AmplifierDto;
+import com.ajou.hertz.domain.instrument.amplifier.dto.request.AmplifierFilterConditions;
+import com.ajou.hertz.domain.instrument.amplifier.dto.request.CreateNewAmplifierRequest;
+import com.ajou.hertz.domain.instrument.amplifier.entity.Amplifier;
 import com.ajou.hertz.domain.instrument.audio_equipment.constant.AudioEquipmentType;
+import com.ajou.hertz.domain.instrument.audio_equipment.dto.AudioEquipmentDto;
+import com.ajou.hertz.domain.instrument.audio_equipment.dto.request.AudioEquipmentFilterConditions;
+import com.ajou.hertz.domain.instrument.audio_equipment.dto.request.CreateNewAudioEquipmentRequest;
+import com.ajou.hertz.domain.instrument.audio_equipment.entity.AudioEquipment;
 import com.ajou.hertz.domain.instrument.bass_guitar.constant.BassGuitarBrand;
 import com.ajou.hertz.domain.instrument.bass_guitar.constant.BassGuitarPickUp;
 import com.ajou.hertz.domain.instrument.bass_guitar.constant.BassGuitarPreAmplifier;
-import com.ajou.hertz.domain.instrument.effector.constant.EffectorFeature;
-import com.ajou.hertz.domain.instrument.effector.constant.EffectorType;
-import com.ajou.hertz.domain.instrument.electric_guitar.constant.ElectricGuitarBrand;
-import com.ajou.hertz.domain.instrument.electric_guitar.constant.ElectricGuitarModel;
+import com.ajou.hertz.domain.instrument.bass_guitar.dto.BassGuitarDto;
+import com.ajou.hertz.domain.instrument.bass_guitar.dto.request.BassGuitarFilterConditions;
+import com.ajou.hertz.domain.instrument.bass_guitar.dto.request.CreateNewBassGuitarRequest;
+import com.ajou.hertz.domain.instrument.bass_guitar.entity.BassGuitar;
 import com.ajou.hertz.domain.instrument.constant.GuitarColor;
 import com.ajou.hertz.domain.instrument.constant.InstrumentProgressStatus;
-import com.ajou.hertz.domain.instrument.acoustic_and_classic_guitar.dto.AcousticAndClassicGuitarDto;
-import com.ajou.hertz.domain.instrument.amplifier.dto.AmplifierDto;
-import com.ajou.hertz.domain.instrument.audio_equipment.dto.AudioEquipmentDto;
-import com.ajou.hertz.domain.instrument.bass_guitar.dto.BassGuitarDto;
-import com.ajou.hertz.domain.instrument.effector.dto.EffectorDto;
-import com.ajou.hertz.domain.instrument.electric_guitar.dto.ElectricGuitarDto;
 import com.ajou.hertz.domain.instrument.dto.InstrumentImageDto;
-import com.ajou.hertz.domain.instrument.acoustic_and_classic_guitar.dto.request.AcousticAndClassicGuitarFilterConditions;
-import com.ajou.hertz.domain.instrument.amplifier.dto.request.AmplifierFilterConditions;
-import com.ajou.hertz.domain.instrument.audio_equipment.dto.request.AudioEquipmentFilterConditions;
-import com.ajou.hertz.domain.instrument.bass_guitar.dto.request.BassGuitarFilterConditions;
-import com.ajou.hertz.domain.instrument.acoustic_and_classic_guitar.dto.request.CreateNewAcousticAndClassicGuitarRequest;
-import com.ajou.hertz.domain.instrument.amplifier.dto.request.CreateNewAmplifierRequest;
-import com.ajou.hertz.domain.instrument.audio_equipment.dto.request.CreateNewAudioEquipmentRequest;
-import com.ajou.hertz.domain.instrument.bass_guitar.dto.request.CreateNewBassGuitarRequest;
-import com.ajou.hertz.domain.instrument.effector.dto.request.CreateNewEffectorRequest;
-import com.ajou.hertz.domain.instrument.electric_guitar.dto.request.CreateNewElectricGuitarRequest;
-import com.ajou.hertz.domain.instrument.effector.dto.request.EffectorFilterConditions;
-import com.ajou.hertz.domain.instrument.electric_guitar.dto.request.ElectricGuitarFilterConditions;
 import com.ajou.hertz.domain.instrument.dto.request.InstrumentFilterConditions;
-import com.ajou.hertz.domain.instrument.acoustic_and_classic_guitar.entity.AcousticAndClassicGuitar;
-import com.ajou.hertz.domain.instrument.amplifier.entity.Amplifier;
-import com.ajou.hertz.domain.instrument.audio_equipment.entity.AudioEquipment;
-import com.ajou.hertz.domain.instrument.bass_guitar.entity.BassGuitar;
+import com.ajou.hertz.domain.instrument.effector.constant.EffectorFeature;
+import com.ajou.hertz.domain.instrument.effector.constant.EffectorType;
+import com.ajou.hertz.domain.instrument.effector.dto.EffectorDto;
+import com.ajou.hertz.domain.instrument.effector.dto.request.CreateNewEffectorRequest;
+import com.ajou.hertz.domain.instrument.effector.dto.request.EffectorFilterConditions;
 import com.ajou.hertz.domain.instrument.effector.entity.Effector;
+import com.ajou.hertz.domain.instrument.electric_guitar.constant.ElectricGuitarBrand;
+import com.ajou.hertz.domain.instrument.electric_guitar.constant.ElectricGuitarModel;
+import com.ajou.hertz.domain.instrument.electric_guitar.dto.ElectricGuitarDto;
+import com.ajou.hertz.domain.instrument.electric_guitar.dto.request.CreateNewElectricGuitarRequest;
+import com.ajou.hertz.domain.instrument.electric_guitar.dto.request.ElectricGuitarFilterConditions;
+import com.ajou.hertz.domain.instrument.electric_guitar.dto.request.ElectricGuitarUpdateRequest;
 import com.ajou.hertz.domain.instrument.electric_guitar.entity.ElectricGuitar;
 import com.ajou.hertz.domain.instrument.entity.Instrument;
 import com.ajou.hertz.domain.instrument.entity.InstrumentHashtag;
@@ -834,6 +836,48 @@ public class ReflectionUtils {
 			);
 		constructor.setAccessible(true);
 		return constructor.newInstance(progressStatus, sido, sgg, type);
+	}
+
+	public static ElectricGuitarUpdateRequest createElectricGuitarUpdateRequest(
+		@Nullable String title,
+		@Nullable InstrumentProgressStatus progressStatus,
+		@Nullable AddressRequest tradeAddress,
+		@Nullable Short qualityStatus,
+		@Nullable Integer price,
+		@Nullable Boolean hasAnomaly,
+		@Nullable String description,
+		@Nullable List<Long> deletedImageIds,
+		@Nullable List<MultipartFile> newImages,
+		@Nullable List<Long> deletedHashtagIds,
+		@Nullable List<String> newHashtags,
+		@Nullable ElectricGuitarBrand brand,
+		@Nullable ElectricGuitarModel model,
+		@Nullable Short productionYear,
+		@Nullable GuitarColor color
+	) throws Exception {
+		Constructor<ElectricGuitarUpdateRequest> constructor = ElectricGuitarUpdateRequest.class.getDeclaredConstructor(
+			String.class, InstrumentProgressStatus.class, AddressRequest.class, Short.class,
+			Integer.class, Boolean.class, String.class, List.class, List.class, List.class, List.class,
+			ElectricGuitarBrand.class, ElectricGuitarModel.class, Short.class, GuitarColor.class
+		);
+		constructor.setAccessible(true);
+		return constructor.newInstance(
+			title,
+			progressStatus,
+			tradeAddress,
+			qualityStatus,
+			price,
+			hasAnomaly,
+			description,
+			deletedImageIds,
+			newImages,
+			deletedHashtagIds,
+			newHashtags,
+			brand,
+			model,
+			productionYear,
+			color
+		);
 	}
 
 	/**
