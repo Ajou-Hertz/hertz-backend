@@ -164,8 +164,10 @@ public class UserController {
 		@RequestBody @Valid UpdatePasswordRequest updatePasswordRequest,
 		@AuthenticationPrincipal UserPrincipal userPrincipal
 	) {
-		UserDto userUpdated = userCommandService.updatePassword(userPrincipal.getUserId(),
-			updatePasswordRequest.getPassword());
+		UserDto userUpdated = userCommandService.updatePassword(
+			userPrincipal.getUserId(),
+			updatePasswordRequest.getPassword()
+		);
 		return UserResponse.from(userUpdated);
 	}
 

@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @Getter
 public class UpdatePasswordRequest {
 
-	@Schema(description = "비밀 번호", example = "newpassword1234!!")
+	@Schema(description = "비밀번호", example = "newpwd1234!!")
 	@NotBlank
 	@Password
 	private String password;
