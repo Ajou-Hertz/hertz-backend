@@ -1,8 +1,11 @@
 package com.ajou.hertz.domain.instrument.entity;
 
+import org.springframework.util.StringUtils;
+
 import com.ajou.hertz.common.entity.Address;
 import com.ajou.hertz.common.entity.TimeTrackedBaseEntity;
 import com.ajou.hertz.domain.instrument.constant.InstrumentProgressStatus;
+import com.ajou.hertz.domain.instrument.dto.request.InstrumentUpdateRequest;
 import com.ajou.hertz.domain.user.entity.User;
 
 import jakarta.persistence.Column;
@@ -87,5 +90,26 @@ public abstract class Instrument extends TimeTrackedBaseEntity {
 		this.price = price;
 		this.hasAnomaly = hasAnomaly;
 		this.description = description;
+	}
+
+	public void update(InstrumentUpdateRequest updateRequest) {
+		if (StringUtils.hasText(updateRequest.getTitle())) {
+			this.title = updateRequest.getTitle();
+		}
+		if (updateRequest.getTradeAddress() != null) {
+			this.tradeAddress = updateRequest.getTradeAddress().toEntity();
+		}
+		if (updateRequest.getQualityStatus() != null) {
+			this.qualityStatus = updateRequest.getQualityStatus();
+		}
+		if (updateRequest.getPrice() != null) {
+			this.price = updateRequest.getPrice();
+		}
+		if (updateRequest.getHasAnomaly() != null) {
+			this.hasAnomaly = updateRequest.getHasAnomaly();
+		}
+		if (updateRequest.getDescription() != null) {
+			this.description = updateRequest.getDescription();
+		}
 	}
 }

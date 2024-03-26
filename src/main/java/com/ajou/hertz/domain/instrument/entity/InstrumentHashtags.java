@@ -1,5 +1,6 @@
 package com.ajou.hertz.domain.instrument.entity;
 
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -19,6 +20,10 @@ public class InstrumentHashtags {
 
 	public void addAll(List<InstrumentHashtag> hashtags) {
 		content.addAll(hashtags);
+	}
+
+	public void deleteAllByIds(Collection<Long> ids) {
+		content.removeIf(hashtag -> ids.contains(hashtag.getId()));
 	}
 
 	public List<String> toStrings() {

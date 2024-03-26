@@ -1,43 +1,46 @@
 package com.ajou.hertz.domain.instrument.service;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.ajou.hertz.domain.instrument.acoustic_and_classic_guitar.dto.AcousticAndClassicGuitarDto;
-import com.ajou.hertz.domain.instrument.amplifier.dto.AmplifierDto;
-import com.ajou.hertz.domain.instrument.audio_equipment.dto.AudioEquipmentDto;
-import com.ajou.hertz.domain.instrument.bass_guitar.dto.BassGuitarDto;
-import com.ajou.hertz.domain.instrument.effector.dto.EffectorDto;
-import com.ajou.hertz.domain.instrument.electric_guitar.dto.ElectricGuitarDto;
 import com.ajou.hertz.domain.instrument.acoustic_and_classic_guitar.dto.request.CreateNewAcousticAndClassicGuitarRequest;
-import com.ajou.hertz.domain.instrument.amplifier.dto.request.CreateNewAmplifierRequest;
-import com.ajou.hertz.domain.instrument.audio_equipment.dto.request.CreateNewAudioEquipmentRequest;
-import com.ajou.hertz.domain.instrument.bass_guitar.dto.request.CreateNewBassGuitarRequest;
-import com.ajou.hertz.domain.instrument.effector.dto.request.CreateNewEffectorRequest;
-import com.ajou.hertz.domain.instrument.electric_guitar.dto.request.CreateNewElectricGuitarRequest;
-import com.ajou.hertz.domain.instrument.dto.request.CreateNewInstrumentRequest;
 import com.ajou.hertz.domain.instrument.acoustic_and_classic_guitar.entity.AcousticAndClassicGuitar;
+import com.ajou.hertz.domain.instrument.acoustic_and_classic_guitar.strategy.AcousticAndClassicGuitarCreationStrategy;
+import com.ajou.hertz.domain.instrument.amplifier.dto.AmplifierDto;
+import com.ajou.hertz.domain.instrument.amplifier.dto.request.CreateNewAmplifierRequest;
 import com.ajou.hertz.domain.instrument.amplifier.entity.Amplifier;
+import com.ajou.hertz.domain.instrument.amplifier.strategy.AmplifierCreationStrategy;
+import com.ajou.hertz.domain.instrument.audio_equipment.dto.AudioEquipmentDto;
+import com.ajou.hertz.domain.instrument.audio_equipment.dto.request.CreateNewAudioEquipmentRequest;
 import com.ajou.hertz.domain.instrument.audio_equipment.entity.AudioEquipment;
+import com.ajou.hertz.domain.instrument.audio_equipment.strategy.AudioEquipmentCreationStrategy;
+import com.ajou.hertz.domain.instrument.bass_guitar.dto.BassGuitarDto;
+import com.ajou.hertz.domain.instrument.bass_guitar.dto.request.CreateNewBassGuitarRequest;
 import com.ajou.hertz.domain.instrument.bass_guitar.entity.BassGuitar;
+import com.ajou.hertz.domain.instrument.bass_guitar.strategy.BassGuitarCreationStrategy;
+import com.ajou.hertz.domain.instrument.dto.InstrumentDto;
+import com.ajou.hertz.domain.instrument.dto.request.CreateNewInstrumentRequest;
+import com.ajou.hertz.domain.instrument.dto.request.InstrumentUpdateRequest;
+import com.ajou.hertz.domain.instrument.effector.dto.EffectorDto;
+import com.ajou.hertz.domain.instrument.effector.dto.request.CreateNewEffectorRequest;
 import com.ajou.hertz.domain.instrument.effector.entity.Effector;
+import com.ajou.hertz.domain.instrument.effector.strategy.EffectorCreationStrategy;
+import com.ajou.hertz.domain.instrument.electric_guitar.dto.ElectricGuitarDto;
+import com.ajou.hertz.domain.instrument.electric_guitar.dto.request.CreateNewElectricGuitarRequest;
+import com.ajou.hertz.domain.instrument.electric_guitar.dto.request.ElectricGuitarUpdateRequest;
 import com.ajou.hertz.domain.instrument.electric_guitar.entity.ElectricGuitar;
+import com.ajou.hertz.domain.instrument.electric_guitar.strategy.ElectricGuitarCreationStrategy;
 import com.ajou.hertz.domain.instrument.entity.Instrument;
 import com.ajou.hertz.domain.instrument.entity.InstrumentHashtag;
 import com.ajou.hertz.domain.instrument.entity.InstrumentImage;
 import com.ajou.hertz.domain.instrument.exception.InstrumentDeletePermissionDeniedException;
+import com.ajou.hertz.domain.instrument.exception.InstrumentUpdatePermissionDeniedException;
 import com.ajou.hertz.domain.instrument.mapper.InstrumentMapper;
-import com.ajou.hertz.domain.instrument.repository.InstrumentHashtagRepository;
 import com.ajou.hertz.domain.instrument.repository.InstrumentRepository;
-import com.ajou.hertz.domain.instrument.acoustic_and_classic_guitar.strategy.AcousticAndClassicGuitarCreationStrategy;
-import com.ajou.hertz.domain.instrument.amplifier.strategy.AmplifierCreationStrategy;
-import com.ajou.hertz.domain.instrument.audio_equipment.strategy.AudioEquipmentCreationStrategy;
-import com.ajou.hertz.domain.instrument.bass_guitar.strategy.BassGuitarCreationStrategy;
-import com.ajou.hertz.domain.instrument.effector.strategy.EffectorCreationStrategy;
-import com.ajou.hertz.domain.instrument.electric_guitar.strategy.ElectricGuitarCreationStrategy;
 import com.ajou.hertz.domain.instrument.strategy.InstrumentCreationStrategy;
 import com.ajou.hertz.domain.user.entity.User;
 import com.ajou.hertz.domain.user.service.UserQueryService;
@@ -52,8 +55,39 @@ public class InstrumentCommandService {
 	private final UserQueryService userQueryService;
 	private final InstrumentQueryService instrumentQueryService;
 	private final InstrumentImageCommandService instrumentImageCommandService;
+	private final InstrumentHashtagCommandService instrumentHashtagCommandService;
 	private final InstrumentRepository instrumentRepository;
-	private final InstrumentHashtagRepository instrumentHashtagRepository;
+
+	/**
+	 * 신규 악기 매물을 생성하여 저장한다.
+	 *
+	 * @param sellerId                   악기 판매자의 id
+	 * @param createNewInstrumentRequest 판매하고자 하는 악기 정보
+	 * @param creationStrategy           Instrument type별 entity 생성 전략 (strategy pattern 사용)
+	 * @return 생성된 악기 entity
+	 */
+	private <T extends Instrument, U extends CreateNewInstrumentRequest<T>> T createNewInstrument(
+		Long sellerId,
+		U createNewInstrumentRequest,
+		InstrumentCreationStrategy<T, U> creationStrategy
+	) {
+		User seller = userQueryService.getById(sellerId);
+		T instrument = instrumentRepository.save(creationStrategy.createInstrument(seller, createNewInstrumentRequest));
+
+		List<InstrumentImage> savedInstrumentImages = instrumentImageCommandService.saveImages(
+			instrument,
+			createNewInstrumentRequest.getImages()
+		);
+		instrument.getImages().addAll(savedInstrumentImages);
+
+		List<InstrumentHashtag> savedInstrumentHashtags = instrumentHashtagCommandService.saveHashtags(
+			instrument,
+			createNewInstrumentRequest.getHashtags()
+		);
+		instrument.getHashtags().addAll(savedInstrumentHashtags);
+
+		return instrument;
+	}
 
 	/**
 	 * 신규 일렉 기타 매물을 생성 및 저장한다.
@@ -135,6 +169,70 @@ public class InstrumentCommandService {
 	}
 
 	/**
+	 * 악기 매물 정보를 수정한다.
+	 *
+	 * @param userId        수정하고자 하는 유저의 id
+	 * @param instrumentId  수정하고자 하는 악기 매물의 id
+	 * @param updateRequest 수정하고자 하는 정보
+	 * @return 수정된 악기 정보
+	 */
+	private InstrumentDto updateInstrument(
+		Long userId,
+		Long instrumentId,
+		InstrumentUpdateRequest updateRequest
+	) {
+		Instrument instrument = instrumentQueryService.getInstrumentById(instrumentId);
+
+		if (!userId.equals(instrument.getSeller().getId())) {
+			throw new InstrumentUpdatePermissionDeniedException(userId, instrumentId);
+		}
+
+		instrument.update(updateRequest);
+
+		List<Long> deletedImageIds = updateRequest.getDeletedImageIds();
+		if (hasElement(deletedImageIds)) {
+			instrumentImageCommandService.deleteAllByIds(deletedImageIds);
+			instrument.getImages().deleteAllByIds(deletedImageIds);
+		}
+
+		if (hasElement(updateRequest.getNewImages())) {
+			List<InstrumentImage> newImages =
+				instrumentImageCommandService.saveImages(instrument, updateRequest.getNewImages());
+			instrument.getImages().addAll(newImages);
+		}
+
+		List<Long> deletedHashtagIds = updateRequest.getDeletedHashtagIds();
+		if (hasElement(deletedHashtagIds)) {
+			instrumentHashtagCommandService.deleteAllByIds(deletedHashtagIds);
+			instrument.getHashtags().deleteAllByIds(deletedHashtagIds);
+		}
+
+		if (hasElement(updateRequest.getNewHashtags())) {
+			List<InstrumentHashtag> newHashtags =
+				instrumentHashtagCommandService.saveHashtags(instrument, updateRequest.getNewHashtags());
+			instrument.getHashtags().addAll(newHashtags);
+		}
+
+		return InstrumentMapper.toDto(instrument);
+	}
+
+	/**
+	 * 일렉 기타 매물 정보를 수정한다.
+	 *
+	 * @param userId           수정하고자 하는 유저의 id. 악기 판매자와 동일해야 한다.
+	 * @param electricGuitarId 수정할 일렉 기타의 id
+	 * @param updateRequest    수정하고자 하는 정보
+	 * @return 수정된 일렉 기타 매물 정보
+	 */
+	public ElectricGuitarDto updateElectricGuitar(
+		Long userId,
+		Long electricGuitarId,
+		ElectricGuitarUpdateRequest updateRequest
+	) {
+		return (ElectricGuitarDto)updateInstrument(userId, electricGuitarId, updateRequest);
+	}
+
+	/**
 	 * 악기 매물을 삭제한다.
 	 *
 	 * @param userId       악기 매물을 삭제하려는 유저의 id
@@ -147,52 +245,11 @@ public class InstrumentCommandService {
 			throw new InstrumentDeletePermissionDeniedException();
 		}
 		instrumentImageCommandService.deleteAllByInstrumentId(instrumentId);
-		instrumentHashtagRepository.deleteAllByInstrument(instrument);
+		instrumentHashtagCommandService.deleteAllByInstrument(instrument);
 		instrumentRepository.delete(instrument);
 	}
 
-	/**
-	 * 신규 악기 매물을 생성하여 저장한다.
-	 *
-	 * @param sellerId                   악기 판매자의 id
-	 * @param createNewInstrumentRequest 판매하고자 하는 악기 정보
-	 * @param creationStrategy           Instrument type별 entity 생성 전략 (strategy pattern 사용)
-	 * @return 생성된 악기 entity
-	 */
-	private <T extends Instrument, U extends CreateNewInstrumentRequest<T>> T createNewInstrument(
-		Long sellerId,
-		U createNewInstrumentRequest,
-		InstrumentCreationStrategy<T, U> creationStrategy
-	) {
-		User seller = userQueryService.getById(sellerId);
-		T instrument = instrumentRepository.save(creationStrategy.createInstrument(seller, createNewInstrumentRequest));
-		registerInstrumentImages(instrument, createNewInstrumentRequest.getImages());
-		registerInstrumentHashtags(instrument, createNewInstrumentRequest.getHashtags());
-		return instrument;
-	}
-
-	/**
-	 * 전달된 이미지들을 업로드하고, <code>InstrumentImage</code> list를 만들어 저장 및 등록한다.
-	 *
-	 * @param instrument 이미지에 대한 악기
-	 * @param images     image list
-	 */
-	private void registerInstrumentImages(Instrument instrument, List<MultipartFile> images) {
-		List<InstrumentImage> savedInstrumentImages = instrumentImageCommandService.saveImages(instrument, images);
-		instrument.getImages().addAll(savedInstrumentImages);
-	}
-
-	/**
-	 * 전달된 hashtag content list로 <code>InstrumentHashtag</code> list를 만들어 저장 및 등록한다.
-	 *
-	 * @param instrument hashtag가 작성된 악기
-	 * @param hashtags   hashtag list
-	 */
-	private void registerInstrumentHashtags(Instrument instrument, List<String> hashtags) {
-		List<InstrumentHashtag> instrumentHashtags = hashtags.stream()
-			.map(hashtagContent -> InstrumentHashtag.create(instrument, hashtagContent))
-			.toList();
-		List<InstrumentHashtag> savedInstrumentHashtags = instrumentHashtagRepository.saveAll(instrumentHashtags);
-		instrument.getHashtags().addAll(savedInstrumentHashtags);
+	private boolean hasElement(Collection<?> collection) {
+		return collection != null && !collection.isEmpty();
 	}
 }

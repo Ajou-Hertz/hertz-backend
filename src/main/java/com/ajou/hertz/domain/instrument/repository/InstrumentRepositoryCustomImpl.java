@@ -18,20 +18,20 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 
+import com.ajou.hertz.domain.instrument.acoustic_and_classic_guitar.dto.request.AcousticAndClassicGuitarFilterConditions;
+import com.ajou.hertz.domain.instrument.acoustic_and_classic_guitar.entity.AcousticAndClassicGuitar;
+import com.ajou.hertz.domain.instrument.amplifier.dto.request.AmplifierFilterConditions;
+import com.ajou.hertz.domain.instrument.amplifier.entity.Amplifier;
+import com.ajou.hertz.domain.instrument.audio_equipment.dto.request.AudioEquipmentFilterConditions;
+import com.ajou.hertz.domain.instrument.audio_equipment.entity.AudioEquipment;
+import com.ajou.hertz.domain.instrument.bass_guitar.dto.request.BassGuitarFilterConditions;
+import com.ajou.hertz.domain.instrument.bass_guitar.entity.BassGuitar;
 import com.ajou.hertz.domain.instrument.constant.InstrumentProgressStatus;
 import com.ajou.hertz.domain.instrument.constant.InstrumentSortOption;
-import com.ajou.hertz.domain.instrument.acoustic_and_classic_guitar.dto.request.AcousticAndClassicGuitarFilterConditions;
-import com.ajou.hertz.domain.instrument.amplifier.dto.request.AmplifierFilterConditions;
-import com.ajou.hertz.domain.instrument.audio_equipment.dto.request.AudioEquipmentFilterConditions;
-import com.ajou.hertz.domain.instrument.bass_guitar.dto.request.BassGuitarFilterConditions;
-import com.ajou.hertz.domain.instrument.effector.dto.request.EffectorFilterConditions;
-import com.ajou.hertz.domain.instrument.electric_guitar.dto.request.ElectricGuitarFilterConditions;
 import com.ajou.hertz.domain.instrument.dto.request.InstrumentFilterConditions;
-import com.ajou.hertz.domain.instrument.acoustic_and_classic_guitar.entity.AcousticAndClassicGuitar;
-import com.ajou.hertz.domain.instrument.amplifier.entity.Amplifier;
-import com.ajou.hertz.domain.instrument.audio_equipment.entity.AudioEquipment;
-import com.ajou.hertz.domain.instrument.bass_guitar.entity.BassGuitar;
+import com.ajou.hertz.domain.instrument.effector.dto.request.EffectorFilterConditions;
 import com.ajou.hertz.domain.instrument.effector.entity.Effector;
+import com.ajou.hertz.domain.instrument.electric_guitar.dto.request.ElectricGuitarFilterConditions;
 import com.ajou.hertz.domain.instrument.electric_guitar.entity.ElectricGuitar;
 import com.ajou.hertz.domain.instrument.entity.Instrument;
 import com.ajou.hertz.domain.user.entity.User;
@@ -42,6 +42,7 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.ComparableExpression;
 import com.querydsl.core.types.dsl.EntityPathBase;
 import com.querydsl.core.types.dsl.EnumPath;
+import com.querydsl.core.types.dsl.NumberPath;
 import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.core.types.dsl.StringPath;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -52,6 +53,41 @@ import lombok.RequiredArgsConstructor;
 public class InstrumentRepositoryCustomImpl implements InstrumentRepositoryCustom {
 
 	private final JPAQueryFactory queryFactory;
+
+	@Override
+	public Optional<ElectricGuitar> findElectricGuitarById(Long id) {
+		return findInstrumentById(electricGuitar, electricGuitar.seller, electricGuitar.id, id);
+	}
+
+	@Override
+	public Optional<BassGuitar> findBassGuitarById(Long id) {
+		return findInstrumentById(bassGuitar, bassGuitar.seller, bassGuitar.id, id);
+	}
+
+	@Override
+	public Optional<AcousticAndClassicGuitar> findAcousticAndClassicGuitarById(Long id) {
+		return findInstrumentById(
+			acousticAndClassicGuitar,
+			acousticAndClassicGuitar.seller,
+			acousticAndClassicGuitar.id,
+			id
+		);
+	}
+
+	@Override
+	public Optional<Effector> findEffectorById(Long id) {
+		return findInstrumentById(effector, effector.seller, effector.id, id);
+	}
+
+	@Override
+	public Optional<Amplifier> findAmplifierById(Long id) {
+		return findInstrumentById(amplifier, amplifier.seller, amplifier.id, id);
+	}
+
+	@Override
+	public Optional<AudioEquipment> findAudioEquipmentById(Long id) {
+		return findInstrumentById(audioEquipment, audioEquipment.seller, audioEquipment.id, id);
+	}
 
 	@Override
 	public Page<ElectricGuitar> findElectricGuitars(
@@ -117,6 +153,20 @@ public class InstrumentRepositoryCustomImpl implements InstrumentRepositoryCusto
 			page, pageSize, sort, filterConditions, audioEquipment, audioEquipment.seller,
 			this::mapInstrumentFilterConditionsToPredicates
 		);
+	}
+
+	private <T extends Instrument> Optional<T> findInstrumentById(
+		EntityPathBase<T> instrumentPath,
+		EntityPathBase<User> sellerPath,
+		NumberPath<Long> idPath,
+		Long id
+	) {
+		T entity = queryFactory
+			.selectFrom(instrumentPath)
+			.join(sellerPath, user).fetchJoin()
+			.where(idPath.eq(id))
+			.fetchOne();
+		return Optional.ofNullable(entity);
 	}
 
 	private <T extends Instrument, F extends InstrumentFilterConditions> Page<T> findInstruments(
@@ -206,7 +256,8 @@ public class InstrumentRepositoryCustomImpl implements InstrumentRepositoryCusto
 		return res;
 	}
 
-	private List<Predicate> mapInstrumentFilterConditionsToPredicates(AcousticAndClassicGuitarFilterConditions filterConditions) {
+	private List<Predicate> mapInstrumentFilterConditionsToPredicates(
+		AcousticAndClassicGuitarFilterConditions filterConditions) {
 		List<Predicate> res = mapInstrumentFilterConditionsToPredicates(
 			filterConditions,
 			acousticAndClassicGuitar.progressStatus,

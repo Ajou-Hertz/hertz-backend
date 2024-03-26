@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.*;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import org.junit.jupiter.api.DisplayName;
@@ -21,31 +22,31 @@ import com.ajou.hertz.domain.instrument.acoustic_and_classic_guitar.constant.Aco
 import com.ajou.hertz.domain.instrument.acoustic_and_classic_guitar.constant.AcousticAndClassicGuitarModel;
 import com.ajou.hertz.domain.instrument.acoustic_and_classic_guitar.constant.AcousticAndClassicGuitarPickUp;
 import com.ajou.hertz.domain.instrument.acoustic_and_classic_guitar.constant.AcousticAndClassicGuitarWood;
+import com.ajou.hertz.domain.instrument.acoustic_and_classic_guitar.dto.request.AcousticAndClassicGuitarFilterConditions;
+import com.ajou.hertz.domain.instrument.acoustic_and_classic_guitar.entity.AcousticAndClassicGuitar;
 import com.ajou.hertz.domain.instrument.amplifier.constant.AmplifierBrand;
 import com.ajou.hertz.domain.instrument.amplifier.constant.AmplifierType;
 import com.ajou.hertz.domain.instrument.amplifier.constant.AmplifierUsage;
+import com.ajou.hertz.domain.instrument.amplifier.dto.request.AmplifierFilterConditions;
+import com.ajou.hertz.domain.instrument.amplifier.entity.Amplifier;
 import com.ajou.hertz.domain.instrument.audio_equipment.constant.AudioEquipmentType;
+import com.ajou.hertz.domain.instrument.audio_equipment.dto.request.AudioEquipmentFilterConditions;
+import com.ajou.hertz.domain.instrument.audio_equipment.entity.AudioEquipment;
 import com.ajou.hertz.domain.instrument.bass_guitar.constant.BassGuitarBrand;
 import com.ajou.hertz.domain.instrument.bass_guitar.constant.BassGuitarPickUp;
 import com.ajou.hertz.domain.instrument.bass_guitar.constant.BassGuitarPreAmplifier;
-import com.ajou.hertz.domain.instrument.effector.constant.EffectorFeature;
-import com.ajou.hertz.domain.instrument.effector.constant.EffectorType;
-import com.ajou.hertz.domain.instrument.electric_guitar.constant.ElectricGuitarBrand;
-import com.ajou.hertz.domain.instrument.electric_guitar.constant.ElectricGuitarModel;
+import com.ajou.hertz.domain.instrument.bass_guitar.dto.request.BassGuitarFilterConditions;
+import com.ajou.hertz.domain.instrument.bass_guitar.entity.BassGuitar;
 import com.ajou.hertz.domain.instrument.constant.GuitarColor;
 import com.ajou.hertz.domain.instrument.constant.InstrumentProgressStatus;
 import com.ajou.hertz.domain.instrument.constant.InstrumentSortOption;
-import com.ajou.hertz.domain.instrument.acoustic_and_classic_guitar.dto.request.AcousticAndClassicGuitarFilterConditions;
-import com.ajou.hertz.domain.instrument.amplifier.dto.request.AmplifierFilterConditions;
-import com.ajou.hertz.domain.instrument.audio_equipment.dto.request.AudioEquipmentFilterConditions;
-import com.ajou.hertz.domain.instrument.bass_guitar.dto.request.BassGuitarFilterConditions;
+import com.ajou.hertz.domain.instrument.effector.constant.EffectorFeature;
+import com.ajou.hertz.domain.instrument.effector.constant.EffectorType;
 import com.ajou.hertz.domain.instrument.effector.dto.request.EffectorFilterConditions;
-import com.ajou.hertz.domain.instrument.electric_guitar.dto.request.ElectricGuitarFilterConditions;
-import com.ajou.hertz.domain.instrument.acoustic_and_classic_guitar.entity.AcousticAndClassicGuitar;
-import com.ajou.hertz.domain.instrument.amplifier.entity.Amplifier;
-import com.ajou.hertz.domain.instrument.audio_equipment.entity.AudioEquipment;
-import com.ajou.hertz.domain.instrument.bass_guitar.entity.BassGuitar;
 import com.ajou.hertz.domain.instrument.effector.entity.Effector;
+import com.ajou.hertz.domain.instrument.electric_guitar.constant.ElectricGuitarBrand;
+import com.ajou.hertz.domain.instrument.electric_guitar.constant.ElectricGuitarModel;
+import com.ajou.hertz.domain.instrument.electric_guitar.dto.request.ElectricGuitarFilterConditions;
 import com.ajou.hertz.domain.instrument.electric_guitar.entity.ElectricGuitar;
 import com.ajou.hertz.domain.instrument.entity.Instrument;
 import com.ajou.hertz.domain.instrument.repository.InstrumentRepository;
@@ -71,6 +72,156 @@ class InstrumentRepositoryTest {
 	) {
 		this.sut = instrumentRepository;
 		this.userRepository = userRepository;
+	}
+
+	@Test
+	void 주어진_id와_일치하는_일렉_기타를_단건_조회한다() throws Exception {
+		// given
+		User user = userRepository.save(createUser());
+		Long electricGuitarId = sut.save(createElectricGuitar(user)).getId();
+
+		// when
+		Optional<ElectricGuitar> result = sut.findElectricGuitarById(electricGuitarId);
+
+		// then
+		assertThat(result).isPresent();
+		assertThat(result.get().getId()).isEqualTo(electricGuitarId);
+	}
+
+	@Test
+	void 존재하지_않는_악기_id로_일렉_기타를_단건_조회하면_empty_optional_객체가_반환된다() {
+		// given
+
+		// when
+		Optional<ElectricGuitar> result = sut.findElectricGuitarById(1L);
+
+		// then
+		assertThat(result).isEmpty();
+	}
+
+	@Test
+	void 주어진_id와_일치하는_베이스_기타를_단건_조회한다() throws Exception {
+		// given
+		User user = userRepository.save(createUser());
+		Long bassGuitarId = sut.save(createBassGuitar(user)).getId();
+
+		// when
+		Optional<BassGuitar> result = sut.findBassGuitarById(bassGuitarId);
+
+		// then
+		assertThat(result).isPresent();
+		assertThat(result.get().getId()).isEqualTo(bassGuitarId);
+	}
+
+	@Test
+	void 존재하지_않는_악기_id로_베이스_기타를_단건_조회하면_empty_optional_객체가_반환된다() {
+		// given
+
+		// when
+		Optional<BassGuitar> result = sut.findBassGuitarById(1L);
+
+		// then
+		assertThat(result).isEmpty();
+	}
+
+	@Test
+	void 주어진_id와_일치하는_어쿠스틱_클래식_기타를_단건_조회한다() throws Exception {
+		// given
+		User user = userRepository.save(createUser());
+		Long electricGuitarId = sut.save(createAcousticAndClassicGuitar(user)).getId();
+
+		// when
+		Optional<AcousticAndClassicGuitar> result = sut.findAcousticAndClassicGuitarById(electricGuitarId);
+
+		// then
+		assertThat(result).isPresent();
+		assertThat(result.get().getId()).isEqualTo(electricGuitarId);
+	}
+
+	@Test
+	void 존재하지_않는_악기_id로_어쿠스틱_클래식_기타를_단건_조회하면_empty_optional_객체가_반환된다() {
+		// given
+
+		// when
+		Optional<AcousticAndClassicGuitar> result = sut.findAcousticAndClassicGuitarById(1L);
+
+		// then
+		assertThat(result).isEmpty();
+	}
+
+	@Test
+	void 주어진_id와_일치하는_이펙터를_단건_조회한다() throws Exception {
+		// given
+		User user = userRepository.save(createUser());
+		Long effectorId = sut.save(createEffector(user)).getId();
+
+		// when
+		Optional<Effector> result = sut.findEffectorById(effectorId);
+
+		// then
+		assertThat(result).isPresent();
+		assertThat(result.get().getId()).isEqualTo(effectorId);
+	}
+
+	@Test
+	void 존재하지_않는_악기_id로_이펙터를_단건_조회하면_empty_optional_객체가_반환된다() {
+		// given
+
+		// when
+		Optional<Effector> result = sut.findEffectorById(1L);
+
+		// then
+		assertThat(result).isEmpty();
+	}
+
+	@Test
+	void 주어진_id와_일치하는_앰프를_단건_조회한다() throws Exception {
+		// given
+		User user = userRepository.save(createUser());
+		Long amplifierId = sut.save(createAmplifier(user)).getId();
+
+		// when
+		Optional<Amplifier> result = sut.findAmplifierById(amplifierId);
+
+		// then
+		assertThat(result).isPresent();
+		assertThat(result.get().getId()).isEqualTo(amplifierId);
+	}
+
+	@Test
+	void 존재하지_않는_악기_id로_앰프를_단건_조회하면_empty_optional_객체가_반환된다() {
+		// given
+
+		// when
+		Optional<Amplifier> result = sut.findAmplifierById(1L);
+
+		// then
+		assertThat(result).isEmpty();
+	}
+
+	@Test
+	void 주어진_id와_일치하는_음향_장비를_단건_조회한다() throws Exception {
+		// given
+		User user = userRepository.save(createUser());
+		Long audioEquipmentId = sut.save(createAudioEquipment(user)).getId();
+
+		// when
+		Optional<AudioEquipment> result = sut.findAudioEquipmentById(audioEquipmentId);
+
+		// then
+		assertThat(result).isPresent();
+		assertThat(result.get().getId()).isEqualTo(audioEquipmentId);
+	}
+
+	@Test
+	void 존재하지_않는_악기_id로_음향_장비를_단건_조회하면_empty_optional_객체가_반환된다() {
+		// given
+
+		// when
+		Optional<AudioEquipment> result = sut.findAudioEquipmentById(1L);
+
+		// then
+		assertThat(result).isEmpty();
 	}
 
 	@Test

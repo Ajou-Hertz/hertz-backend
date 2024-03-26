@@ -1,5 +1,6 @@
 package com.ajou.hertz.domain.instrument.entity;
 
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -21,6 +22,10 @@ public class InstrumentImages {
 
 	public void addAll(List<InstrumentImage> images) {
 		content.addAll(images);
+	}
+
+	public void deleteAllByIds(Collection<Long> ids) {
+		content.removeIf(image -> ids.contains(image.getId()));
 	}
 
 	public List<InstrumentImageDto> toDtos() {

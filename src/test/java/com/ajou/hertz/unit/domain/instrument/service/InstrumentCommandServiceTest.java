@@ -15,6 +15,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
+import org.springframework.lang.Nullable;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -25,44 +26,46 @@ import com.ajou.hertz.domain.instrument.acoustic_and_classic_guitar.constant.Aco
 import com.ajou.hertz.domain.instrument.acoustic_and_classic_guitar.constant.AcousticAndClassicGuitarModel;
 import com.ajou.hertz.domain.instrument.acoustic_and_classic_guitar.constant.AcousticAndClassicGuitarPickUp;
 import com.ajou.hertz.domain.instrument.acoustic_and_classic_guitar.constant.AcousticAndClassicGuitarWood;
+import com.ajou.hertz.domain.instrument.acoustic_and_classic_guitar.dto.AcousticAndClassicGuitarDto;
+import com.ajou.hertz.domain.instrument.acoustic_and_classic_guitar.dto.request.CreateNewAcousticAndClassicGuitarRequest;
+import com.ajou.hertz.domain.instrument.acoustic_and_classic_guitar.entity.AcousticAndClassicGuitar;
 import com.ajou.hertz.domain.instrument.amplifier.constant.AmplifierBrand;
 import com.ajou.hertz.domain.instrument.amplifier.constant.AmplifierType;
 import com.ajou.hertz.domain.instrument.amplifier.constant.AmplifierUsage;
+import com.ajou.hertz.domain.instrument.amplifier.dto.AmplifierDto;
+import com.ajou.hertz.domain.instrument.amplifier.dto.request.CreateNewAmplifierRequest;
+import com.ajou.hertz.domain.instrument.amplifier.entity.Amplifier;
 import com.ajou.hertz.domain.instrument.audio_equipment.constant.AudioEquipmentType;
+import com.ajou.hertz.domain.instrument.audio_equipment.dto.AudioEquipmentDto;
+import com.ajou.hertz.domain.instrument.audio_equipment.dto.request.CreateNewAudioEquipmentRequest;
+import com.ajou.hertz.domain.instrument.audio_equipment.entity.AudioEquipment;
 import com.ajou.hertz.domain.instrument.bass_guitar.constant.BassGuitarBrand;
 import com.ajou.hertz.domain.instrument.bass_guitar.constant.BassGuitarPickUp;
 import com.ajou.hertz.domain.instrument.bass_guitar.constant.BassGuitarPreAmplifier;
-import com.ajou.hertz.domain.instrument.effector.constant.EffectorFeature;
-import com.ajou.hertz.domain.instrument.effector.constant.EffectorType;
-import com.ajou.hertz.domain.instrument.electric_guitar.constant.ElectricGuitarBrand;
-import com.ajou.hertz.domain.instrument.electric_guitar.constant.ElectricGuitarModel;
+import com.ajou.hertz.domain.instrument.bass_guitar.dto.BassGuitarDto;
+import com.ajou.hertz.domain.instrument.bass_guitar.dto.request.CreateNewBassGuitarRequest;
+import com.ajou.hertz.domain.instrument.bass_guitar.entity.BassGuitar;
 import com.ajou.hertz.domain.instrument.constant.GuitarColor;
 import com.ajou.hertz.domain.instrument.constant.InstrumentProgressStatus;
-import com.ajou.hertz.domain.instrument.acoustic_and_classic_guitar.dto.AcousticAndClassicGuitarDto;
-import com.ajou.hertz.domain.instrument.amplifier.dto.AmplifierDto;
-import com.ajou.hertz.domain.instrument.audio_equipment.dto.AudioEquipmentDto;
-import com.ajou.hertz.domain.instrument.bass_guitar.dto.BassGuitarDto;
+import com.ajou.hertz.domain.instrument.effector.constant.EffectorFeature;
+import com.ajou.hertz.domain.instrument.effector.constant.EffectorType;
 import com.ajou.hertz.domain.instrument.effector.dto.EffectorDto;
-import com.ajou.hertz.domain.instrument.electric_guitar.dto.ElectricGuitarDto;
-import com.ajou.hertz.domain.instrument.acoustic_and_classic_guitar.dto.request.CreateNewAcousticAndClassicGuitarRequest;
-import com.ajou.hertz.domain.instrument.amplifier.dto.request.CreateNewAmplifierRequest;
-import com.ajou.hertz.domain.instrument.audio_equipment.dto.request.CreateNewAudioEquipmentRequest;
-import com.ajou.hertz.domain.instrument.bass_guitar.dto.request.CreateNewBassGuitarRequest;
 import com.ajou.hertz.domain.instrument.effector.dto.request.CreateNewEffectorRequest;
-import com.ajou.hertz.domain.instrument.electric_guitar.dto.request.CreateNewElectricGuitarRequest;
-import com.ajou.hertz.domain.instrument.acoustic_and_classic_guitar.entity.AcousticAndClassicGuitar;
-import com.ajou.hertz.domain.instrument.amplifier.entity.Amplifier;
-import com.ajou.hertz.domain.instrument.audio_equipment.entity.AudioEquipment;
-import com.ajou.hertz.domain.instrument.bass_guitar.entity.BassGuitar;
 import com.ajou.hertz.domain.instrument.effector.entity.Effector;
+import com.ajou.hertz.domain.instrument.electric_guitar.constant.ElectricGuitarBrand;
+import com.ajou.hertz.domain.instrument.electric_guitar.constant.ElectricGuitarModel;
+import com.ajou.hertz.domain.instrument.electric_guitar.dto.ElectricGuitarDto;
+import com.ajou.hertz.domain.instrument.electric_guitar.dto.request.CreateNewElectricGuitarRequest;
+import com.ajou.hertz.domain.instrument.electric_guitar.dto.request.ElectricGuitarUpdateRequest;
 import com.ajou.hertz.domain.instrument.electric_guitar.entity.ElectricGuitar;
 import com.ajou.hertz.domain.instrument.entity.Instrument;
 import com.ajou.hertz.domain.instrument.entity.InstrumentHashtag;
 import com.ajou.hertz.domain.instrument.entity.InstrumentImage;
 import com.ajou.hertz.domain.instrument.exception.InstrumentDeletePermissionDeniedException;
-import com.ajou.hertz.domain.instrument.repository.InstrumentHashtagRepository;
+import com.ajou.hertz.domain.instrument.exception.InstrumentUpdatePermissionDeniedException;
 import com.ajou.hertz.domain.instrument.repository.InstrumentRepository;
 import com.ajou.hertz.domain.instrument.service.InstrumentCommandService;
+import com.ajou.hertz.domain.instrument.service.InstrumentHashtagCommandService;
 import com.ajou.hertz.domain.instrument.service.InstrumentImageCommandService;
 import com.ajou.hertz.domain.instrument.service.InstrumentQueryService;
 import com.ajou.hertz.domain.user.constant.Gender;
@@ -88,10 +91,10 @@ class InstrumentCommandServiceTest {
 	private InstrumentImageCommandService instrumentImageCommandService;
 
 	@Mock
-	private InstrumentRepository instrumentRepository;
+	private InstrumentHashtagCommandService instrumentHashtagCommandService;
 
 	@Mock
-	private InstrumentHashtagRepository instrumentHashtagRepository;
+	private InstrumentRepository instrumentRepository;
 
 	@Test
 	void 새로_등록할_일렉기타의_정보가_주어지면_일렉기타_매물을_등록한다() throws Exception {
@@ -106,7 +109,7 @@ class InstrumentCommandServiceTest {
 		given(instrumentRepository.save(any(Instrument.class))).willReturn(electricGuitar);
 		given(instrumentImageCommandService.saveImages(eq(electricGuitar), ArgumentMatchers.<List<MultipartFile>>any()))
 			.willReturn(instrumentImages);
-		given(instrumentHashtagRepository.saveAll(ArgumentMatchers.<List<InstrumentHashtag>>any()))
+		given(instrumentHashtagCommandService.saveHashtags(electricGuitar, electricGuitarRequest.getHashtags()))
 			.willReturn(instrumentHashtags);
 
 		// when
@@ -118,7 +121,8 @@ class InstrumentCommandServiceTest {
 		then(instrumentImageCommandService)
 			.should()
 			.saveImages(eq(electricGuitar), ArgumentMatchers.<List<MultipartFile>>any());
-		then(instrumentHashtagRepository).should().saveAll(ArgumentMatchers.<List<InstrumentHashtag>>any());
+		then(instrumentHashtagCommandService).should()
+			.saveHashtags(electricGuitar, electricGuitarRequest.getHashtags());
 		verifyEveryMocksShouldHaveNoMoreInteractions();
 		assertThat(result)
 			.hasFieldOrPropertyWithValue("id", electricGuitar.getId())
@@ -140,7 +144,7 @@ class InstrumentCommandServiceTest {
 		given(instrumentRepository.save(any(Instrument.class))).willReturn(bassGuitar);
 		given(instrumentImageCommandService.saveImages(eq(bassGuitar), ArgumentMatchers.<List<MultipartFile>>any()))
 			.willReturn(instrumentImages);
-		given(instrumentHashtagRepository.saveAll(ArgumentMatchers.<List<InstrumentHashtag>>any()))
+		given(instrumentHashtagCommandService.saveHashtags(bassGuitar, bassGuitarRequest.getHashtags()))
 			.willReturn(instrumentHashtags);
 
 		// when
@@ -151,7 +155,7 @@ class InstrumentCommandServiceTest {
 		then(instrumentRepository).should().save(any(Instrument.class));
 		then(instrumentImageCommandService).should()
 			.saveImages(eq(bassGuitar), ArgumentMatchers.<List<MultipartFile>>any());
-		then(instrumentHashtagRepository).should().saveAll(ArgumentMatchers.<List<InstrumentHashtag>>any());
+		then(instrumentHashtagCommandService).should().saveHashtags(bassGuitar, bassGuitarRequest.getHashtags());
 		verifyEveryMocksShouldHaveNoMoreInteractions();
 		assertThat(result)
 			.hasFieldOrPropertyWithValue("id", bassGuitar.getId())
@@ -174,8 +178,10 @@ class InstrumentCommandServiceTest {
 		given(instrumentImageCommandService.saveImages(
 			eq(acousticAndClassicGuitar), ArgumentMatchers.<List<MultipartFile>>any()
 		)).willReturn(instrumentImages);
-		given(instrumentHashtagRepository.saveAll(ArgumentMatchers.<List<InstrumentHashtag>>any()))
-			.willReturn(instrumentHashtags);
+		given(instrumentHashtagCommandService.saveHashtags(
+			acousticAndClassicGuitar,
+			acousticAndClassicGuitarReq.getHashtags())
+		).willReturn(instrumentHashtags);
 
 		// when
 		AcousticAndClassicGuitarDto result = sut.createNewAcousticAndClassicGuitar(
@@ -188,7 +194,9 @@ class InstrumentCommandServiceTest {
 		then(instrumentImageCommandService)
 			.should()
 			.saveImages(eq(acousticAndClassicGuitar), ArgumentMatchers.<List<MultipartFile>>any());
-		then(instrumentHashtagRepository).should().saveAll(ArgumentMatchers.<List<InstrumentHashtag>>any());
+		then(instrumentHashtagCommandService)
+			.should()
+			.saveHashtags(acousticAndClassicGuitar, acousticAndClassicGuitarReq.getHashtags());
 		verifyEveryMocksShouldHaveNoMoreInteractions();
 		assertThat(result)
 			.hasFieldOrPropertyWithValue("id", acousticAndClassicGuitar.getId())
@@ -210,7 +218,7 @@ class InstrumentCommandServiceTest {
 		given(instrumentRepository.save(any(Instrument.class))).willReturn(effector);
 		given(instrumentImageCommandService.saveImages(eq(effector), ArgumentMatchers.<List<MultipartFile>>any()))
 			.willReturn(instrumentImages);
-		given(instrumentHashtagRepository.saveAll(ArgumentMatchers.<List<InstrumentHashtag>>any()))
+		given(instrumentHashtagCommandService.saveHashtags(effector, effectorRequest.getHashtags()))
 			.willReturn(instrumentHashtags);
 
 		// when
@@ -221,7 +229,7 @@ class InstrumentCommandServiceTest {
 		then(instrumentRepository).should().save(any(Instrument.class));
 		then(instrumentImageCommandService).should()
 			.saveImages(eq(effector), ArgumentMatchers.<List<MultipartFile>>any());
-		then(instrumentHashtagRepository).should().saveAll(ArgumentMatchers.<List<InstrumentHashtag>>any());
+		then(instrumentHashtagCommandService).should().saveHashtags(effector, effectorRequest.getHashtags());
 		verifyEveryMocksShouldHaveNoMoreInteractions();
 		assertThat(result)
 			.hasFieldOrPropertyWithValue("id", effector.getId())
@@ -243,7 +251,7 @@ class InstrumentCommandServiceTest {
 		given(instrumentRepository.save(any(Instrument.class))).willReturn(amplifier);
 		given(instrumentImageCommandService.saveImages(eq(amplifier), ArgumentMatchers.<List<MultipartFile>>any()))
 			.willReturn(instrumentImages);
-		given(instrumentHashtagRepository.saveAll(ArgumentMatchers.<List<InstrumentHashtag>>any()))
+		given(instrumentHashtagCommandService.saveHashtags(amplifier, amplifierRequest.getHashtags()))
 			.willReturn(instrumentHashtags);
 
 		// when
@@ -254,7 +262,7 @@ class InstrumentCommandServiceTest {
 		then(instrumentRepository).should().save(any(Instrument.class));
 		then(instrumentImageCommandService).should()
 			.saveImages(eq(amplifier), ArgumentMatchers.<List<MultipartFile>>any());
-		then(instrumentHashtagRepository).should().saveAll(ArgumentMatchers.<List<InstrumentHashtag>>any());
+		then(instrumentHashtagCommandService).should().saveHashtags(amplifier, amplifierRequest.getHashtags());
 		verifyEveryMocksShouldHaveNoMoreInteractions();
 		assertThat(result)
 			.hasFieldOrPropertyWithValue("id", amplifier.getId())
@@ -276,7 +284,7 @@ class InstrumentCommandServiceTest {
 		given(instrumentRepository.save(any(Instrument.class))).willReturn(audioEquipment);
 		given(instrumentImageCommandService.saveImages(eq(audioEquipment), ArgumentMatchers.<List<MultipartFile>>any()))
 			.willReturn(instrumentImages);
-		given(instrumentHashtagRepository.saveAll(ArgumentMatchers.<List<InstrumentHashtag>>any()))
+		given(instrumentHashtagCommandService.saveHashtags(audioEquipment, audioEquipmentRequest.getHashtags()))
 			.willReturn(instrumentHashtags);
 
 		// when
@@ -288,13 +296,145 @@ class InstrumentCommandServiceTest {
 		then(instrumentImageCommandService)
 			.should()
 			.saveImages(eq(audioEquipment), ArgumentMatchers.<List<MultipartFile>>any());
-		then(instrumentHashtagRepository).should().saveAll(ArgumentMatchers.<List<InstrumentHashtag>>any());
+		then(instrumentHashtagCommandService)
+			.should()
+			.saveHashtags(audioEquipment, audioEquipmentRequest.getHashtags());
 		verifyEveryMocksShouldHaveNoMoreInteractions();
 		assertThat(result)
 			.hasFieldOrPropertyWithValue("id", audioEquipment.getId())
 			.hasFieldOrPropertyWithValue("seller.id", seller.getId());
 		assertThat(result.getImages()).hasSize(instrumentImages.size());
 		assertThat(result.getHashtags()).hasSize(instrumentHashtags.size());
+	}
+
+	@Test
+	void 삭제할_이미지들의_id_리스트가_주어지고_매물_정보를_수정하면_악기_이미지들이_삭제된다() throws Exception {
+		// given
+		long userId = 1L;
+		long instrumentId = 2L;
+		List<Long> deleteImageIds = List.of(3L, 4L);
+		ElectricGuitar electricGuitar = createElectricGuitar(instrumentId, createUser(userId));
+		List<InstrumentImage> initialImages = List.of(
+			createInstrumentImage(deleteImageIds.get(0), electricGuitar),
+			createInstrumentImage(deleteImageIds.get(1), electricGuitar)
+		);
+		electricGuitar.getImages().addAll(initialImages);
+		ElectricGuitarUpdateRequest updateRequest = createElectricGuitarUpdateRequest(deleteImageIds, null, null, null);
+		given(instrumentQueryService.getInstrumentById(instrumentId))
+			.willReturn(electricGuitar);
+		willDoNothing().given(instrumentImageCommandService).deleteAllByIds(deleteImageIds);
+
+		// when
+		ElectricGuitarDto result = sut.updateElectricGuitar(userId, instrumentId, updateRequest);
+
+		// then
+		then(instrumentQueryService).should().getInstrumentById(instrumentId);
+		then(instrumentImageCommandService).should().deleteAllByIds(deleteImageIds);
+		verifyEveryMocksShouldHaveNoMoreInteractions();
+		assertThat(result.getImages()).hasSize(initialImages.size() - deleteImageIds.size());
+	}
+
+	@Test
+	void 추가할_이미지들이_주어지고_매물_정보를_수정하면_새로운_악기_이미지들이_추가된다() throws Exception {
+		// given
+		long userId = 1L;
+		long instrumentId = 2L;
+		ElectricGuitar electricGuitar = createElectricGuitar(instrumentId, createUser(userId));
+		List<MultipartFile> newImages = List.of(
+			createMultipartFile(),
+			createMultipartFile()
+		);
+		List<InstrumentImage> newInstrumentImages = List.of(
+			createInstrumentImage(3L, electricGuitar),
+			createInstrumentImage(4L, electricGuitar)
+		);
+		ElectricGuitarUpdateRequest updateRequest = createElectricGuitarUpdateRequest(List.of(), newImages, null, null);
+		given(instrumentQueryService.getInstrumentById(instrumentId))
+			.willReturn(electricGuitar);
+		given(instrumentImageCommandService.saveImages(electricGuitar, updateRequest.getNewImages()))
+			.willReturn(newInstrumentImages);
+
+		// when
+		ElectricGuitarDto result = sut.updateElectricGuitar(userId, instrumentId, updateRequest);
+
+		// then
+		then(instrumentQueryService).should().getInstrumentById(instrumentId);
+		then(instrumentImageCommandService).should().saveImages(electricGuitar, updateRequest.getNewImages());
+		verifyEveryMocksShouldHaveNoMoreInteractions();
+		assertThat(result.getImages()).hasSize(newImages.size());
+	}
+
+	@Test
+	void 삭제할_해시태그들의_id_리스트가_주어지고_매물_정보를_수정하면_해시태그가_삭제된다() throws Exception {
+		long userId = 1L;
+		long instrumentId = 2L;
+		List<Long> deleteHashtagIds = List.of(3L, 4L);
+		ElectricGuitar electricGuitar = createElectricGuitar(instrumentId, createUser(userId));
+		List<InstrumentHashtag> initialHashtags = List.of(
+			createInstrumentHashtag(deleteHashtagIds.get(0), electricGuitar),
+			createInstrumentHashtag(deleteHashtagIds.get(1), electricGuitar)
+		);
+		electricGuitar.getHashtags().addAll(initialHashtags);
+		ElectricGuitarUpdateRequest updateRequest =
+			createElectricGuitarUpdateRequest(null, null, deleteHashtagIds, null);
+		given(instrumentQueryService.getInstrumentById(instrumentId))
+			.willReturn(electricGuitar);
+		willDoNothing().given(instrumentHashtagCommandService).deleteAllByIds(deleteHashtagIds);
+
+		// when
+		ElectricGuitarDto result = sut.updateElectricGuitar(userId, instrumentId, updateRequest);
+
+		// then
+		then(instrumentQueryService).should().getInstrumentById(instrumentId);
+		then(instrumentHashtagCommandService).should().deleteAllByIds(deleteHashtagIds);
+		verifyEveryMocksShouldHaveNoMoreInteractions();
+		assertThat(result.getHashtags()).hasSize(initialHashtags.size() - deleteHashtagIds.size());
+	}
+
+	@Test
+	void 추가할_해시태그들이_주어지고_매물_정보를_수정하면_새로운_해시태그들이_추가된다() throws Exception {
+		// given
+		long userId = 1L;
+		long instrumentId = 2L;
+		ElectricGuitar electricGuitar = createElectricGuitar(instrumentId, createUser(userId));
+		List<String> newHashtags = List.of("tag1", "tag2");
+		List<InstrumentHashtag> newInstrumentHashtags = List.of(
+			createInstrumentHashtag(3L, electricGuitar),
+			createInstrumentHashtag(4L, electricGuitar)
+		);
+		ElectricGuitarUpdateRequest updateRequest = createElectricGuitarUpdateRequest(null, null, null, newHashtags);
+		given(instrumentQueryService.getInstrumentById(instrumentId))
+			.willReturn(electricGuitar);
+		given(instrumentHashtagCommandService.saveHashtags(electricGuitar, updateRequest.getNewHashtags()))
+			.willReturn(newInstrumentHashtags);
+
+		// when
+		ElectricGuitarDto result = sut.updateElectricGuitar(userId, instrumentId, updateRequest);
+
+		// then
+		then(instrumentQueryService).should().getInstrumentById(instrumentId);
+		then(instrumentHashtagCommandService).should().saveHashtags(electricGuitar, updateRequest.getNewHashtags());
+		verifyEveryMocksShouldHaveNoMoreInteractions();
+		assertThat(result.getHashtags()).hasSize(newHashtags.size());
+	}
+
+	@Test
+	void 판매자가_아닌_유저가_악기_매물_정보를_수정하면_예외가_발생한다() throws Exception {
+		// given
+		long userId = 1L;
+		long instrumentId = 2L;
+		ElectricGuitar electricGuitar = createElectricGuitar(instrumentId, createUser(3L));
+		ElectricGuitarUpdateRequest updateRequest = createElectricGuitarUpdateRequest(null, null, null, null);
+		given(instrumentQueryService.getInstrumentById(instrumentId))
+			.willReturn(electricGuitar);
+
+		// when
+		Throwable ex = catchThrowable(() -> sut.updateElectricGuitar(userId, instrumentId, updateRequest));
+
+		// then
+		then(instrumentQueryService).should().getInstrumentById(instrumentId);
+		verifyEveryMocksShouldHaveNoMoreInteractions();
+		assertThat(ex).isInstanceOf(InstrumentUpdatePermissionDeniedException.class);
 	}
 
 	@Test
@@ -305,7 +445,7 @@ class InstrumentCommandServiceTest {
 		BassGuitar bassGuitar = createBassGuitar(instrumentId, createUser(userId));
 		given(instrumentQueryService.getInstrumentById(instrumentId)).willReturn(bassGuitar);
 		willDoNothing().given(instrumentImageCommandService).deleteAllByInstrumentId(instrumentId);
-		willDoNothing().given(instrumentHashtagRepository).deleteAllByInstrument(bassGuitar);
+		willDoNothing().given(instrumentHashtagCommandService).deleteAllByInstrument(bassGuitar);
 		willDoNothing().given(instrumentRepository).delete(bassGuitar);
 
 		// when
@@ -314,7 +454,7 @@ class InstrumentCommandServiceTest {
 		// then
 		then(instrumentQueryService).should().getInstrumentById(instrumentId);
 		then(instrumentImageCommandService).should().deleteAllByInstrumentId(instrumentId);
-		then(instrumentHashtagRepository).should().deleteAllByInstrument(bassGuitar);
+		then(instrumentHashtagCommandService).should().deleteAllByInstrument(bassGuitar);
 		then(instrumentRepository).should().delete(bassGuitar);
 		verifyEveryMocksShouldHaveNoMoreInteractions();
 	}
@@ -340,7 +480,7 @@ class InstrumentCommandServiceTest {
 		then(userQueryService).shouldHaveNoMoreInteractions();
 		then(instrumentRepository).shouldHaveNoMoreInteractions();
 		then(instrumentImageCommandService).shouldHaveNoMoreInteractions();
-		then(instrumentHashtagRepository).shouldHaveNoMoreInteractions();
+		then(instrumentHashtagCommandService).shouldHaveNoMoreInteractions();
 	}
 
 	private MockMultipartFile createMultipartFile() {
@@ -594,6 +734,19 @@ class InstrumentCommandServiceTest {
 			List.of(createMultipartFile()),
 			List.of("Fender", "Guitar"),
 			AudioEquipmentType.AUDIO_EQUIPMENT
+		);
+	}
+
+	private ElectricGuitarUpdateRequest createElectricGuitarUpdateRequest(
+		@Nullable List<Long> deletedImageIds,
+		@Nullable List<MultipartFile> newImages,
+		@Nullable List<Long> deletedHashtagIds,
+		@Nullable List<String> newHashtags
+	) throws Exception {
+		return ReflectionUtils.createElectricGuitarUpdateRequest(
+			null, null, null, null, null, null, null,
+			deletedImageIds, newImages, deletedHashtagIds, newHashtags,
+			null, null, null, null
 		);
 	}
 }

@@ -1,6 +1,8 @@
 package com.ajou.hertz.domain.instrument.service;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -28,7 +30,7 @@ public class InstrumentImageCommandService {
 	 * 전달받은 multipart files로 instrument image entity를 생성 후 저장한다.
 	 *
 	 * @param instrument 이미지의 대상이 되는 instrument entity
-	 * @param images 저장하고자 하는 image
+	 * @param images     저장하고자 하는 image
 	 * @return 저장된 instrument images
 	 */
 	public List<InstrumentImage> saveImages(Instrument instrument, Iterable<MultipartFile> images) {
@@ -47,7 +49,7 @@ public class InstrumentImageCommandService {
 	/**
 	 * 특정 악기 매물의 모든 이미지를 삭제한다.
 	 *
-	 * @param instrumentId    이미지를 전체 삭제할 악기 매물의 id
+	 * @param instrumentId 이미지를 전체 삭제할 악기 매물의 id
 	 */
 	public void deleteAllByInstrumentId(Long instrumentId) {
 		List<InstrumentImage> instrumentImages = instrumentImageQueryService.findAllByInstrumentId(instrumentId);
@@ -57,5 +59,20 @@ public class InstrumentImageCommandService {
 				.toList()
 		);
 		instrumentImageRepository.deleteAll(instrumentImages);
+	}
+
+	/**
+	 * 전달받은 id 리스트에 해당하는 악기 이미지를 전부 삭제한다.
+	 *
+	 * @param ids 삭제할 악기들의 id 리스트
+	 */
+	public void deleteAllByIds(Collection<Long> ids) {
+		List<InstrumentImage> instrumentImages = instrumentImageRepository.findAllByIdIn(ids);
+		instrumentImageRepository.deleteAllInBatch(instrumentImages);
+		fileService.deleteAll(
+			instrumentImages.stream()
+				.map(InstrumentImage::getStoredName)
+				.collect(Collectors.toList())
+		);
 	}
 }

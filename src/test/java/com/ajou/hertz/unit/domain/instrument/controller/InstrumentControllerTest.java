@@ -33,43 +33,44 @@ import com.ajou.hertz.domain.instrument.acoustic_and_classic_guitar.constant.Aco
 import com.ajou.hertz.domain.instrument.acoustic_and_classic_guitar.constant.AcousticAndClassicGuitarModel;
 import com.ajou.hertz.domain.instrument.acoustic_and_classic_guitar.constant.AcousticAndClassicGuitarPickUp;
 import com.ajou.hertz.domain.instrument.acoustic_and_classic_guitar.constant.AcousticAndClassicGuitarWood;
+import com.ajou.hertz.domain.instrument.acoustic_and_classic_guitar.dto.AcousticAndClassicGuitarDto;
+import com.ajou.hertz.domain.instrument.acoustic_and_classic_guitar.dto.request.AcousticAndClassicGuitarFilterConditions;
+import com.ajou.hertz.domain.instrument.acoustic_and_classic_guitar.dto.request.CreateNewAcousticAndClassicGuitarRequest;
 import com.ajou.hertz.domain.instrument.amplifier.constant.AmplifierBrand;
 import com.ajou.hertz.domain.instrument.amplifier.constant.AmplifierType;
 import com.ajou.hertz.domain.instrument.amplifier.constant.AmplifierUsage;
+import com.ajou.hertz.domain.instrument.amplifier.dto.AmplifierDto;
+import com.ajou.hertz.domain.instrument.amplifier.dto.request.AmplifierFilterConditions;
+import com.ajou.hertz.domain.instrument.amplifier.dto.request.CreateNewAmplifierRequest;
 import com.ajou.hertz.domain.instrument.audio_equipment.constant.AudioEquipmentType;
+import com.ajou.hertz.domain.instrument.audio_equipment.dto.AudioEquipmentDto;
+import com.ajou.hertz.domain.instrument.audio_equipment.dto.request.AudioEquipmentFilterConditions;
+import com.ajou.hertz.domain.instrument.audio_equipment.dto.request.CreateNewAudioEquipmentRequest;
 import com.ajou.hertz.domain.instrument.bass_guitar.constant.BassGuitarBrand;
 import com.ajou.hertz.domain.instrument.bass_guitar.constant.BassGuitarPickUp;
 import com.ajou.hertz.domain.instrument.bass_guitar.constant.BassGuitarPreAmplifier;
-import com.ajou.hertz.domain.instrument.effector.constant.EffectorFeature;
-import com.ajou.hertz.domain.instrument.effector.constant.EffectorType;
-import com.ajou.hertz.domain.instrument.electric_guitar.constant.ElectricGuitarBrand;
-import com.ajou.hertz.domain.instrument.electric_guitar.constant.ElectricGuitarModel;
+import com.ajou.hertz.domain.instrument.bass_guitar.dto.BassGuitarDto;
+import com.ajou.hertz.domain.instrument.bass_guitar.dto.request.BassGuitarFilterConditions;
+import com.ajou.hertz.domain.instrument.bass_guitar.dto.request.CreateNewBassGuitarRequest;
 import com.ajou.hertz.domain.instrument.constant.GuitarColor;
 import com.ajou.hertz.domain.instrument.constant.InstrumentCategory;
 import com.ajou.hertz.domain.instrument.constant.InstrumentProgressStatus;
 import com.ajou.hertz.domain.instrument.constant.InstrumentSortOption;
 import com.ajou.hertz.domain.instrument.controller.InstrumentController;
-import com.ajou.hertz.domain.instrument.acoustic_and_classic_guitar.dto.AcousticAndClassicGuitarDto;
-import com.ajou.hertz.domain.instrument.amplifier.dto.AmplifierDto;
-import com.ajou.hertz.domain.instrument.audio_equipment.dto.AudioEquipmentDto;
-import com.ajou.hertz.domain.instrument.bass_guitar.dto.BassGuitarDto;
-import com.ajou.hertz.domain.instrument.effector.dto.EffectorDto;
-import com.ajou.hertz.domain.instrument.electric_guitar.dto.ElectricGuitarDto;
 import com.ajou.hertz.domain.instrument.dto.InstrumentDto;
 import com.ajou.hertz.domain.instrument.dto.InstrumentImageDto;
-import com.ajou.hertz.domain.instrument.acoustic_and_classic_guitar.dto.request.AcousticAndClassicGuitarFilterConditions;
-import com.ajou.hertz.domain.instrument.amplifier.dto.request.AmplifierFilterConditions;
-import com.ajou.hertz.domain.instrument.audio_equipment.dto.request.AudioEquipmentFilterConditions;
-import com.ajou.hertz.domain.instrument.bass_guitar.dto.request.BassGuitarFilterConditions;
-import com.ajou.hertz.domain.instrument.acoustic_and_classic_guitar.dto.request.CreateNewAcousticAndClassicGuitarRequest;
-import com.ajou.hertz.domain.instrument.amplifier.dto.request.CreateNewAmplifierRequest;
-import com.ajou.hertz.domain.instrument.audio_equipment.dto.request.CreateNewAudioEquipmentRequest;
-import com.ajou.hertz.domain.instrument.bass_guitar.dto.request.CreateNewBassGuitarRequest;
-import com.ajou.hertz.domain.instrument.effector.dto.request.CreateNewEffectorRequest;
-import com.ajou.hertz.domain.instrument.electric_guitar.dto.request.CreateNewElectricGuitarRequest;
-import com.ajou.hertz.domain.instrument.effector.dto.request.EffectorFilterConditions;
-import com.ajou.hertz.domain.instrument.electric_guitar.dto.request.ElectricGuitarFilterConditions;
 import com.ajou.hertz.domain.instrument.dto.request.InstrumentFilterConditions;
+import com.ajou.hertz.domain.instrument.effector.constant.EffectorFeature;
+import com.ajou.hertz.domain.instrument.effector.constant.EffectorType;
+import com.ajou.hertz.domain.instrument.effector.dto.EffectorDto;
+import com.ajou.hertz.domain.instrument.effector.dto.request.CreateNewEffectorRequest;
+import com.ajou.hertz.domain.instrument.effector.dto.request.EffectorFilterConditions;
+import com.ajou.hertz.domain.instrument.electric_guitar.constant.ElectricGuitarBrand;
+import com.ajou.hertz.domain.instrument.electric_guitar.constant.ElectricGuitarModel;
+import com.ajou.hertz.domain.instrument.electric_guitar.dto.ElectricGuitarDto;
+import com.ajou.hertz.domain.instrument.electric_guitar.dto.request.CreateNewElectricGuitarRequest;
+import com.ajou.hertz.domain.instrument.electric_guitar.dto.request.ElectricGuitarFilterConditions;
+import com.ajou.hertz.domain.instrument.electric_guitar.dto.request.ElectricGuitarUpdateRequest;
 import com.ajou.hertz.domain.instrument.service.InstrumentCommandService;
 import com.ajou.hertz.domain.instrument.service.InstrumentQueryService;
 import com.ajou.hertz.domain.user.constant.Gender;
@@ -401,7 +402,7 @@ class InstrumentControllerTest {
 	void 새로_등록할_일렉기타의_정보가_주어지면_일렉기타_매물을_등록한다() throws Exception {
 		// given
 		long sellerId = 1L;
-		CreateNewElectricGuitarRequest electricGuitarRequest = createElectricGuitarRequest();
+		CreateNewElectricGuitarRequest electricGuitarRequest = createNewElectricGuitarRequest();
 		ElectricGuitarDto expectedResult = createElectricGuitarDto(2L, sellerId);
 		given(instrumentCommandService.createNewElectricGuitar(
 			eq(sellerId), any(CreateNewElectricGuitarRequest.class)
@@ -664,6 +665,47 @@ class InstrumentControllerTest {
 	}
 
 	@Test
+	void 수정할_일렉_기타_정보가_주어지고_주어진_정보로_매물_정보를_수정한다() throws Exception {
+		// given
+		long userId = 1L;
+		long electricGuitarId = 2L;
+		ElectricGuitarUpdateRequest updateRequest = createElectricGuitarUpdateRequest();
+		ElectricGuitarDto expectedResult = createElectricGuitarDto(electricGuitarId, userId);
+		given(instrumentCommandService.updateElectricGuitar(
+			eq(userId),
+			eq(electricGuitarId),
+			any(ElectricGuitarUpdateRequest.class)
+		)).willReturn(expectedResult);
+
+		// when & then
+		mvc.perform(
+				multipart("/api/instruments/electric-guitars/{electricGuitarId}", electricGuitarId)
+					.header(API_VERSION_HEADER_NAME, 1)
+					.param("title", updateRequest.getTitle())
+					.param("progressStatus", String.valueOf(updateRequest.getProgressStatus()))
+					.param("qualityStatus", String.valueOf(updateRequest.getQualityStatus()))
+					.param("price", String.valueOf(updateRequest.getPrice()))
+					.param("hasAnomaly", String.valueOf(updateRequest.getHasAnomaly()))
+					.param("description", updateRequest.getDescription())
+					.param("brand", String.valueOf(updateRequest.getBrand()))
+					.param("model", String.valueOf(updateRequest.getModel()))
+					.param("productionYear", String.valueOf(updateRequest.getProductionYear()))
+					.param("color", String.valueOf(updateRequest.getColor()))
+					.with(user(createTestUser(userId)))
+					.with(request -> {
+						request.setMethod("PATCH");
+						return request;
+					})
+			)
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.id").value(expectedResult.getId()));
+		then(instrumentCommandService)
+			.should()
+			.updateElectricGuitar(eq(userId), eq(electricGuitarId), any(ElectricGuitarUpdateRequest.class));
+		verifyEveryMocksShouldHaveNoMoreInteractions();
+	}
+
+	@Test
 	void 악기_id가_주어지고_해당하는_악기_매물을_삭제한다() throws Exception {
 		// given
 		long userId = 1L;
@@ -875,7 +917,7 @@ class InstrumentControllerTest {
 		return ReflectionUtils.createAddressRequest("서울특별시", "강남구", "청담동");
 	}
 
-	private CreateNewElectricGuitarRequest createElectricGuitarRequest() throws Exception {
+	private CreateNewElectricGuitarRequest createNewElectricGuitarRequest() throws Exception {
 		return ReflectionUtils.createElectricGuitarRequest(
 			"Test electric guitar",
 			InstrumentProgressStatus.SELLING,
@@ -982,6 +1024,26 @@ class InstrumentControllerTest {
 			InstrumentProgressStatus.SELLING,
 			"서울특별시",
 			"마포구"
+		);
+	}
+
+	private ElectricGuitarUpdateRequest createElectricGuitarUpdateRequest() throws Exception {
+		return ReflectionUtils.createElectricGuitarUpdateRequest(
+			"title",
+			InstrumentProgressStatus.SOLD_OUT,
+			createAddressRequest(),
+			(short)3,
+			550000,
+			true,
+			"description",
+			null,
+			null,
+			null,
+			null,
+			ElectricGuitarBrand.FENDER_JAPAN,
+			ElectricGuitarModel.TELECASTER,
+			(short)2014,
+			GuitarColor.RED
 		);
 	}
 }

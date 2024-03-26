@@ -31,7 +31,7 @@ public class CreateNewElectricGuitarRequest extends CreateNewInstrumentRequest<E
 	@NotNull
 	private ElectricGuitarModel model;
 
-	@Schema(description = "생상연도", example = "2014")
+	@Schema(description = "생산연도", example = "2014")
 	@NotNull
 	private Short productionYear;
 

@@ -24,39 +24,39 @@ import com.ajou.hertz.domain.instrument.acoustic_and_classic_guitar.constant.Aco
 import com.ajou.hertz.domain.instrument.acoustic_and_classic_guitar.constant.AcousticAndClassicGuitarModel;
 import com.ajou.hertz.domain.instrument.acoustic_and_classic_guitar.constant.AcousticAndClassicGuitarPickUp;
 import com.ajou.hertz.domain.instrument.acoustic_and_classic_guitar.constant.AcousticAndClassicGuitarWood;
+import com.ajou.hertz.domain.instrument.acoustic_and_classic_guitar.dto.AcousticAndClassicGuitarDto;
+import com.ajou.hertz.domain.instrument.acoustic_and_classic_guitar.dto.request.AcousticAndClassicGuitarFilterConditions;
+import com.ajou.hertz.domain.instrument.acoustic_and_classic_guitar.entity.AcousticAndClassicGuitar;
 import com.ajou.hertz.domain.instrument.amplifier.constant.AmplifierBrand;
 import com.ajou.hertz.domain.instrument.amplifier.constant.AmplifierType;
 import com.ajou.hertz.domain.instrument.amplifier.constant.AmplifierUsage;
+import com.ajou.hertz.domain.instrument.amplifier.dto.AmplifierDto;
+import com.ajou.hertz.domain.instrument.amplifier.dto.request.AmplifierFilterConditions;
+import com.ajou.hertz.domain.instrument.amplifier.entity.Amplifier;
 import com.ajou.hertz.domain.instrument.audio_equipment.constant.AudioEquipmentType;
+import com.ajou.hertz.domain.instrument.audio_equipment.dto.AudioEquipmentDto;
+import com.ajou.hertz.domain.instrument.audio_equipment.dto.request.AudioEquipmentFilterConditions;
+import com.ajou.hertz.domain.instrument.audio_equipment.entity.AudioEquipment;
 import com.ajou.hertz.domain.instrument.bass_guitar.constant.BassGuitarBrand;
 import com.ajou.hertz.domain.instrument.bass_guitar.constant.BassGuitarPickUp;
 import com.ajou.hertz.domain.instrument.bass_guitar.constant.BassGuitarPreAmplifier;
-import com.ajou.hertz.domain.instrument.effector.constant.EffectorFeature;
-import com.ajou.hertz.domain.instrument.effector.constant.EffectorType;
-import com.ajou.hertz.domain.instrument.electric_guitar.constant.ElectricGuitarBrand;
-import com.ajou.hertz.domain.instrument.electric_guitar.constant.ElectricGuitarModel;
+import com.ajou.hertz.domain.instrument.bass_guitar.dto.BassGuitarDto;
+import com.ajou.hertz.domain.instrument.bass_guitar.dto.request.BassGuitarFilterConditions;
+import com.ajou.hertz.domain.instrument.bass_guitar.entity.BassGuitar;
 import com.ajou.hertz.domain.instrument.constant.GuitarColor;
 import com.ajou.hertz.domain.instrument.constant.InstrumentCategory;
 import com.ajou.hertz.domain.instrument.constant.InstrumentProgressStatus;
 import com.ajou.hertz.domain.instrument.constant.InstrumentSortOption;
-import com.ajou.hertz.domain.instrument.acoustic_and_classic_guitar.dto.AcousticAndClassicGuitarDto;
-import com.ajou.hertz.domain.instrument.amplifier.dto.AmplifierDto;
-import com.ajou.hertz.domain.instrument.audio_equipment.dto.AudioEquipmentDto;
-import com.ajou.hertz.domain.instrument.bass_guitar.dto.BassGuitarDto;
-import com.ajou.hertz.domain.instrument.effector.dto.EffectorDto;
-import com.ajou.hertz.domain.instrument.electric_guitar.dto.ElectricGuitarDto;
 import com.ajou.hertz.domain.instrument.dto.InstrumentDto;
-import com.ajou.hertz.domain.instrument.acoustic_and_classic_guitar.dto.request.AcousticAndClassicGuitarFilterConditions;
-import com.ajou.hertz.domain.instrument.amplifier.dto.request.AmplifierFilterConditions;
-import com.ajou.hertz.domain.instrument.audio_equipment.dto.request.AudioEquipmentFilterConditions;
-import com.ajou.hertz.domain.instrument.bass_guitar.dto.request.BassGuitarFilterConditions;
+import com.ajou.hertz.domain.instrument.effector.constant.EffectorFeature;
+import com.ajou.hertz.domain.instrument.effector.constant.EffectorType;
+import com.ajou.hertz.domain.instrument.effector.dto.EffectorDto;
 import com.ajou.hertz.domain.instrument.effector.dto.request.EffectorFilterConditions;
-import com.ajou.hertz.domain.instrument.electric_guitar.dto.request.ElectricGuitarFilterConditions;
-import com.ajou.hertz.domain.instrument.acoustic_and_classic_guitar.entity.AcousticAndClassicGuitar;
-import com.ajou.hertz.domain.instrument.amplifier.entity.Amplifier;
-import com.ajou.hertz.domain.instrument.audio_equipment.entity.AudioEquipment;
-import com.ajou.hertz.domain.instrument.bass_guitar.entity.BassGuitar;
 import com.ajou.hertz.domain.instrument.effector.entity.Effector;
+import com.ajou.hertz.domain.instrument.electric_guitar.constant.ElectricGuitarBrand;
+import com.ajou.hertz.domain.instrument.electric_guitar.constant.ElectricGuitarModel;
+import com.ajou.hertz.domain.instrument.electric_guitar.dto.ElectricGuitarDto;
+import com.ajou.hertz.domain.instrument.electric_guitar.dto.request.ElectricGuitarFilterConditions;
 import com.ajou.hertz.domain.instrument.electric_guitar.entity.ElectricGuitar;
 import com.ajou.hertz.domain.instrument.entity.Instrument;
 import com.ajou.hertz.domain.instrument.exception.InstrumentNotFoundByIdException;
@@ -108,6 +108,41 @@ class InstrumentQueryServiceTest {
 		then(instrumentRepository).should().findById(instrumentId);
 		verifyEveryMocksShouldHaveNoMoreInteractions();
 		assertThat(t).isInstanceOf(InstrumentNotFoundByIdException.class);
+	}
+
+	@Test
+	void id가_주어지고_id에_해당하는_일렉_기타를_단건_조회한다() throws Exception {
+		// given
+		long electricGuitarId = 1L;
+		ElectricGuitar expectedResult = createElectricGuitar(electricGuitarId, createUser(2L));
+		given(instrumentRepository.findElectricGuitarById(electricGuitarId))
+			.willReturn(Optional.of(expectedResult));
+
+		// when
+		ElectricGuitar actualResult = sut.getElectricGuitarById(electricGuitarId);
+
+		// then
+		then(instrumentRepository).should().findElectricGuitarById(electricGuitarId);
+		verifyEveryMocksShouldHaveNoMoreInteractions();
+		assertThat(actualResult.getId()).isEqualTo(expectedResult.getId());
+		assertThat(actualResult.getProductionYear()).isEqualTo(expectedResult.getProductionYear());
+	}
+
+	@Test
+	void 존재하지_않는_악기_id가_주어지고_id에_해당하는_일렉_기타를_단건_조회하면_예외가_발생한다() throws Exception {
+		// given
+		long electricGuitarId = 1L;
+		ElectricGuitar expectedResult = createElectricGuitar(electricGuitarId, createUser(2L));
+		given(instrumentRepository.findElectricGuitarById(electricGuitarId))
+			.willReturn(Optional.empty());
+
+		// when
+		Throwable ex = catchThrowable(() -> sut.getElectricGuitarById(electricGuitarId));
+
+		// then
+		then(instrumentRepository).should().findElectricGuitarById(electricGuitarId);
+		verifyEveryMocksShouldHaveNoMoreInteractions();
+		assertThat(ex).isInstanceOf(InstrumentNotFoundByIdException.class);
 	}
 
 	@Test
