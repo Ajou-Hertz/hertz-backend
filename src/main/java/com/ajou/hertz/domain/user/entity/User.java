@@ -101,6 +101,10 @@ public class User extends TimeTrackedBaseEntity {
 		);
 	}
 
+	public void changeProfileImageUrl(String profileImageUrl) {
+		this.profileImageUrl = profileImageUrl;
+	}
+
 	public void changeContactLink(String contactLink) {
 		this.contactLink = contactLink;
 	}

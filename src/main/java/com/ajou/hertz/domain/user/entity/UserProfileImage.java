@@ -24,7 +24,7 @@ public class UserProfileImage extends FileEntity {
 	@Column(name = "user_profile_image_id", nullable = false)
 	private Long id;
 
-	@JoinColumn(name = "user_id", nullable = false)
+	@JoinColumn(name = "user_id", nullable = false, unique = true)
 	@OneToOne(fetch = FetchType.LAZY)
 	private User user;
 
@@ -33,4 +33,14 @@ public class UserProfileImage extends FileEntity {
 		this.id = id;
 		this.user = user;
 	}
+
+	public static UserProfileImage create(
+		User user,
+		String originalName,
+		String storedName,
+		String url
+	) {
+		return new UserProfileImage(null, user, originalName, storedName, url);
+	}
+
 }

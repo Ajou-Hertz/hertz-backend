@@ -18,6 +18,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.test.context.event.annotation.BeforeTestMethod;
 import org.springframework.test.web.servlet.MockMvc;
@@ -213,6 +214,38 @@ class UserControllerTest {
 	}
 
 	@Test
+	void 주어진_id와_변경할_프로필_이미지로_프로필_이미지를_변경한다() throws Exception {
+		// given
+		long userId = 1L;
+		MockMultipartFile profileImage = new MockMultipartFile(
+			"profileImage",
+			"test.jpg",
+			"image/jpeg",
+			"test".getBytes()
+		);
+		UserDetails userDetails = createTestUser(userId);
+		UserDto expectedResult = createUserDto(userId);
+
+		given(userCommandService.updateUserProfileImage(userId, profileImage)).willReturn(expectedResult);
+
+		// when & then
+		mvc.perform(
+				multipart("/api/users/me/profile-images")
+					.file(profileImage)
+					.header(API_VERSION_HEADER_NAME, 1)
+					.with(user(userDetails))
+					.with(request -> {
+						request.setMethod("PUT");
+						return request;
+					})
+			)
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.profileImageUrl").value(expectedResult.getProfileImageUrl()));
+		then(userCommandService).should().updateUserProfileImage(userId, profileImage);
+		verifyEveryMocksShouldHaveNoMoreInteractions();
+	}
+
+	@Test
 	void 주어진_연락수단을_새로운_연락수단으로_변경한다() throws Exception {
 		// given
 		long userId = 1L;
@@ -281,5 +314,4 @@ class UserControllerTest {
 	private UserDetails createTestUser(Long userId) throws Exception {
 		return new UserPrincipal(createUserDto(userId));
 	}
-
 }

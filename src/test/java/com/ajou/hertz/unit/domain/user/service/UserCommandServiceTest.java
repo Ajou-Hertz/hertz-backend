@@ -17,9 +17,12 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.event.annotation.BeforeTestMethod;
+import org.springframework.web.multipart.MultipartFile;
 
+import com.ajou.hertz.common.file.service.FileService;
 import com.ajou.hertz.common.kakao.dto.response.KakaoUserInfoResponse;
 import com.ajou.hertz.common.properties.HertzProperties;
 import com.ajou.hertz.domain.user.constant.Gender;
@@ -33,6 +36,7 @@ import com.ajou.hertz.domain.user.exception.UserNotFoundByIdException;
 import com.ajou.hertz.domain.user.exception.UserPhoneDuplicationException;
 import com.ajou.hertz.domain.user.repository.UserRepository;
 import com.ajou.hertz.domain.user.service.UserCommandService;
+import com.ajou.hertz.domain.user.service.UserProfileImageCommandService;
 import com.ajou.hertz.domain.user.service.UserQueryService;
 import com.ajou.hertz.util.ReflectionUtils;
 
@@ -54,6 +58,12 @@ class UserCommandServiceTest {
 
 	@Mock
 	private HertzProperties hertzProperties;
+
+	@Mock
+	private FileService fileService;
+
+	@Mock
+	private UserProfileImageCommandService userProfileImageCommandService;
 
 	@BeforeTestMethod
 	public void setUp() {
@@ -173,6 +183,30 @@ class UserCommandServiceTest {
 	}
 
 	@Test
+	void 주어진_유저_ID와_이미지_URL로_유저의_프로필_이미지를_업데이트한다() throws Exception {
+		// Given
+		Long userId = 1L;
+		User user = createUser(userId, "password", "kakaoUid");
+		String newProfileImageUrl = "https://new-profile-image-url";
+
+		MultipartFile profileImage = new MockMultipartFile("file", "test.jpg", "image/jpeg",
+			"test image content".getBytes());
+
+		given(userQueryService.getById(userId)).willReturn(user);
+		given(userProfileImageCommandService.updateProfileImage(user, profileImage)).willReturn(
+			newProfileImageUrl);
+
+		// When
+		UserDto result = sut.updateUserProfileImage(userId, profileImage);
+
+		// Then
+		then(userQueryService).should().getById(userId);
+		then(userProfileImageCommandService).should().updateProfileImage(user, profileImage);
+		assertThat(result.getProfileImageUrl()).isEqualTo(newProfileImageUrl);
+		verifyEveryMocksShouldHaveNoMoreInteractions();
+	}
+
+	@Test
 	void 주어진_유저_ID와_연락_수단으로_연락_수단을_변경한다() throws Exception {
 		// given
 		Long userId = 1L;
@@ -209,6 +243,8 @@ class UserCommandServiceTest {
 		then(userQueryService).shouldHaveNoMoreInteractions();
 		then(userRepository).shouldHaveNoMoreInteractions();
 		then(passwordEncoder).shouldHaveNoMoreInteractions();
+		then(fileService).shouldHaveNoMoreInteractions();
+		then(userProfileImageCommandService).shouldHaveNoMoreInteractions();
 	}
 
 	private static User createUser(Long id, String password, String kakaoUid, Gender gender) throws Exception {

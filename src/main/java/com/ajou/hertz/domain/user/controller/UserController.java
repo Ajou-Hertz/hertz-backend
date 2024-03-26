@@ -4,6 +4,7 @@ import static com.ajou.hertz.common.constant.GlobalConstants.*;
 
 import java.net.URI;
 
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
@@ -13,7 +14,9 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.ajou.hertz.common.auth.UserPrincipal;
 import com.ajou.hertz.common.validator.PhoneNumber;
@@ -118,6 +121,24 @@ public class UserController {
 	}
 
 	@Operation(
+		summary = "프로필 이미지 변경",
+		description = "프로필 이미지를 변경합니다.",
+		security = @SecurityRequirement(name = "access-token")
+	)
+	@PutMapping(
+		value = "/me/profile-images",
+		headers = API_VERSION_HEADER_NAME + "=" + 1,
+		consumes = MediaType.MULTIPART_FORM_DATA_VALUE
+	)
+	public UserResponse updateProfileImageV1(
+		@AuthenticationPrincipal UserPrincipal userPrincipal,
+		@RequestPart MultipartFile profileImage
+	) {
+		UserDto userUpdated = userCommandService.updateUserProfileImage(userPrincipal.getUserId(), profileImage);
+		return UserResponse.from(userUpdated);
+	}
+
+	@Operation(
 		summary = "연락 수단 변경",
 		description = "연락 수단을 변경합니다.",
 		security = @SecurityRequirement(name = "access-token")
@@ -132,3 +153,4 @@ public class UserController {
 		return UserResponse.from(userUpdated);
 	}
 }
+

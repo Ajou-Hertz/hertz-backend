@@ -130,4 +130,17 @@ public class AmazonS3FileService implements FileService {
 			throw new MultipartFileNotReadableException(ex);
 		}
 	}
+
+	/**
+	 * S3 bucket에서 파일을 삭제한다.
+	 *
+	 * @param storedFileName 삭제할 파일의 이름 (key of bucket object)
+	 */
+	@Override
+	public void deleteFile(String storedFileName) {
+		s3Client.deleteObject(
+			new DeleteObjectRequest(awsProperties.s3().bucketName(), storedFileName)
+		);
+	}
+
 }
