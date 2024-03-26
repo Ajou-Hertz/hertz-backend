@@ -13,7 +13,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.event.annotation.BeforeTestMethod;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -25,9 +24,7 @@ import com.ajou.hertz.domain.user.constant.RoleType;
 import com.ajou.hertz.domain.user.entity.User;
 import com.ajou.hertz.domain.user.entity.UserProfileImage;
 import com.ajou.hertz.domain.user.repository.UserProfileImageRepository;
-import com.ajou.hertz.domain.user.repository.UserRepository;
 import com.ajou.hertz.domain.user.service.UserProfileImageCommandService;
-import com.ajou.hertz.domain.user.service.UserQueryService;
 import com.ajou.hertz.util.ReflectionUtils;
 
 @DisplayName("[Unit] Service(Command) - User Profile Image")
@@ -37,16 +34,7 @@ public class UserProfileImageCommandServiceTest {
 	private UserProfileImageCommandService sut;
 
 	@Mock
-	private UserQueryService userQueryService;
-
-	@Mock
-	private UserRepository userRepository;
-
-	@Mock
 	private UserProfileImageRepository userProfileImageRepository;
-
-	@Mock
-	private PasswordEncoder passwordEncoder;
 
 	@Mock
 	private HertzProperties hertzProperties;
@@ -120,9 +108,6 @@ public class UserProfileImageCommandServiceTest {
 	}
 
 	private void verifyEveryMocksShouldHaveNoMoreInteractions() {
-		then(userQueryService).shouldHaveNoMoreInteractions();
-		then(userRepository).shouldHaveNoMoreInteractions();
-		then(passwordEncoder).shouldHaveNoMoreInteractions();
 		then(fileService).shouldHaveNoMoreInteractions();
 	}
 
