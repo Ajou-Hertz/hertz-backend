@@ -13,12 +13,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.test.context.event.annotation.BeforeTestMethod;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.ajou.hertz.common.file.dto.FileDto;
 import com.ajou.hertz.common.file.service.FileService;
-import com.ajou.hertz.common.properties.HertzProperties;
 import com.ajou.hertz.domain.user.constant.Gender;
 import com.ajou.hertz.domain.user.constant.RoleType;
 import com.ajou.hertz.domain.user.entity.User;
@@ -37,15 +35,7 @@ public class UserProfileImageCommandServiceTest {
 	private UserProfileImageRepository userProfileImageRepository;
 
 	@Mock
-	private HertzProperties hertzProperties;
-
-	@Mock
 	private FileService fileService;
-
-	@BeforeTestMethod
-	public void setUp() {
-		given(hertzProperties.userDefaultProfileImageUrl()).willReturn("https://user-default-profile-image");
-	}
 
 	@Test
 	void 기본_프로필_이미지인_경우_유저의_프로필_이미지를_최초로_업데이트한다() throws Exception {
