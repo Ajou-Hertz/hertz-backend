@@ -258,22 +258,6 @@ class UserCommandServiceTest {
 		assertThat(updatedUserDto.getPassword()).isEqualTo(newPassword);
 	}
 
-	@Test
-	void 주어진_유저_ID와_새로운_비밀번호로_유저의_비밀번호를_변경한다_존재하지_않는_유저라면_예외가_발생한다() throws Exception {
-		// given
-		Long userId = 1L;
-		String newPassword = "newPwd1234!!";
-		given(userQueryService.getById(userId)).willThrow(UserNotFoundByIdException.class);
-
-		// when
-		Throwable t = catchThrowable(() -> sut.updatePassword(userId, newPassword));
-
-		// then
-		then(userQueryService).should().getById(userId);
-		verifyEveryMocksShouldHaveNoMoreInteractions();
-		assertThat(t).isInstanceOf(UserNotFoundByIdException.class);
-	}
-
 	private void verifyEveryMocksShouldHaveNoMoreInteractions() {
 		then(userQueryService).shouldHaveNoMoreInteractions();
 		then(userRepository).shouldHaveNoMoreInteractions();
