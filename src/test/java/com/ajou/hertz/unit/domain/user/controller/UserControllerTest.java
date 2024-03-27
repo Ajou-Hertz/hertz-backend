@@ -31,6 +31,7 @@ import com.ajou.hertz.common.auth.JwtExceptionFilter;
 import com.ajou.hertz.common.auth.JwtTokenProvider;
 import com.ajou.hertz.common.auth.UserPrincipal;
 import com.ajou.hertz.common.config.SecurityConfig;
+import com.ajou.hertz.domain.instrument.service.InstrumentQueryService;
 import com.ajou.hertz.domain.user.constant.Gender;
 import com.ajou.hertz.domain.user.constant.RoleType;
 import com.ajou.hertz.domain.user.controller.UserController;
@@ -60,6 +61,9 @@ class UserControllerTest {
 
 	@MockBean
 	private UserQueryService userQueryService;
+
+	@MockBean
+	private InstrumentQueryService instrumentQueryService;
 
 	private final MockMvc mvc;
 
@@ -292,6 +296,31 @@ class UserControllerTest {
 			.andExpect(jsonPath("$.gender").value(expectedResult.getGender().name()))
 			.andExpect(jsonPath("$.contactLink").value(expectedResult.getContactLink()));
 		then(userCommandService).should().updatePassword(userId, newPassword);
+		verifyEveryMocksShouldHaveNoMoreInteractions();
+	}
+
+	@Test
+	void 주어진_id로_판매자의_판매자_정보를_조회한다() throws Exception {
+		// given
+		long userId = 1L;
+		UserDetails testUser = createTestUser(userId);
+		UserDto expectedResult = createUserDto(userId);
+		int sellingCount = 2;
+		int soldCount = 3;
+		given(userQueryService.getDtoById(userId)).willReturn(expectedResult);
+		given(instrumentQueryService.countSellingItemsBySellerId(userId)).willReturn(sellingCount);
+		given(instrumentQueryService.countSoldItemsBySellerId(userId)).willReturn(soldCount);
+
+		// when & then
+		mvc.perform(
+				get("/api/users/{userId}/seller", userId)
+					.header(API_VERSION_HEADER_NAME, 1)
+					.with(user(testUser))
+			)
+			.andExpect(status().isOk());
+		then(userQueryService).should().getDtoById(userId);
+		then(instrumentQueryService).should().countSellingItemsBySellerId(userId);
+		then(instrumentQueryService).should().countSoldItemsBySellerId(userId);
 		verifyEveryMocksShouldHaveNoMoreInteractions();
 	}
 
