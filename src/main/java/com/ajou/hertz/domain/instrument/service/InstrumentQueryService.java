@@ -203,17 +203,17 @@ public class InstrumentQueryService {
 	 *
 	 * @return 판매중인 물품의 수
 	 */
-	public long countSellingItemsBySellerId(Long sellerId) {
+	public int countSellingItemsBySellerId(Long sellerId) {
 		return instrumentRepository.countBySellerIdAndProgressStatus(sellerId, InstrumentProgressStatus.SELLING);
 	}
 
 	/**
-	 * 판매자가 판매완료한 물품들을 조회한다
+	 * 판매자가 판매완료한 물품의 수를 조회한다
 	 *
 	 * @param sellerId 판매자 id
 	 * @return 판매완료한 물품의 수
 	 */
-	public long countSoldItemsBySellerId(Long sellerId) {
+	public int countSoldItemsBySellerId(Long sellerId) {
 		return instrumentRepository.countBySellerIdAndProgressStatus(sellerId, InstrumentProgressStatus.SOLD_OUT);
 	}
 }

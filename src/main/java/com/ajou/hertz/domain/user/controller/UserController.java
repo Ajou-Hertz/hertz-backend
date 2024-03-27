@@ -185,8 +185,8 @@ public class UserController {
 		@PathVariable Long userId
 	) {
 		UserDto userDto = userQueryService.getDtoById(userId);
-		long sellingCount = instrumentQueryService.countSellingItemsBySellerId(userId);
-		long soldCount = instrumentQueryService.countSoldItemsBySellerId(userId);
+		int sellingCount = instrumentQueryService.countSellingItemsBySellerId(userId);
+		int soldCount = instrumentQueryService.countSoldItemsBySellerId(userId);
 		return SellerInfoResponse.from(userDto, sellingCount, soldCount);
 	}
 
