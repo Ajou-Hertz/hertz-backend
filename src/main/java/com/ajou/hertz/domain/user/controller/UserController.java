@@ -23,6 +23,7 @@ import com.ajou.hertz.common.validator.PhoneNumber;
 import com.ajou.hertz.domain.user.dto.UserDto;
 import com.ajou.hertz.domain.user.dto.request.SignUpRequest;
 import com.ajou.hertz.domain.user.dto.request.UpdateContactLinkRequest;
+import com.ajou.hertz.domain.user.dto.request.UpdatePasswordRequest;
 import com.ajou.hertz.domain.user.dto.response.UserEmailResponse;
 import com.ajou.hertz.domain.user.dto.response.UserExistenceResponse;
 import com.ajou.hertz.domain.user.dto.response.UserResponse;
@@ -152,5 +153,23 @@ public class UserController {
 			updateContactLinkRequest.getContactLink());
 		return UserResponse.from(userUpdated);
 	}
+
+	@Operation(
+		summary = "비밀번호 변경",
+		description = "회원의 비밀번호를 변경합니다.",
+		security = @SecurityRequirement(name = "access-token")
+	)
+	@PutMapping(value = "/me/password", headers = API_VERSION_HEADER_NAME + "=" + 1)
+	public UserResponse updatePasswordV1(
+		@RequestBody @Valid UpdatePasswordRequest updatePasswordRequest,
+		@AuthenticationPrincipal UserPrincipal userPrincipal
+	) {
+		UserDto userUpdated = userCommandService.updatePassword(
+			userPrincipal.getUserId(),
+			updatePasswordRequest.getPassword()
+		);
+		return UserResponse.from(userUpdated);
+	}
+
 }
 

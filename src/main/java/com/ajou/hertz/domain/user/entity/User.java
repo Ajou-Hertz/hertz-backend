@@ -109,4 +109,8 @@ public class User extends TimeTrackedBaseEntity {
 		this.contactLink = contactLink;
 	}
 
+	public void changePassword(String encodedPassword) {
+		this.password = encodedPassword;
+	}
+
 }

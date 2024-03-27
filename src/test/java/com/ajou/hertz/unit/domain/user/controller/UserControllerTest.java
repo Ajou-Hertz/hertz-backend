@@ -268,6 +268,33 @@ class UserControllerTest {
 		verifyEveryMocksShouldHaveNoMoreInteractions();
 	}
 
+	@Test
+	void 주어진_유저의_id와_새로운_비밀번호로_기존_비밀번호를_업데이트한다() throws Exception {
+		// given
+		long userId = 1L;
+		String newPassword = "newPwd11!!";
+		UserDetails testUser = createTestUser(userId);
+		UserDto expectedResult = createUserDto(userId);
+		given(userCommandService.updatePassword(userId, newPassword)).willReturn(expectedResult);
+
+		// when & then
+		mvc.perform(
+				put("/api/users/me/password")
+					.header(API_VERSION_HEADER_NAME, 1)
+					.contentType(MediaType.APPLICATION_JSON)
+					.content(objectMapper.writeValueAsString(newPassword))
+					.with(user(testUser))
+			)
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.id").value(expectedResult.getId()))
+			.andExpect(jsonPath("$.email").value(expectedResult.getEmail()))
+			.andExpect(jsonPath("$.birth").value(expectedResult.getBirth().toString()))
+			.andExpect(jsonPath("$.gender").value(expectedResult.getGender().name()))
+			.andExpect(jsonPath("$.contactLink").value(expectedResult.getContactLink()));
+		then(userCommandService).should().updatePassword(userId, newPassword);
+		verifyEveryMocksShouldHaveNoMoreInteractions();
+	}
+
 	private void verifyEveryMocksShouldHaveNoMoreInteractions() {
 		then(userCommandService).shouldHaveNoMoreInteractions();
 		then(userQueryService).shouldHaveNoMoreInteractions();
