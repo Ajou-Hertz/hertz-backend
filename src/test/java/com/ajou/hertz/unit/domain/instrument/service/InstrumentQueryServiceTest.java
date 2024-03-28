@@ -363,6 +363,44 @@ class InstrumentQueryServiceTest {
 		);
 	}
 
+	@Test
+	void 해당_유저의_판매_중인_물품의_수를_조회한다() throws Exception {
+		// given
+		Long sellerId = 1L;
+		int expectedResult = 3;
+		given(instrumentRepository.countBySellerIdAndProgressStatus(sellerId, InstrumentProgressStatus.SELLING))
+			.willReturn(expectedResult);
+
+		// when
+		int actualResult = sut.countSellingItemsBySellerId(sellerId);
+
+		// then
+		assertThat(actualResult).isEqualTo(expectedResult);
+		then(instrumentRepository).should()
+			.countBySellerIdAndProgressStatus(sellerId, InstrumentProgressStatus.SELLING);
+		verifyEveryMocksShouldHaveNoMoreInteractions();
+		assertThat(actualResult).isEqualTo(expectedResult);
+	}
+
+	@Test
+	void 해당_유저의_판매_완료한한물품의_수를_조회한다() throws Exception {
+		// given
+		Long sellerId = 1L;
+		int expectedResult = 3;
+		given(instrumentRepository.countBySellerIdAndProgressStatus(sellerId, InstrumentProgressStatus.SOLD_OUT))
+			.willReturn(expectedResult);
+
+		// when
+		int actualResult = sut.countSoldItemsBySellerId(sellerId);
+
+		// then
+		assertThat(actualResult).isEqualTo(expectedResult);
+		then(instrumentRepository).should()
+			.countBySellerIdAndProgressStatus(sellerId, InstrumentProgressStatus.SOLD_OUT);
+		verifyEveryMocksShouldHaveNoMoreInteractions();
+		assertThat(actualResult).isEqualTo(expectedResult);
+	}
+
 	private void verifyEveryMocksShouldHaveNoMoreInteractions() {
 		then(instrumentRepository).shouldHaveNoMoreInteractions();
 	}

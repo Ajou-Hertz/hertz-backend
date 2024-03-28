@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,10 +21,12 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.ajou.hertz.common.auth.UserPrincipal;
 import com.ajou.hertz.common.validator.PhoneNumber;
+import com.ajou.hertz.domain.instrument.service.InstrumentQueryService;
 import com.ajou.hertz.domain.user.dto.UserDto;
 import com.ajou.hertz.domain.user.dto.request.SignUpRequest;
 import com.ajou.hertz.domain.user.dto.request.UpdateContactLinkRequest;
 import com.ajou.hertz.domain.user.dto.request.UpdatePasswordRequest;
+import com.ajou.hertz.domain.user.dto.response.SellerInfoResponse;
 import com.ajou.hertz.domain.user.dto.response.UserEmailResponse;
 import com.ajou.hertz.domain.user.dto.response.UserExistenceResponse;
 import com.ajou.hertz.domain.user.dto.response.UserResponse;
@@ -52,6 +55,7 @@ public class UserController {
 
 	private final UserCommandService userCommandService;
 	private final UserQueryService userQueryService;
+	private final InstrumentQueryService instrumentQueryService;
 
 	@Operation(
 		summary = "내 정보 조회",
@@ -169,6 +173,21 @@ public class UserController {
 			updatePasswordRequest.getPassword()
 		);
 		return UserResponse.from(userUpdated);
+	}
+
+	@Operation(
+		summary = "판매자 정보 조회",
+		description = "판매자 정보(유저 정보 + 판매 중인 매물 수 + 판매 완료 매물 수)를 조회합니다.",
+		security = @SecurityRequirement(name = "access-token")
+	)
+	@GetMapping(value = "/{userId}/seller", headers = API_VERSION_HEADER_NAME + "=" + 1)
+	public SellerInfoResponse getSellerInfoV1(
+		@PathVariable Long userId
+	) {
+		UserDto userDto = userQueryService.getDtoById(userId);
+		int sellingCount = instrumentQueryService.countSellingItemsBySellerId(userId);
+		int soldCount = instrumentQueryService.countSoldItemsBySellerId(userId);
+		return SellerInfoResponse.from(userDto, sellingCount, soldCount);
 	}
 
 }

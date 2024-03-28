@@ -13,6 +13,7 @@ import com.ajou.hertz.domain.instrument.audio_equipment.dto.AudioEquipmentDto;
 import com.ajou.hertz.domain.instrument.audio_equipment.dto.request.AudioEquipmentFilterConditions;
 import com.ajou.hertz.domain.instrument.bass_guitar.dto.BassGuitarDto;
 import com.ajou.hertz.domain.instrument.bass_guitar.dto.request.BassGuitarFilterConditions;
+import com.ajou.hertz.domain.instrument.constant.InstrumentProgressStatus;
 import com.ajou.hertz.domain.instrument.constant.InstrumentSortOption;
 import com.ajou.hertz.domain.instrument.dto.InstrumentDto;
 import com.ajou.hertz.domain.instrument.effector.dto.EffectorDto;
@@ -193,5 +194,26 @@ public class InstrumentQueryService {
 		return instrumentRepository
 			.findAudioEquipments(page, pageSize, sort, filterConditions)
 			.map(InstrumentMapper::toAmplifierDto);
+	}
+
+	/**
+	 * 판매자가 판매중인 물품의 수를 조회합니다
+	 *
+	 * @param sellerId 판매자 id
+	 *
+	 * @return 판매중인 물품의 수
+	 */
+	public int countSellingItemsBySellerId(Long sellerId) {
+		return instrumentRepository.countBySellerIdAndProgressStatus(sellerId, InstrumentProgressStatus.SELLING);
+	}
+
+	/**
+	 * 판매자가 판매완료한 물품의 수를 조회한다
+	 *
+	 * @param sellerId 판매자 id
+	 * @return 판매완료한 물품의 수
+	 */
+	public int countSoldItemsBySellerId(Long sellerId) {
+		return instrumentRepository.countBySellerIdAndProgressStatus(sellerId, InstrumentProgressStatus.SOLD_OUT);
 	}
 }
